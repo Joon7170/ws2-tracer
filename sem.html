@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>WS2 SEM 판독 결과</title>
+<style>
+:root { --bg:#f5f6f8; --card:#fff; --ink:#1c2330; --sub:#5b6577; --line:#dfe3ea; --accent:#1f5fbf; --accent-ink:#fff; --ok:#1e7d46; --warn:#a15c00; --bad:#b3261e; --soft:#eef2f8; }
+* { box-sizing:border-box; }
+html, body { margin:0; }
+body { background:var(--bg); color:var(--ink); font:15px/1.5 -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+button, input, select, textarea { font:inherit; color:inherit; }
+button { cursor:pointer; border:1px solid var(--line); background:#fff; border-radius:8px; padding:7px 13px; }
+button.primary { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+button:disabled { opacity:.5; cursor:default; }
+input[type=text], input[type=password], select, textarea { border:1px solid var(--line); border-radius:8px; padding:7px 10px; background:#fff; min-width:0; }
+header { position:sticky; top:0; z-index:5; background:#fff; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px; padding:10px 18px; flex-wrap:wrap; }
+header h1 { font-size:17px; margin:0; font-weight:700; }
+header .sp { flex:1; }
+header .who { color:var(--sub); font-size:13px; }
+main { max-width:1280px; margin:0 auto; padding:18px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; }
+.row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.muted { color:var(--sub); } .small { font-size:13px; }
+.tablewrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
+th { font-size:13px; color:var(--sub); font-weight:600; background:#fafbfc; position:sticky; top:0; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tr.pick { cursor:pointer; } tr.pick:hover td { background:var(--soft); }
+.tag { display:inline-block; border-radius:999px; padding:1px 9px; font-size:12.5px; border:1px solid var(--line); background:#fff; }
+.tag.ok { color:var(--ok); border-color:#b9dcc7; background:#eff8f2; } .tag.warn { color:var(--warn); border-color:#ecd3a8; background:#fdf6e9; }
+.tag.bad { color:var(--bad); border-color:#efc1bd; background:#fdf0ef; } .tag.wait { color:var(--sub); background:#f3f4f7; }
+#login { max-width:440px; margin:8vh auto; } #login label { display:block; margin:12px 0 4px; font-size:13px; color:var(--sub); } #login input { width:100%; }
+.err { color:var(--bad); min-height:1.4em; }
+.grid2 { display:grid; grid-template-columns:minmax(0, 1.25fr) minmax(0, 1fr); gap:16px; } @media (max-width:900px){ .grid2 { grid-template-columns:1fr; } }
+.kv { display:grid; grid-template-columns:auto 1fr; gap:4px 14px; } .kv dt { color:var(--sub); } .kv dd { margin:0; }
+h2 { font-size:16px; margin:0 0 10px; } h3 { font-size:14px; margin:16px 0 6px; color:var(--sub); font-weight:600; }
+.stat { display:flex; gap:10px; flex-wrap:wrap; } .stat > div { background:var(--soft); border-radius:10px; padding:8px 12px; min-width:92px; }
+.stat b { display:block; font-size:19px; font-variant-numeric:tabular-nums; } .stat span { font-size:12.5px; color:var(--sub); }
+img.fit { max-width:100%; height:auto; border-radius:8px; border:1px solid var(--line); display:block; }
+dialog { border:1px solid var(--line); border-radius:14px; padding:20px; width:min(560px, 94vw); } dialog::backdrop { background:rgba(20,25,35,.45); }
+dialog label { display:block; margin:10px 0 4px; font-size:13px; color:var(--sub); } dialog input[type=text], dialog select, dialog textarea { width:100%; }
+#rv { position:fixed; inset:0; z-index:20; background:#fff; display:flex; flex-direction:column; } #rv[hidden] { display:none; }
+#rv .bar { display:flex; gap:10px; align-items:center; padding:8px 14px; border-bottom:1px solid var(--line); flex-wrap:wrap; background:#fff; }
+#rv iframe { flex:1; border:0; width:100%; }
+#toast { position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#1c2330; color:#fff; padding:9px 16px; border-radius:10px; z-index:40; max-width:90vw; } #toast[hidden] { display:none; }
+.note { background:#fdf6e9; border:1px solid #ecd3a8; border-radius:10px; padding:10px 12px; }
+.scrollbox { max-height:340px; overflow:auto; border:1px solid var(--line); border-radius:8px; }
+a { color:var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>WS2 SEM 판독 결과</h1>
+  <span class="muted small" id="ver"></span>
+  <span class="sp"></span>
+  <span class="who" id="whoami"></span>
+  <button id="btnList" hidden>목록</button>
+  <button id="btnUpload" class="primary" hidden>사진 등록</button>
+  <button id="btnLogout" hidden>나가기</button>
+</header>
+
+<main>
+  <section id="login" class="card" hidden>
+    <h2>들어가기</h2>
+    <p class="muted small">연구실에서 받은 암호와 본인 이름을 넣으세요. 이름은 사진 등록·검토 기록에 남습니다.</p>
+    <div id="apiRow"><label for="inApi">저장소 연결 주소</label><input id="inApi" type="text" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off"></div>
+    <label for="inPw">암호</label><input id="inPw" type="password" autocomplete="current-password">
+    <label for="inWho">이름</label><input id="inWho" type="text" autocomplete="name" maxlength="40">
+    <p class="err" id="loginErr"></p>
+    <button class="primary" id="btnLogin">들어가기</button>
+  </section>
+
+  <section id="list" hidden>
+    <div class="card">
+      <div class="row">
+        <input id="q" type="text" placeholder="검색: 런 번호, 위치, 파일 이름, 등록한 사람" style="flex:1 1 260px">
+        <select id="fStatus" aria-label="상태"><option value="">상태 전체</option><option value="registered">분석 대기</option><option value="needs_side">결정 쪽 선택 필요</option><option value="analyzed">분석 완료 · 검토 전</option><option value="reviewed">검토됨</option><option value="failed">분석 실패</option></select>
+        <select id="fPre" aria-label="전구체"><option value="">전구체 전체</option><option value="H2S">H₂S</option><option value="DMS">DMS</option><option value="unknown">미확인</option></select>
+        <button id="btnRefresh">새로 고침</button>
+      </div>
+      <p class="muted small" id="listInfo" style="margin:10px 0 6px"></p>
+      <div class="tablewrap"><table id="tbl"><thead><tr>
+        <th>런</th><th>위치</th><th class="num">배율</th><th>전구체</th><th>상태</th><th class="num">자동 판독 수</th><th class="num">사진 전체 S3</th><th class="num">검토 영역 S3</th><th>마지막 검토</th><th>파일</th><th>등록</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="detail" hidden></section>
+</main>
+
+<dialog id="dlgUpload">
+  <h2>SEM 사진 등록</h2>
+  <p class="muted small">원본 그대로 올립니다(정보 띠 포함). 등록하면 분석 대기 상태가 되고, 계산 담당이 Colab의 "새 사진 분석"을 실행하면 결과가 붙습니다.</p>
+  <label for="upFile">사진 파일 (jpg, tif, png · 여러 장 가능)</label><input id="upFile" type="file" accept=".jpg,.jpeg,.png,.tif,.tiff,image/*" multiple>
+  <label for="upRun">런 번호 (비워 두면 파일 이름에서 읽음. 예: R237)</label><input id="upRun" type="text" maxlength="20">
+  <label for="upPos">위치 (비워 두면 파일 이름에서 읽음. 예: P1)</label><input id="upPos" type="text" maxlength="30">
+  <label for="upPre">전구체</label><select id="upPre"><option value="unknown">미확인</option><option value="H2S">H₂S</option><option value="DMS">DMS</option></select>
+  <label for="upNote">메모 (선택)</label><input id="upNote" type="text" maxlength="200">
+  <p class="err" id="upErr"></p><p class="small muted" id="upProg"></p>
+  <div class="row" style="justify-content:flex-end"><button id="upCancel">닫기</button><button class="primary" id="upGo">등록</button></div>
+</dialog>
+
+<dialog id="dlgStart">
+  <h2>어디에서 시작할까요?</h2>
+  <div id="startOpts"></div>
+  <div class="row" style="justify-content:flex-end; margin-top:14px"><button id="startCancel">취소</button></div>
+</dialog>
+
+<div id="rv" hidden>
+  <div class="bar">
+    <b id="rvTitle"></b><span class="muted small" id="rvFrom"></span><span class="sp" style="flex:1"></span>
+    <span class="small" id="rvMsg"></span>
+    <button class="primary" id="rvSave">저장 (새 판으로)</button><button id="rvClose">닫기</button>
+  </div>
+  <iframe id="rvFrame" title="검토 화면"></iframe>
+</div>
+<div id="toast" hidden></div>
+
+<script>
+/* ============================== settings ==============================
+   Put the storage-link address (Apps Script web app URL) here once it exists; while it is empty the page asks for it. */
+const API_URL_FIXED = '';
+const APP_VERSION = 'sem web 0.1';
+
+/* ============================== small helpers ============================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS = { get(k){ try { return localStorage.getItem(k); } catch (e){ return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch (e){} }, del(k){ try { localStorage.removeItem(k); } catch (e){} } };
+const SS = { get(k){ try { return sessionStorage.getItem(k); } catch (e){ return null; } }, set(k, v){ try { sessionStorage.setItem(k, v); } catch (e){} }, del(k){ try { sessionStorage.removeItem(k); } catch (e){} } };
+let toastTimer = 0;
+function toast(t, ms){ const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms || 3500); }
+const fmt = (v, d) => v == null || Number.isNaN(v) ? '–' : Number(v).toFixed(d == null ? 3 : d);
+const when = t => { if (!t) return ''; const d = new Date(t); if (isNaN(d)) return String(t); const p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+function lkey(n){ let h = 2166136261; for (const ch of String(n).toLowerCase()) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(16).padStart(8, '0'); }   // same as the review page
+const PRE_KO = {H2S: 'H₂S', DMS: 'DMS', unknown: '미확인'};
+const STATUS = { registered: ['분석 대기', 'wait'], reread_requested: ['다시 판독 대기', 'wait'], needs_side: ['결정 쪽 선택 필요', 'warn'], analyzed: ['분석 완료 · 검토 전', ''], reviewed: ['검토됨', 'ok'], failed: ['분석 실패', 'bad'] };
+const SIDE_KO = {auto: '자동', dark: '어두운 쪽이 결정', bright: '밝은 쪽이 결정', off: '적용 안 함'};
+const STATE_KO = {confirmed: '확인 완료', partial: '부분 검토', not_reviewed: '미검토'};
+const HOLD_KO = {border: '사진 끝에 닿음', small: '작음', round: '둥긂', 'merged-shape': '붙은 모양', background: '바탕(결정 사이 빈 곳)'};
+const statusTag = s => { const v = STATUS[s] || [s, '']; return `<span class="tag ${v[1]}">${esc(v[0])}</span>`; };
+
+/* ============================== storage link ============================== */
+let API = API_URL_FIXED || LS.get('ws2sem.api') || '', PW = SS.get('ws2sem.pw') || '', WHO = LS.get('ws2sem.who') || '';
+async function api(action, params){
+  let res;
+  try { res = await fetch(API, {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(Object.assign({password: PW, action}, params || {}))}); }
+  catch (e){ throw new Error('저장소에 연결하지 못했습니다. 인터넷 연결과 연결 주소를 확인하세요.'); }
+  let j; try { j = await res.json(); } catch (e){ throw new Error('저장소의 답을 읽지 못했습니다 (연결 주소가 맞는지 확인하세요).'); }
+  if (!j.ok){ if (j.error === 'password'){ const e = new Error('암호가 맞지 않습니다.'); e.code = 'password'; throw e; } throw new Error(j.error || '알 수 없는 오류'); }
+  return j;
+}
+const fileText = async (id, path) => (await api('file', {photo_id: id, path, as: 'text'})).text;
+const fileUrl = async (id, path) => { const r = await api('file', {photo_id: id, path}); return `data:${r.mime || 'image/jpeg'};base64,${r.b64}`; };
+
+/* ============================== review arithmetic ==============================
+   The same rules as ws2read.review.apply_review / core.alignment (Python).  Colab recomputes every saved review in Python
+   and records whether the two agree. */
+const SINGLE = new Set(['iso', 'touch', 'round']);
+function norm(x){
+  if (typeof x === 'boolean' || x == null) return !!x;
+  if (typeof x === 'number') return Math.round(x * 1000) / 1000;
+  if (Array.isArray(x)) return x.map(norm);
+  if (typeof x === 'object'){ const o = {}; Object.keys(x).sort().forEach(k => { if (k !== 't') o[k] = norm(x[k]); }); return o; }
+  return x;
+}
+const sameN = (a, b) => JSON.stringify(norm(a)) === JSON.stringify(norm(b));
+const changedFields = (p, q) => ['tag', 'v', 'nodir', 'u', 'cut', 'dirs', 'pts'].filter(k => !sameN(p[k], q[k]));
+const mod = (x, m) => ((x % m) + m) % m, deg = r => r * 180 / Math.PI, r2 = x => Math.round(x * 100) / 100, r4 = x => Math.round(x * 10000) / 10000;
+const centre = pts => [pts.reduce((a, p) => a + p[0], 0) / pts.length, pts.reduce((a, p) => a + p[1], 0) / pts.length];
+const inBox = (x, y, b) => b[0] <= x && x < b[0] + b[2] && b[1] <= y && y < b[1] + b[3];
+function vertexDir(pts, v){ const c = centre(pts); return mod(deg(Math.atan2(-(v[1] - c[1]), v[0] - c[0])), 120); }
+function markDir(d){ const ua = [d.a[0] - d.v[0], d.a[1] - d.v[1]], ub = [d.b[0] - d.v[0], d.b[1] - d.v[1]]; const na = Math.hypot(ua[0], ua[1]) || 1, nb = Math.hypot(ub[0], ub[1]) || 1;
+  const w = [ua[0] / na + ub[0] / nb, ua[1] / na + ub[1] / nb]; return mod(deg(Math.atan2(w[1], -w[0])), 120); }
+function alignment(theta, k){ const n = theta.length; if (n < 2) return {n, raw: null, S: null};
+  let re = 0, im = 0; theta.forEach(t => { const a = k * t * Math.PI / 180; re += Math.cos(a); im += Math.sin(a); }); re /= n; im /= n; const S = Math.hypot(re, im);
+  return {n, raw: r4(S), S: r4(Math.sqrt(Math.max(S * S - 1 / n, 0) / (1 - 1 / n)))}; }
+function reviewState(d, preDoc){ const ck = d.checks || {}, unread = ['unreadable', 'none', 'notread'].includes(d.status);
+  if (d.done && (unread || (ck.auto && ck.missing))) return 'confirmed';
+  const pre = {}, now = {}; preDoc.polys.forEach(p => { pre[p.id] = p; }); d.polys.forEach(p => { now[p.id] = p; });
+  const touched = Object.keys(now).some(i => !(i in pre) || changedFields(now[i], pre[i]).length) || Object.keys(pre).some(i => !(i in now)) || ck.auto || ck.missing || d.status;
+  return touched ? 'partial' : 'not_reviewed'; }
+function computeResult(payload, preDoc){
+  const d = (payload.docs || []).find(x => x.box === preDoc.box); if (!d) throw new Error('검토 내용에 이 사진의 상자가 없습니다.');
+  const box = preDoc.box_xywh, pre = {}; preDoc.polys.forEach(p => { pre[p.id] = p; }); const now = {}; d.polys.forEach(p => { now[p.id] = p; });
+  const th = []; let single = 0, marks = 0, kept = 0, changed = 0, added = 0;
+  d.polys.forEach(p => { const q = pre[p.id]; const ch = q ? changedFields(p, q) : null;
+    if (!q) added++; else if (ch.length) changed++; else kept++;
+    const c = centre(p.pts), cin = inBox(c[0], c[1], box);
+    if (SINGLE.has(p.tag) && p.v && !p.nodir && cin){ const a0 = q ? q.auto_theta : null; const vauto = !!q && sameN(q.v, p.v);
+      th.push(r2((vauto && a0 != null) ? a0 : vertexDir(p.pts, p.v))); single++; }
+    (p.dirs || []).forEach(m => { if (inBox(m.v[0], m.v[1], box)){ th.push(r2(markDir(m))); marks++; } }); });
+  const a3 = alignment(th, 3), a6 = alignment(th, 6); const before = preDoc.polys.filter(p => p.auto_theta != null).map(p => p.auto_theta); const b3 = alignment(before, 3), b6 = alignment(before, 6);
+  return {n: a3.n, S3: a3.S, S6: a6.S, S3_raw: a3.raw, S6_raw: a6.raw, single, clump_marks: marks, review_state: reviewState(d, preDoc), box_xywh: box, box_done: !!d.done,
+          before: {n: b3.n, S3: b3.S, S6: b6.S}, changes: {program_outlines: preDoc.polys.length, kept_untouched: kept, changed, deleted: Object.keys(pre).filter(i => !(i in now)).length, added}, computed_by: APP_VERSION};
+}
+
+/* ============================== views ============================== */
+let INDEX = null, CUR = null;
+function show(id){ ['#login', '#list', '#detail'].forEach(s => { $(s).hidden = s !== id; }); const inside = id !== '#login';
+  ['#btnUpload', '#btnLogout'].forEach(s => { $(s).hidden = !inside; }); $('#btnList').hidden = id !== '#detail'; $('#whoami').textContent = inside ? WHO : ''; }
+function showLogin(msg){ $('#apiRow').hidden = !!API_URL_FIXED; $('#inApi').value = API; $('#inWho').value = WHO; $('#loginErr').textContent = msg || ''; show('#login'); ($('#inPw')).focus(); }
+async function doLogin(){
+  if (!API_URL_FIXED) API = $('#inApi').value.trim(); PW = $('#inPw').value; WHO = $('#inWho').value.trim().slice(0, 40);
+  if (!API){ $('#loginErr').textContent = '저장소 연결 주소를 넣으세요.'; return; } if (!WHO){ $('#loginErr').textContent = '이름을 넣으세요.'; return; }
+  $('#btnLogin').disabled = true; $('#loginErr').textContent = '확인 중…';
+  try { const r = await api('ping'); LS.set('ws2sem.api', API); LS.set('ws2sem.who', WHO); SS.set('ws2sem.pw', PW); $('#ver').textContent = `${APP_VERSION} · 저장소 ${r.version}`; await loadList(); }
+  catch (e){ $('#loginErr').textContent = e.message; }
+  $('#btnLogin').disabled = false;
+}
+async function loadList(){ show('#list'); $('#listInfo').textContent = '불러오는 중…'; try { INDEX = (await api('list')).index; renderList(); } catch (e){ if (e.code === 'password') return showLogin(e.message); $('#listInfo').textContent = e.message; } }
+function renderList(){
+  const q = $('#q').value.trim().toLowerCase(), fs = $('#fStatus').value, fp = $('#fPre').value;
+  let rows = Object.values((INDEX && INDEX.photos) || {});
+  rows = rows.filter(r => (!fs || r.status === fs || (fs === 'registered' && r.status === 'reread_requested')) && (!fp || r.precursor === fp) &&
+    (!q || [r.run, r.position, r.file, r.uploader, r.photo_id, r.note].some(v => String(v || '').toLowerCase().includes(q))));
+  rows.sort((a, b) => String(a.run).localeCompare(String(b.run)) || String(a.position).localeCompare(String(b.position)) || (a.magnification || 0) - (b.magnification || 0));
+  const total = Object.keys((INDEX && INDEX.photos) || {}).length;
+  $('#listInfo').textContent = total ? `사진 ${total}장 중 ${rows.length}장 표시` : '아직 등록된 사진이 없습니다. 오른쪽 위 "사진 등록"으로 시작하세요.';
+  $('#tbl tbody').innerHTML = rows.map(r => { const a = r.auto, v = r.review;
+    return `<tr class="pick" data-id="${esc(r.photo_id)}"><td><b>${esc(r.run || '–')}</b></td><td>${esc(r.position || '–')}</td><td class="num">${r.magnification ? Number(r.magnification).toLocaleString() : '–'}</td><td>${esc(PRE_KO[r.precursor] || r.precursor)}</td>
+      <td>${statusTag(r.status)}</td><td class="num">${a ? a.whole.read : '–'}</td><td class="num">${a ? fmt(a.whole.S3) : '–'}</td><td class="num">${v ? fmt(v.S3) : '–'}</td>
+      <td>${v ? esc(v.who) + ' · ' + esc(when(v.at)) : '–'}</td><td class="muted small">${esc(r.file)}</td><td class="muted small">${esc(r.uploader || '')} ${esc(when(r.registered_at))}</td></tr>`; }).join('');
+}
+$('#tbl tbody').addEventListener('click', e => { const tr = e.target.closest('tr.pick'); if (tr) openDetail(tr.dataset.id); });
+
+/* ----- detail ----- */
+function currentAuto(m){ const A = m.auto || []; if (!A.length) return null; return A.find(x => x.k === m.auto_current) || A[A.length - 1]; }
+async function openDetail(id){
+  show('#detail'); const el = $('#detail'); el.innerHTML = '<div class="card">불러오는 중…</div>';
+  try { CUR = await api('get', {photo_id: id}); } catch (e){ if (e.code === 'password') return showLogin(e.message); el.innerHTML = `<div class="card err">${esc(e.message)}</div>`; return; }
+  renderDetail();
+}
+function renderDetail(){
+  const m = CUR.meta, a = currentAuto(m), el = $('#detail'); const A = m.auto || [];
+  const head = `<div class="row" style="margin-bottom:12px"><h2 style="margin:0">${esc(m.run || '런 미입력')} · ${esc(m.position || '위치 미입력')}${m.magnification ? ' · ' + Number(m.magnification).toLocaleString() + '배' : ''}</h2>${statusTag(m.status)}
+    <span class="muted small">${esc(m.file)} · 사진 ID ${esc(m.photo_id)}</span></div>`;
+  let left = '', right = '';
+  if (!a){
+    left = `<div class="card"><p>${m.status === 'failed' ? '분석에 실패했습니다.' : '아직 분석 전입니다.'}</p>
+      ${m.status === 'failed' ? `<p class="err small">${esc(m.error || '')}</p><button id="btnRetry">다시 시도 요청</button>` : '<p class="muted">계산 담당이 Colab의 "새 사진 분석"을 실행하면 결과가 여기에 붙습니다.</p>'}</div>`;
+  } else {
+    const hold = Object.entries(a.whole.set_aside || {}).map(([k, v]) => `${esc(HOLD_KO[k] || k)} ${v}`).join(' · ');
+    const variants = A.length > 1 ? `<h3>자동 판독본 (결정 쪽)</h3><div class="row">${A.map(x => `<button data-k="${x.k}" class="pickAuto ${x.k === a.k ? 'primary' : ''}">${esc(SIDE_KO[x.crystal_side_asked] || x.crystal_side_asked)}${x.crystal_side_asked === 'auto' && !x.background_applied ? ' (건너뜀)' : ''} · 판독 ${x.whole.read}</button>`).join('')}</div>` : '';
+    const sideNote = m.status === 'needs_side' ? `<div class="note" style="margin-bottom:12px"><b>결정 쪽을 골라 주세요.</b> 이 사진은 밝은 쪽과 어두운 쪽 윤곽이 비슷하게 섞여 있어(반대쪽 ${fmt((a.background_minority_share || 0) * 100, 0)} %) 프로그램이 정하지 않았습니다. 원본을 보고 결정이 어느 쪽인지 아래에서 고르세요. 밝고 어두운 결정이 실제로 섞여 있으면 "자동 (건너뜀)"을 그대로 두면 됩니다.</div>` : '';
+    left = `<div class="card">${sideNote}<div class="row" style="margin-bottom:8px"><button data-img="overlay" class="imgTab primary">판독 그림</button><button data-img="original" class="imgTab">원본</button><button data-img="dist" class="imgTab">방향 분포</button></div>
+      <div id="imgBox" class="muted">그림을 불러오는 중…</div><p class="muted small">초록 = 방향을 낸 결정, 노랑 점선 = 보류, 회색 점선 = 바탕으로 돌림, 노란 사각형 = 검토 영역.</p></div>`;
+    const v = m.latest_review; const vOk = v && v.auto_k === a.k;
+    right = `<div class="card">
+      <h2>사진 전체 · 자동 결과 <span class="muted small">(사람 검토 전)</span></h2>
+      <div class="stat"><div><b>${a.whole.read}</b><span>방향을 낸 결정</span></div><div><b>${a.whole.outlines - a.whole.read}</b><span>보류</span></div><div><b>${fmt(a.whole.S3)}</b><span>S3 (n=${a.whole.n})</span></div><div><b>${fmt(a.whole.S6)}</b><span>S6</span></div></div>
+      <p class="muted small" style="margin:8px 0 0">보류 내용: ${hold || '없음'}</p>
+      <p class="muted small" style="margin:4px 0 0">배경 보류: ${a.background_applied ? '결정 = ' + (a.background_side === 'dark' ? '어두운 쪽' : '밝은 쪽') + ' (' + esc(SIDE_KO[a.crystal_side_asked] || '') + ')' : '적용 안 됨' + (a.background_needs_person ? ' (자동 판정 건너뜀)' : '')}</p>
+      ${variants}
+      <h3>검토 영역 x ${a.box.xywh[0]}~${a.box.xywh[0] + a.box.xywh[2]}, y ${a.box.xywh[1]}~${a.box.xywh[1] + a.box.xywh[3]} px</h3>
+      <div class="stat"><div><b>${a.box.read}</b><span>자동 · 방향 수</span></div><div><b>${fmt(a.box.S3)}</b><span>자동 S3 (n=${a.box.n})</span></div>
+        <div><b>${vOk ? v.n_dir : '–'}</b><span>검토 후 · 방향 수</span></div><div><b>${vOk ? fmt(v.S3) : '–'}</b><span>검토 후 S3</span></div><div><b>${vOk ? fmt(v.S6) : '–'}</b><span>검토 후 S6</span></div></div>
+      <p class="small" style="margin:8px 0 0">${vOk ? `최신 검토본: <b>${v.n}판</b> · ${esc(v.who)} · ${esc(when(v.at))} · ${esc(STATE_KO[v.state] || v.state || '')}${v.python_checked ? (v.python_same ? ' · <span class="tag ok">파이썬 재계산과 같음</span>' : ' · <span class="tag bad">파이썬 재계산과 다름</span>') : ' · <span class="tag wait">파이썬 재계산 전</span>'}` : (v ? '<span class="muted">검토본은 다른 자동 판독본(결정 쪽)에서 만든 것입니다. 아래 기록에서 볼 수 있습니다.</span>' : '<span class="muted">아직 검토본이 없습니다.</span>')}</p>
+      <div class="row" style="margin-top:12px"><button class="primary" id="btnReview">결과 보기·수정</button><button id="btnCsv">결정별 표 보기</button></div>
+      <h3>촬영·분석 정보</h3>
+      <dl class="kv small"><dt>전구체</dt><dd>${esc(PRE_KO[m.precursor] || m.precursor)}</dd><dt>화소 크기</dt><dd>${m.nm_per_px ? fmt(m.nm_per_px, 4) + ' nm/px' + (m.nm_status ? ' · ' + esc(m.nm_status) : '') : '–'}</dd>
+        <dt>프로그램</dt><dd>${esc(a.program)} · ${esc(a.model)} · 자동 판독본 ${a.k}/${A.length}</dd><dt>분석 시각</dt><dd>${esc(when(a.at))} · 검산 ${a.checks_passed}/${a.checks_total}${a.checks_failed && a.checks_failed.length ? ' <span class="tag bad">검산 실패 있음</span>' : ''}</dd>
+        <dt>등록</dt><dd>${esc(m.uploader || '')} · ${esc(when(m.registered_at))}${m.note ? ' · ' + esc(m.note) : ''}</dd></dl>
+      <h3>기록</h3>
+      <div class="scrollbox small" style="max-height:170px"><table><tbody>${(m.log || []).slice().reverse().map(g => `<tr><td>${esc(when(g.at))}</td><td>${esc(g.who || '')}</td><td>${esc(logKo(g))}</td><td>${g.what === 'review saved' ? `<button class="openRev" data-n="${g.n}">이 판 열기</button>` : ''}</td></tr>`).join('')}</tbody></table></div>
+    </div>`;
+  }
+  el.innerHTML = head + `<div class="grid2"><div>${left}<div id="csvBox"></div></div><div>${right}</div></div>`;
+  if (a) loadImg('overlay');
+}
+function logKo(g){ if (g.what === 'registered') return '사진 등록'; if (g.what === 'analyzed') return `자동 판독 완료 (판독본 ${g.k})`; if (g.what === 'failed') return '분석 실패: ' + (g.error || ''); if (g.what === 'review saved') return `검토본 ${g.n}판 저장`;
+  if (/^automatic reading/.test(g.what)) return g.what.replace(/automatic reading (\d+) chosen/, '자동 판독본 $1 선택'); if (/^crystal side/.test(g.what)) return '결정 쪽 다시 판독 요청'; if (g.what === 'retry requested') return '다시 시도 요청'; return g.what; }
+const IMG_CACHE = {};
+async function loadImg(kind){
+  const m = CUR.meta, a = currentAuto(m), box = $('#imgBox'); if (!box) return; document.querySelectorAll('.imgTab').forEach(b => b.classList.toggle('primary', b.dataset.img === kind));
+  const path = kind === 'overlay' ? `auto/${a.k}/overlay_web.jpg` : kind === 'dist' ? `auto/${a.k}/direction_distribution.png` : `original/${m.file}`; const key = m.photo_id + '|' + path;
+  box.textContent = '그림을 불러오는 중…';
+  try { if (!IMG_CACHE[key]) IMG_CACHE[key] = await fileUrl(m.photo_id, path); if (CUR.meta.photo_id !== m.photo_id) return;
+    if (kind === 'original' && /\.tiff?$/i.test(m.file)) box.innerHTML = '<p class="muted">TIF 원본은 브라우저에서 바로 보이지 않습니다. 판독 그림을 보세요.</p>';
+    else box.innerHTML = `<img class="fit" alt="${kind === 'overlay' ? '판독 그림' : kind === 'dist' ? '방향 분포' : '원본 사진'}" src="${IMG_CACHE[key]}">`; }
+  catch (e){ box.innerHTML = `<span class="err">${esc(e.message)}</span>`; }
+}
+function parseCsv(t){ const rows = []; let row = [], cur = '', q = false; for (let i = 0; i < t.length; i++){ const c = t[i];
+    if (q){ if (c === '"'){ if (t[i + 1] === '"'){ cur += '"'; i++; } else q = false; } else cur += c; }
+    else if (c === '"') q = true; else if (c === ','){ row.push(cur); cur = ''; } else if (c === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; } else if (c !== '\r') cur += c; }
+  if (cur || row.length){ row.push(cur); rows.push(row); } return rows; }
+async function showCsv(){ const m = CUR.meta, a = currentAuto(m), box = $('#csvBox'); box.innerHTML = '<div class="card" style="margin-top:16px">표를 불러오는 중…</div>';
+  try { const t = (await fileText(m.photo_id, `auto/${a.k}/crystals.csv`)).replace(/^\ufeff/, ''); const R = parseCsv(t); const H = R[0], B = R.slice(1).filter(r => r.length > 1);
+    box.innerHTML = `<div class="card" style="margin-top:16px"><div class="row"><h2 style="margin:0">결정별 표</h2><span class="muted small">${B.length}개 윤곽 (사진 전체 · 자동 결과)</span><span style="flex:1"></span><button id="btnCsvSave">CSV 저장</button></div>
+      <div class="scrollbox" style="margin-top:10px"><table class="small"><thead><tr>${H.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${B.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+    $('#btnCsvSave').onclick = () => { const b = new Blob(['\ufeff' + t], {type: 'text/csv'}); const u = URL.createObjectURL(b); const l = document.createElement('a'); l.href = u; l.download = `${m.run || 'photo'}_${m.photo_id}_crystals.csv`; document.body.appendChild(l); l.click(); setTimeout(() => { URL.revokeObjectURL(u); l.remove(); }, 1500); };
+  } catch (e){ box.innerHTML = `<div class="card err" style="margin-top:16px">${esc(e.message)}</div>`; } }
+$('#detail').addEventListener('click', async e => {
+  const t = e.target.closest('button'); if (!t) return;
+  try {
+    if (t.classList.contains('imgTab')) return loadImg(t.dataset.img);
+    if (t.id === 'btnCsv') return showCsv();
+    if (t.id === 'btnReview') return chooseStart();
+    if (t.classList.contains('openRev')) return startReview('saved', Number(t.dataset.n));
+    if (t.classList.contains('pickAuto')){ t.disabled = true; CUR.meta = (await api('chooseAuto', {photo_id: CUR.meta.photo_id, k: Number(t.dataset.k), who: WHO})).meta; renderDetail(); toast('이 자동 판독본을 쓰도록 저장했습니다'); return; }
+    if (t.id === 'btnRetry'){ t.disabled = true; CUR.meta = (await api('retry', {photo_id: CUR.meta.photo_id, who: WHO})).meta; renderDetail(); toast('다시 시도하도록 표시했습니다'); return; }
+  } catch (err){ if (err.code === 'password') return showLogin(err.message); toast(err.message, 6000); t.disabled = false; }
+});
+
+/* ----- review (the existing ws2read review page, shown inside this page) ----- */
+let RV = null;
+const reviewFiles = () => CUR.reviews || [];
+function chooseStart(){
+  const m = CUR.meta, a = currentAuto(m), v = m.latest_review; const opts = [];
+  if (v && v.auto_k === a.k) opts.push(['saved', `최신 검토본에서 이어서 (${v.n}판 · ${v.who} · ${when(v.at)})`, v.n]);
+  opts.push(['auto', '자동 판독본에서 새로 시작', null]);
+  opts.push(['draft', '이 PC에 남아 있는 내 임시 작업에서 이어서 (저장하지 않고 닫았을 때)', null]);
+  $('#startOpts').innerHTML = opts.map(o => `<p><button class="startOpt" data-mode="${o[0]}" data-n="${o[2] == null ? '' : o[2]}" style="width:100%; text-align:left">${esc(o[1])}</button></p>`).join('');
+  $('#dlgStart').showModal();
+}
+$('#startOpts').addEventListener('click', e => { const b = e.target.closest('.startOpt'); if (!b) return; $('#dlgStart').close(); startReview(b.dataset.mode, b.dataset.n ? Number(b.dataset.n) : null); });
+$('#startCancel').onclick = () => $('#dlgStart').close();
+async function startReview(mode, n){
+  const m = CUR.meta; let a = currentAuto(m); toast('검토 화면을 불러오는 중…', 8000);
+  try {
+    let start = null, startN = null;
+    if (mode === 'saved'){ const f = reviewFiles().find(x => Number(x.slice(0, 4)) === n); if (!f) throw new Error(`검토본 ${n}판 파일을 찾지 못했습니다. 새로 고침 후 다시 해 보세요.`);
+      const R = JSON.parse(await fileText(m.photo_id, 'reviews/' + f)); start = R.payload; startN = R.n; a = (m.auto || []).find(x => x.k === R.auto_k) || a; }
+    const [html, pre] = await Promise.all([fileText(m.photo_id, `auto/${a.k}/review.html`), fileText(m.photo_id, `auto/${a.k}/preload.json`)]);
+    RV = {photo_id: m.photo_id, auto_k: a.k, page_key: a.page_key, preDoc: JSON.parse(pre).docs[0], startedFrom: startN, latestAtOpen: m.latest_review ? m.latest_review.n : 0, dirty: false};
+    const bridge = `<script>window.__WS2_BRIDGE__ = ${JSON.stringify({who: WHO, mode, start}).replace(/</g, '\\u003c')};<\/script><script>(${bridgeCode.toString()})();<\/script>`;
+    const i = html.lastIndexOf('</body>'); $('#rvFrame').srcdoc = i >= 0 ? html.slice(0, i) + bridge + html.slice(i) : html + bridge;
+    $('#rvTitle').textContent = `${m.run || ''} ${m.position || ''} · 결과 보기·수정`; $('#rvFrom').textContent = mode === 'saved' ? `${startN}판에서 시작` : mode === 'auto' ? '자동 판독본에서 시작' : '이 PC의 임시 작업에서 시작';
+    $('#rvMsg').textContent = ''; $('#rv').hidden = false;
+  } catch (e){ if (e.code === 'password') return showLogin(e.message); toast(e.message, 6000); }
+}
+/* runs INSIDE the review page (same document as its own script): sets the name, chooses the starting content, hands the result to this page */
+function bridgeCode(){
+  const B = window.__WS2_BRIDGE__ || {}; const who = document.getElementById('who');
+  try {
+    who.value = B.who || ''; try { localStorage.setItem('ws2who', who.value); } catch (e){}
+    if (B.mode === 'auto' || B.mode === 'saved'){ try { localStorage.removeItem(LKEY()); } catch (e){} }
+    loadMine();
+    if (B.mode === 'saved' && B.start){ (B.start.docs || []).forEach(v => { if (state[v.box]) state[v.box] = {polys: v.polys || [], done: !!v.done, practice: !!v.practice, status: v.status || '', why: v.why || '', rev: v.rev || 0, checks: v.checks || {}}; });
+      localSaveAll(); renderNav(); renderSide(); draw(); }
+    who.readOnly = true;
+  } catch (e){ parent.postMessage({type: 'ws2-error', message: String(e && e.message || e)}, '*'); }
+  window.addEventListener('message', ev => { const d = ev.data || {};
+    if (d.type === 'ws2-get'){ try { parent.postMessage({type: 'ws2-payload', payload: exportPayload()}, '*'); } catch (e){ parent.postMessage({type: 'ws2-error', message: String(e && e.message || e)}, '*'); } }
+    if (d.type === 'ws2-toast'){ try { toast(d.text); } catch (e){} } });
+  parent.postMessage({type: 'ws2-ready'}, '*');
+}
+window.addEventListener('message', async ev => { const d = ev.data || {}; if (!RV || ev.source !== $('#rvFrame').contentWindow) return;
+  if (d.type === 'ws2-ready') $('#toast').hidden = true;
+  if (d.type === 'ws2-error') toast('검토 화면 오류: ' + d.message, 7000);
+  if (d.type === 'ws2-payload') saveReview(d.payload); });
+$('#rvSave').onclick = () => { $('#rvSave').disabled = true; $('#rvMsg').textContent = '저장 중…'; $('#rvFrame').contentWindow.postMessage({type: 'ws2-get'}, '*'); };
+async function saveReview(payload){
+  try { const result = computeResult(payload, RV.preDoc);
+    const r = await api('saveReview', {photo_id: RV.photo_id, who: WHO, who_key: lkey(WHO), auto_k: RV.auto_k, page_key: RV.page_key, started_from: RV.startedFrom == null ? RV.latestAtOpen : RV.startedFrom, payload, result});
+    CUR.meta = r.meta; CUR.reviews = (CUR.reviews || []).concat([r.file]); RV.startedFrom = r.n; RV.latestAtOpen = r.n;
+    $('#rvMsg').textContent = `${r.n}판으로 저장됨 · 방향 ${result.n}개 · S3 ${fmt(result.S3)} · S6 ${fmt(result.S6)}` + (r.others_saved_meanwhile ? ' · 그 사이 다른 사람이 저장한 판이 있습니다(기록에서 확인)' : '');
+    $('#rvFrame').contentWindow.postMessage({type: 'ws2-toast', text: `${r.n}판으로 저장했습니다`}, '*');
+  } catch (e){ if (e.code === 'password'){ $('#rv').hidden = true; return showLogin(e.message); } $('#rvMsg').textContent = '저장 실패: ' + e.message; }
+  $('#rvSave').disabled = false;
+}
+$('#rvClose').onclick = () => { $('#rv').hidden = true; $('#rvFrame').srcdoc = ''; RV = null; renderDetail(); };
+
+/* ----- registering photos ----- */
+function parseName(b){ const r = /(R\d{3})/.exec(b), stem = b.replace(/\.[^.]+$/, ''), p = /_(P[A-Za-z0-9.(),-]+?)(?:_|$)/.exec(stem); return {run: r ? r[1] : '', position: p ? p[1] : ''}; }
+async function sha16(buf){ const h = new Uint8Array(await crypto.subtle.digest('SHA-256', buf)); return Array.from(h.slice(0, 8)).map(x => x.toString(16).padStart(2, '0')).join(''); }
+function toB64(buf){ const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
+$('#btnUpload').onclick = () => { $('#upErr').textContent = ''; $('#upProg').textContent = ''; $('#upFile').value = ''; $('#dlgUpload').showModal(); };
+$('#upCancel').onclick = () => { $('#dlgUpload').close(); };
+$('#upGo').onclick = async () => {
+  const files = Array.from($('#upFile').files || []); if (!files.length){ $('#upErr').textContent = '사진 파일을 고르세요.'; return; }
+  if (files.some(f => f.size > 30 * 1024 * 1024)){ $('#upErr').textContent = '30 MB가 넘는 파일은 올릴 수 없습니다.'; return; }
+  $('#upGo').disabled = true; $('#upErr').textContent = ''; let done = 0, dup = 0; const errs = [];
+  for (const f of files){ $('#upProg').textContent = `${done + dup + errs.length + 1} / ${files.length} 올리는 중: ${f.name}`;
+    try { const buf = await f.arrayBuffer(); const id = 'P-' + await sha16(buf); const g = parseName(f.name);
+      const r = await api('register', {photo_id: id, filename: f.name, mime: f.type || 'image/jpeg', b64: toB64(buf),
+        meta: {run: $('#upRun').value.trim() || g.run, position: $('#upPos').value.trim() || g.position, precursor: $('#upPre').value, note: $('#upNote').value.trim(), uploader: WHO, crystal_side: 'auto'}});
+      if (r.exists) dup++; else done++; }
+    catch (e){ if (e.code === 'password'){ $('#dlgUpload').close(); return showLogin(e.message); } errs.push(`${f.name}: ${e.message}`); } }
+  $('#upGo').disabled = false; $('#upProg').textContent = `등록 ${done}장` + (dup ? ` · 이미 있던 사진 ${dup}장(다시 올리지 않음)` : '') + (errs.length ? ` · 실패 ${errs.length}장` : ''); $('#upErr').textContent = errs.join(' / ');
+  if (done || dup){ try { INDEX = (await api('list')).index; renderList(); } catch (e){} if (!errs.length){ $('#dlgUpload').close(); show('#list'); toast(done ? `사진 ${done}장을 등록했습니다. 분석 대기 상태입니다.` + (dup ? ` 이미 있던 ${dup}장은 다시 올리지 않았습니다.` : '') : '이미 등록된 사진입니다. 다시 올리지 않았습니다.', 5000); } }
+};
+
+/* ----- wiring ----- */
+['#q', '#fStatus', '#fPre'].forEach(s => $(s).addEventListener('input', renderList));
+$('#btnRefresh').onclick = loadList; $('#btnList').onclick = loadList; $('#btnLogin').onclick = doLogin;
+$('#inPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); }); $('#inWho').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+$('#btnLogout').onclick = () => { SS.del('ws2sem.pw'); PW = ''; showLogin(''); };
+(async () => { if (API && PW && WHO){ try { const r = await api('ping'); $('#ver').textContent = `${APP_VERSION} · 저장소 ${r.version}`; await loadList(); return; } catch (e){} } showLogin(''); })();
+</script>
+</body>
+</html>
