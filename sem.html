@@ -69,6 +69,7 @@ a { color:var(--accent); }
     <div id="apiRow"><label for="inApi">저장소 연결 주소</label><input id="inApi" type="text" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off"></div>
     <label for="inPw">암호</label><input id="inPw" type="password" autocomplete="current-password">
     <label for="inWho">이름</label><input id="inWho" type="text" autocomplete="name" maxlength="40">
+    <label style="display:flex; gap:8px; align-items:center; color:var(--ink)"><input id="inRemember" type="checkbox" style="width:auto"> 이 PC에서는 암호를 기억하기 (같이 쓰는 PC에서는 끄세요)</label>
     <p class="err" id="loginErr"></p>
     <button class="primary" id="btnLogin">들어가기</button>
   </section>
@@ -122,8 +123,8 @@ a { color:var(--accent); }
 <script>
 /* ============================== settings ==============================
    Put the storage-link address (Apps Script web app URL) here once it exists; while it is empty the page asks for it. */
-const API_URL_FIXED = '';
-const APP_VERSION = 'sem web 0.1';
+const API_URL_FIXED = 'https://script.google.com/macros/s/AKfycbwmhgggtNJAvEmEgAFj3a-7XnMAHLRpmxjmt5a3oA8XJ4-5dCfpb2W3Mrxa5izgNBIqrA/exec';
+const APP_VERSION = 'sem web 0.1.2';
 
 /* ============================== small helpers ============================== */
 const $ = s => document.querySelector(s);
@@ -143,7 +144,7 @@ const HOLD_KO = {border: '사진 끝에 닿음', small: '작음', round: '둥긂
 const statusTag = s => { const v = STATUS[s] || [s, '']; return `<span class="tag ${v[1]}">${esc(v[0])}</span>`; };
 
 /* ============================== storage link ============================== */
-let API = API_URL_FIXED || LS.get('ws2sem.api') || '', PW = SS.get('ws2sem.pw') || '', WHO = LS.get('ws2sem.who') || '';
+let API = API_URL_FIXED || LS.get('ws2sem.api') || '', PW = SS.get('ws2sem.pw') || LS.get('ws2sem.pw') || '', WHO = LS.get('ws2sem.who') || '';
 async function api(action, params){
   let res;
   try { res = await fetch(API, {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(Object.assign({password: PW, action}, params || {}))}); }
@@ -201,12 +202,12 @@ function computeResult(payload, preDoc){
 let INDEX = null, CUR = null;
 function show(id){ ['#login', '#list', '#detail'].forEach(s => { $(s).hidden = s !== id; }); const inside = id !== '#login';
   ['#btnUpload', '#btnLogout'].forEach(s => { $(s).hidden = !inside; }); $('#btnList').hidden = id !== '#detail'; $('#whoami').textContent = inside ? WHO : ''; }
-function showLogin(msg){ $('#apiRow').hidden = !!API_URL_FIXED; $('#inApi').value = API; $('#inWho').value = WHO; $('#loginErr').textContent = msg || ''; show('#login'); ($('#inPw')).focus(); }
+function showLogin(msg){ $('#apiRow').hidden = !!API_URL_FIXED; $('#inApi').value = API; $('#inWho').value = WHO; $('#inRemember').checked = !!LS.get('ws2sem.pw'); $('#loginErr').textContent = msg || ''; show('#login'); ($('#inPw')).focus(); }
 async function doLogin(){
   if (!API_URL_FIXED) API = $('#inApi').value.trim(); PW = $('#inPw').value; WHO = $('#inWho').value.trim().slice(0, 40);
   if (!API){ $('#loginErr').textContent = '저장소 연결 주소를 넣으세요.'; return; } if (!WHO){ $('#loginErr').textContent = '이름을 넣으세요.'; return; }
   $('#btnLogin').disabled = true; $('#loginErr').textContent = '확인 중…';
-  try { const r = await api('ping'); LS.set('ws2sem.api', API); LS.set('ws2sem.who', WHO); SS.set('ws2sem.pw', PW); $('#ver').textContent = `${APP_VERSION} · 저장소 ${r.version}`; await loadList(); }
+  try { const r = await api('ping'); LS.set('ws2sem.api', API); LS.set('ws2sem.who', WHO); SS.set('ws2sem.pw', PW); if ($('#inRemember').checked) LS.set('ws2sem.pw', PW); else LS.del('ws2sem.pw'); $('#ver').textContent = `${APP_VERSION} · 저장소 ${r.version}`; await loadList(); }
   catch (e){ $('#loginErr').textContent = e.message; }
   $('#btnLogin').disabled = false;
 }
@@ -245,9 +246,9 @@ function renderDetail(){
     const hold = Object.entries(a.whole.set_aside || {}).map(([k, v]) => `${esc(HOLD_KO[k] || k)} ${v}`).join(' · ');
     const variants = A.length > 1 ? `<h3>자동 판독본 (결정 쪽)</h3><div class="row">${A.map(x => `<button data-k="${x.k}" class="pickAuto ${x.k === a.k ? 'primary' : ''}">${esc(SIDE_KO[x.crystal_side_asked] || x.crystal_side_asked)}${x.crystal_side_asked === 'auto' && !x.background_applied ? ' (건너뜀)' : ''} · 판독 ${x.whole.read}</button>`).join('')}</div>` : '';
     const sideNote = m.status === 'needs_side' ? `<div class="note" style="margin-bottom:12px"><b>결정 쪽을 골라 주세요.</b> 이 사진은 밝은 쪽과 어두운 쪽 윤곽이 비슷하게 섞여 있어(반대쪽 ${fmt((a.background_minority_share || 0) * 100, 0)} %) 프로그램이 정하지 않았습니다. 원본을 보고 결정이 어느 쪽인지 아래에서 고르세요. 밝고 어두운 결정이 실제로 섞여 있으면 "자동 (건너뜀)"을 그대로 두면 됩니다.</div>` : '';
-    left = `<div class="card">${sideNote}<div class="row" style="margin-bottom:8px"><button data-img="overlay" class="imgTab primary">판독 그림</button><button data-img="original" class="imgTab">원본</button><button data-img="dist" class="imgTab">방향 분포</button></div>
-      <div id="imgBox" class="muted">그림을 불러오는 중…</div><p class="muted small">초록 = 방향을 낸 결정, 노랑 점선 = 보류, 회색 점선 = 바탕으로 돌림, 노란 사각형 = 검토 영역.</p></div>`;
     const v = m.latest_review; const vOk = v && v.auto_k === a.k;
+    left = `<div class="card">${sideNote}<div class="row" style="margin-bottom:8px">${vOk ? `<button data-img="reviewed" class="imgTab">검토 후 그림 (${v.n}판)</button>` : ''}<button data-img="overlay" class="imgTab primary">${vOk ? '자동 판독 그림 (검토 전)' : '판독 그림'}</button><button data-img="original" class="imgTab">원본</button><button data-img="dist" class="imgTab">방향 분포</button></div>
+      <div id="imgBox" class="muted">그림을 불러오는 중…</div><p class="muted small" id="imgLegend"></p></div>`;
     right = `<div class="card">
       <h2>사진 전체 · 자동 결과 <span class="muted small">(사람 검토 전)</span></h2>
       <div class="stat"><div><b>${a.whole.read}</b><span>방향을 낸 결정</span></div><div><b>${a.whole.outlines - a.whole.read}</b><span>보류</span></div><div><b>${fmt(a.whole.S3)}</b><span>S3 (n=${a.whole.n})</span></div><div><b>${fmt(a.whole.S6)}</b><span>S6</span></div></div>
@@ -268,13 +269,15 @@ function renderDetail(){
     </div>`;
   }
   el.innerHTML = head + `<div class="grid2"><div>${left}<div id="csvBox"></div></div><div>${right}</div></div>`;
-  if (a) loadImg('overlay');
+  if (a){ const v = m.latest_review; loadImg(v && v.auto_k === a.k ? 'reviewed' : 'overlay'); }
 }
 function logKo(g){ if (g.what === 'registered') return '사진 등록'; if (g.what === 'analyzed') return `자동 판독 완료 (판독본 ${g.k})`; if (g.what === 'failed') return '분석 실패: ' + (g.error || ''); if (g.what === 'review saved') return `검토본 ${g.n}판 저장`;
   if (/^automatic reading/.test(g.what)) return g.what.replace(/automatic reading (\d+) chosen/, '자동 판독본 $1 선택'); if (/^crystal side/.test(g.what)) return '결정 쪽 다시 판독 요청'; if (g.what === 'retry requested') return '다시 시도 요청'; return g.what; }
 const IMG_CACHE = {};
 async function loadImg(kind){
   const m = CUR.meta, a = currentAuto(m), box = $('#imgBox'); if (!box) return; document.querySelectorAll('.imgTab').forEach(b => b.classList.toggle('primary', b.dataset.img === kind));
+  const lg = $('#imgLegend'); if (lg) lg.textContent = kind === 'overlay' ? '프로그램이 처음 읽은 결과입니다 (사람 검토 전). 초록 = 방향을 낸 결정, 노랑 점선 = 보류, 회색 점선 = 바탕으로 돌림, 노란 사각형 = 검토 영역.' : '';
+  if (kind === 'reviewed') return loadReviewed(box);
   const path = kind === 'overlay' ? `auto/${a.k}/overlay_web.jpg` : kind === 'dist' ? `auto/${a.k}/direction_distribution.png` : `original/${m.file}`; const key = m.photo_id + '|' + path;
   box.textContent = '그림을 불러오는 중…';
   try { if (!IMG_CACHE[key]) IMG_CACHE[key] = await fileUrl(m.photo_id, path); if (CUR.meta.photo_id !== m.photo_id) return;
@@ -282,6 +285,42 @@ async function loadImg(kind){
     else box.innerHTML = `<img class="fit" alt="${kind === 'overlay' ? '판독 그림' : kind === 'dist' ? '방향 분포' : '원본 사진'}" src="${IMG_CACHE[key]}">`; }
   catch (e){ box.innerHTML = `<span class="err">${esc(e.message)}</span>`; }
 }
+/* the picture after a person's review: drawn here from the saved review (outlines + directions) on the review-area picture, so it shows right after saving */
+const RV_PIC = {}, RV_SRC = {};
+const PROV_COL = {kept: '#4ade80', changed: '#38bdf8', added: '#f472b6'};
+async function loadReviewed(box){
+  const m = CUR.meta, a = currentAuto(m), v = m.latest_review; box.textContent = '검토 후 그림을 만드는 중…';
+  try {
+    const f = reviewFiles().find(x => Number(x.slice(0, 4)) === v.n); if (!f) throw new Error(`검토본 ${v.n}판 파일을 찾지 못했습니다. 목록으로 나갔다가 다시 열어 보세요.`);
+    const key = m.photo_id + '|' + a.k + '|' + v.n;
+    if (!RV_PIC[key]){
+      const sk = m.photo_id + '|' + a.k;
+      if (!RV_SRC[sk]){ const [html, pre] = await Promise.all([fileText(m.photo_id, `auto/${a.k}/review.html`), fileText(m.photo_id, `auto/${a.k}/preload.json`)]);
+        const i = html.indexOf('const BOXES = '), j = html.indexOf(';\nconst PRELOAD = ', i); if (i < 0 || j < 0) throw new Error('검토 화면 파일에서 사진을 찾지 못했습니다.');
+        RV_SRC[sk] = {B: JSON.parse(html.slice(i + 14, j))[0], preDoc: JSON.parse(pre).docs[0]}; }
+      const R = JSON.parse(await fileText(m.photo_id, 'reviews/' + f)); RV_PIC[key] = await drawReviewed(RV_SRC[sk].B, RV_SRC[sk].preDoc, R.payload);
+    }
+    if (CUR.meta.photo_id !== m.photo_id || !$('#imgBox')) return; const P = RV_PIC[key];
+    $('#imgBox').innerHTML = `<img class="fit" alt="검토 후 그림" src="${P.url}">`;
+    $('#imgLegend').innerHTML = `검토 영역만 보여 줍니다 (${v.n}판 · ${esc(v.who)} · ${esc(when(v.at))}). <b style="color:#16a34a">초록</b> 프로그램 그대로 ${P.kept} · <b style="color:#0284c7">파랑</b> 사람이 고침 ${P.changed} · <b style="color:#db2777">분홍</b> 사람이 추가 ${P.added} · 지움 ${P.deleted}. 점선 = 덩어리·방향 없음, 흰 화살표 = 집계에 든 방향 ${P.single}개, 노란 화살표 = 덩어리 안 방향 ${P.marks}개, 노란 사각형 = 검토 영역.`;
+  } catch (e){ if (e.code === 'password') return showLogin(e.message); box.innerHTML = `<span class="err">${esc(e.message)}</span>`; }
+}
+function drawReviewed(B, preDoc, payload){ return new Promise((res, rej) => {
+  const d = (payload.docs || []).find(x => x.box === preDoc.box); if (!d) return rej(new Error('검토 내용에 이 사진의 상자가 없습니다.'));
+  const im = new Image(); im.onerror = () => rej(new Error('검토 영역 사진을 열지 못했습니다.'));
+  im.onload = () => { const s = 2, cr = B.crop, cv = document.createElement('canvas'); cv.width = cr[2] * s; cv.height = cr[3] * s; const g = cv.getContext('2d');
+    g.imageSmoothingEnabled = true; g.drawImage(im, 0, 0, cv.width, cv.height); const X = x => (x - cr[0]) * s, Y = y => (y - cr[1]) * s; const box = preDoc.box_xywh;
+    g.lineWidth = 2.4; g.setLineDash([10, 7]); g.strokeStyle = '#facc15'; g.strokeRect(X(box[0]), Y(box[1]), box[2] * s, box[3] * s);
+    const pre = {}; preDoc.polys.forEach(p => { pre[p.id] = p; }); const out = {kept: 0, changed: 0, added: 0, single: 0, marks: 0};
+    const arrow = (x0, y0, x1, y1, col) => { const ang = Math.atan2(y1 - y0, x1 - x0), h = 14; g.setLineDash([]); g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 3.4; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+      g.beginPath(); g.moveTo(x1, y1); g.lineTo(x1 - h * Math.cos(ang - 0.45), y1 - h * Math.sin(ang - 0.45)); g.lineTo(x1 - h * Math.cos(ang + 0.45), y1 - h * Math.sin(ang + 0.45)); g.closePath(); g.fill(); };
+    d.polys.forEach(p => { const q = pre[p.id]; const kind = !q ? 'added' : changedFields(p, q).length ? 'changed' : 'kept'; out[kind]++;
+      g.setLineDash(p.tag === 'clump' || p.nodir ? [5, 7] : []); g.strokeStyle = PROV_COL[kind]; g.lineWidth = 3.4; g.beginPath(); p.pts.forEach((t, i) => i ? g.lineTo(X(t[0]), Y(t[1])) : g.moveTo(X(t[0]), Y(t[1]))); g.closePath(); g.stroke(); });
+    d.polys.forEach(p => { const c = centre(p.pts);
+      if (SINGLE.has(p.tag) && p.v && !p.nodir && inBox(c[0], c[1], box)){ const L = Math.hypot(p.v[0] - c[0], p.v[1] - c[1]) || 1, k = Math.min(1, 16 / L); arrow(X(c[0]), Y(c[1]), X(c[0] + (p.v[0] - c[0]) * k), Y(c[1] + (p.v[1] - c[1]) * k), '#ffffff'); out.single++; }
+      (p.dirs || []).forEach(mk => { if (!inBox(mk.v[0], mk.v[1], box)) return; const ua = [mk.a[0] - mk.v[0], mk.a[1] - mk.v[1]], ub = [mk.b[0] - mk.v[0], mk.b[1] - mk.v[1]], na = Math.hypot(ua[0], ua[1]) || 1, nb = Math.hypot(ub[0], ub[1]) || 1; let w = [ua[0] / na + ub[0] / nb, ua[1] / na + ub[1] / nb]; const nw = Math.hypot(w[0], w[1]) || 1, L = 16; arrow(X(mk.v[0] + w[0] / nw * L), Y(mk.v[1] + w[1] / nw * L), X(mk.v[0]), Y(mk.v[1]), '#fde047'); out.marks++; }); });
+    const now = new Set(d.polys.map(p => String(p.id))); out.deleted = Object.keys(pre).filter(i => !now.has(String(i))).length; out.url = cv.toDataURL('image/jpeg', 0.9); res(out); };
+  im.src = B.img; }); }
 function parseCsv(t){ const rows = []; let row = [], cur = '', q = false; for (let i = 0; i < t.length; i++){ const c = t[i];
     if (q){ if (c === '"'){ if (t[i + 1] === '"'){ cur += '"'; i++; } else q = false; } else cur += c; }
     else if (c === '"') q = true; else if (c === ','){ row.push(cur); cur = ''; } else if (c === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; } else if (c !== '\r') cur += c; }
@@ -387,7 +426,7 @@ $('#upGo').onclick = async () => {
 ['#q', '#fStatus', '#fPre'].forEach(s => $(s).addEventListener('input', renderList));
 $('#btnRefresh').onclick = loadList; $('#btnList').onclick = loadList; $('#btnLogin').onclick = doLogin;
 $('#inPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); }); $('#inWho').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-$('#btnLogout').onclick = () => { SS.del('ws2sem.pw'); PW = ''; showLogin(''); };
+$('#btnLogout').onclick = () => { SS.del('ws2sem.pw'); LS.del('ws2sem.pw'); PW = ''; showLogin(''); };
 (async () => { if (API && PW && WHO){ try { const r = await api('ping'); $('#ver').textContent = `${APP_VERSION} · 저장소 ${r.version}`; await loadList(); return; } catch (e){} } showLogin(''); })();
 </script>
 </body>
