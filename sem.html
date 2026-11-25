@@ -6,49 +6,75 @@
 <meta name="robots" content="noindex">
 <title>WS2 SEM 판독 결과</title>
 <style>
-:root { --bg:#f5f6f8; --card:#fff; --ink:#1c2330; --sub:#5b6577; --line:#dfe3ea; --accent:#1f5fbf; --accent-ink:#fff; --ok:#1e7d46; --warn:#a15c00; --bad:#b3261e; --soft:#eef2f8; }
+:root { --bg:#f5f6f8; --card:#fff; --ink:#1c2330; --sub:#5b6577; --line:#dfe3ea; --accent:#1f5fbf; --accent-ink:#fff; --ok:#1e7d46; --warn:#a15c00; --bad:#b3261e; --soft:#eef2f8; --stage:#0e1013; }
 * { box-sizing:border-box; }
 html, body { margin:0; }
 body { background:var(--bg); color:var(--ink); font:15px/1.5 -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
 button, input, select, textarea { font:inherit; color:inherit; }
-button { cursor:pointer; border:1px solid var(--line); background:#fff; border-radius:8px; padding:7px 13px; }
+button { cursor:pointer; border:1px solid var(--line); background:#fff; border-radius:8px; padding:6px 12px; }
 button.primary { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
-button:disabled { opacity:.5; cursor:default; }
-input[type=text], input[type=password], select, textarea { border:1px solid var(--line); border-radius:8px; padding:7px 10px; background:#fff; min-width:0; }
-header { position:sticky; top:0; z-index:5; background:#fff; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px; padding:10px 18px; flex-wrap:wrap; }
+button.on { background:#1c2330; color:#fff; border-color:#1c2330; }
+button.warnb { border-color:#efc1bd; color:var(--bad); }
+button:disabled { opacity:.45; cursor:default; }
+input[type=text], input[type=password], input[type=number], input[type=search], select, textarea { border:1px solid var(--line); border-radius:8px; padding:6px 9px; background:#fff; min-width:0; }
+header { position:sticky; top:0; z-index:5; background:#fff; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px; padding:8px 18px; flex-wrap:wrap; }
 header h1 { font-size:17px; margin:0; font-weight:700; }
 header .sp { flex:1; }
 header .who { color:var(--sub); font-size:13px; }
-main { max-width:1280px; margin:0 auto; padding:18px; }
-.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; }
-.row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-.muted { color:var(--sub); } .small { font-size:13px; }
-.tablewrap { overflow-x:auto; }
+main { max-width:1500px; margin:0 auto; padding:16px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
+.row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.muted { color:var(--sub); } .small { font-size:13px; } .tiny { font-size:12px; }
+.tablewrap { overflow:auto; }
 table { border-collapse:collapse; width:100%; }
-th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
-th { font-size:13px; color:var(--sub); font-weight:600; background:#fafbfc; position:sticky; top:0; }
+th, td { text-align:left; padding:6px 9px; border-bottom:1px solid var(--line); white-space:nowrap; }
+th { font-size:12.5px; color:var(--sub); font-weight:600; background:#fafbfc; position:sticky; top:0; z-index:1; }
 td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
-tr.pick { cursor:pointer; } tr.pick:hover td { background:var(--soft); }
-.tag { display:inline-block; border-radius:999px; padding:1px 9px; font-size:12.5px; border:1px solid var(--line); background:#fff; }
+tr.pick { cursor:pointer; } tr.pick:hover td { background:var(--soft); } tr.sel td { background:#e3ecfb !important; }
+.tag { display:inline-block; border-radius:999px; padding:0 8px; font-size:12px; border:1px solid var(--line); background:#fff; white-space:nowrap; }
 .tag.ok { color:var(--ok); border-color:#b9dcc7; background:#eff8f2; } .tag.warn { color:var(--warn); border-color:#ecd3a8; background:#fdf6e9; }
-.tag.bad { color:var(--bad); border-color:#efc1bd; background:#fdf0ef; } .tag.wait { color:var(--sub); background:#f3f4f7; }
+.tag.bad { color:var(--bad); border-color:#efc1bd; background:#fdf0ef; } .tag.wait { color:var(--sub); background:#f3f4f7; } .tag.blue { color:#0b5cad; border-color:#b8d3f0; background:#eef5fd; }
 #login { max-width:440px; margin:8vh auto; } #login label { display:block; margin:12px 0 4px; font-size:13px; color:var(--sub); } #login input { width:100%; }
 .err { color:var(--bad); min-height:1.4em; }
-.grid2 { display:grid; grid-template-columns:minmax(0, 1.25fr) minmax(0, 1fr); gap:16px; } @media (max-width:900px){ .grid2 { grid-template-columns:1fr; } }
-.kv { display:grid; grid-template-columns:auto 1fr; gap:4px 14px; } .kv dt { color:var(--sub); } .kv dd { margin:0; }
-h2 { font-size:16px; margin:0 0 10px; } h3 { font-size:14px; margin:16px 0 6px; color:var(--sub); font-weight:600; }
-.stat { display:flex; gap:10px; flex-wrap:wrap; } .stat > div { background:var(--soft); border-radius:10px; padding:8px 12px; min-width:92px; }
-.stat b { display:block; font-size:19px; font-variant-numeric:tabular-nums; } .stat span { font-size:12.5px; color:var(--sub); }
+.kv { display:grid; grid-template-columns:auto 1fr; gap:3px 12px; font-size:13.5px; } .kv dt { color:var(--sub); } .kv dd { margin:0; min-width:0; overflow-wrap:anywhere; }
+h2 { font-size:16px; margin:0 0 8px; } h3 { font-size:13.5px; margin:12px 0 6px; color:var(--sub); font-weight:600; }
+.stat { display:flex; gap:8px; flex-wrap:wrap; } .stat > div { background:var(--soft); border-radius:10px; padding:6px 10px; min-width:84px; }
+.stat b { display:block; font-size:18px; font-variant-numeric:tabular-nums; } .stat span { font-size:12px; color:var(--sub); }
 img.fit { max-width:100%; height:auto; border-radius:8px; border:1px solid var(--line); display:block; }
-dialog { border:1px solid var(--line); border-radius:14px; padding:20px; width:min(560px, 94vw); } dialog::backdrop { background:rgba(20,25,35,.45); }
-dialog label { display:block; margin:10px 0 4px; font-size:13px; color:var(--sub); } dialog input[type=text], dialog select, dialog textarea { width:100%; }
+dialog { border:1px solid var(--line); border-radius:14px; padding:18px; width:min(560px, 94vw); } dialog::backdrop { background:rgba(20,25,35,.45); }
+dialog label { display:block; margin:8px 0 3px; font-size:13px; color:var(--sub); } dialog input[type=text], dialog input[type=number], dialog select, dialog textarea { width:100%; }
+dialog.wide { width:min(1280px, 97vw); max-height:94vh; }
 #rv { position:fixed; inset:0; z-index:20; background:#fff; display:flex; flex-direction:column; } #rv[hidden] { display:none; }
 #rv .bar { display:flex; gap:10px; align-items:center; padding:8px 14px; border-bottom:1px solid var(--line); flex-wrap:wrap; background:#fff; }
 #rv iframe { flex:1; border:0; width:100%; }
-#toast { position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#1c2330; color:#fff; padding:9px 16px; border-radius:10px; z-index:40; max-width:90vw; } #toast[hidden] { display:none; }
-.note { background:#fdf6e9; border:1px solid #ecd3a8; border-radius:10px; padding:10px 12px; }
+#toast { position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#1c2330; color:#fff; padding:9px 16px; border-radius:10px; z-index:60; max-width:90vw; } #toast[hidden] { display:none; }
+.note { background:#fdf6e9; border:1px solid #ecd3a8; border-radius:10px; padding:8px 12px; }
+.info { background:#eef5fd; border:1px solid #b8d3f0; border-radius:10px; padding:8px 12px; }
 .scrollbox { max-height:340px; overflow:auto; border:1px solid var(--line); border-radius:8px; }
 a { color:var(--accent); }
+/* ---- whole-photo review */
+.res3 { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; } @media (max-width:980px){ .res3 { grid-template-columns:1fr; } }
+.res { border:1px solid var(--line); border-radius:10px; padding:8px 10px; background:#fff; } .res.cur { border-color:#9fbbe8; background:#f6f9ff; }
+.res h4 { margin:0 0 4px; font-size:13px; } .res .big { font-size:17px; font-weight:700; font-variant-numeric:tabular-nums; } .res .l { font-size:12px; color:var(--sub); }
+.wgrid { display:grid; grid-template-columns:minmax(0, 1fr) 380px; gap:12px; align-items:start; } @media (max-width:1100px){ .wgrid { grid-template-columns:1fr; } }
+#pv { position:relative; height:min(72vh, 820px); background:var(--stage); border-radius:10px; overflow:hidden; touch-action:none; user-select:none; }
+#pv canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+#pvHud { position:absolute; left:8px; top:8px; background:#000b; color:#e8eaec; font-size:12.5px; border-radius:8px; padding:5px 9px; pointer-events:none; max-width:70%; }
+#pvTool { position:absolute; left:50%; bottom:8px; transform:translateX(-50%); background:#1f5fbfee; color:#fff; font-size:13px; border-radius:8px; padding:6px 10px; max-width:92%; } #pvTool[hidden] { display:none; }
+#pvTool button { background:#fff; color:#1c2330; border:0; padding:2px 9px; margin-left:6px; }
+.tb { display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin:8px 0; } .tb .sep { width:1px; height:22px; background:var(--line); }
+.tb label { font-size:13px; display:flex; gap:4px; align-items:center; }
+#side .card + .card { margin-top:10px; }
+#zoomCv { width:100%; height:260px; background:var(--stage); border-radius:8px; display:block; }
+.chips { display:flex; flex-wrap:wrap; gap:5px; } .chips button { padding:3px 9px; font-size:13px; border-radius:999px; }
+.edits { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; } .edits button { padding:4px 9px; font-size:13px; }
+.hist { font-size:12.5px; } .hist td { white-space:normal; vertical-align:top; padding:4px 6px; }
+.legend i { display:inline-block; width:14px; height:3px; vertical-align:middle; margin:0 3px 0 8px; border-radius:2px; }
+.banner { margin:8px 0; }
+/* ---- folder registration */
+#drop { border:2px dashed #9fbbe8; border-radius:12px; padding:18px; text-align:center; background:#f6f9ff; }
+#drop.over { background:#e3ecfb; }
+#regTbl td { font-size:12.5px; } #regTbl tr.off td { color:#8a93a3; } #regTbl tr.fail td { background:#fdf0ef; }
 </style>
 </head>
 <body>
@@ -58,14 +84,14 @@ a { color:var(--accent); }
   <span class="sp"></span>
   <span class="who" id="whoami"></span>
   <button id="btnList" hidden>목록</button>
-  <button id="btnUpload" class="primary" hidden>사진 등록</button>
+  <button id="btnUpload" class="primary" hidden>폴더·사진 등록</button>
   <button id="btnLogout" hidden>나가기</button>
 </header>
 
 <main>
   <section id="login" class="card" hidden>
     <h2>들어가기</h2>
-    <p class="muted small">연구실에서 받은 암호와 본인 이름을 넣으세요. 이름은 사진 등록·검토 기록에 남습니다.</p>
+    <p class="muted small">연구실에서 받은 암호와 본인 이름(또는 이니셜)을 넣으세요. 이름은 사진 등록·검토 기록에 남습니다.</p>
     <div id="apiRow"><label for="inApi">저장소 연결 주소</label><input id="inApi" type="text" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off"></div>
     <label for="inPw">암호</label><input id="inPw" type="password" autocomplete="current-password">
     <label for="inWho">이름</label><input id="inWho" type="text" autocomplete="name" maxlength="40">
@@ -77,14 +103,15 @@ a { color:var(--accent); }
   <section id="list" hidden>
     <div class="card">
       <div class="row">
-        <input id="q" type="text" placeholder="검색: 런 번호, 위치, 파일 이름, 등록한 사람" style="flex:1 1 260px">
+        <input id="q" type="search" placeholder="검색: 런 번호, 위치, 파일 이름·경로, 등록한 사람" style="flex:1 1 260px">
         <select id="fStatus" aria-label="상태"><option value="">상태 전체</option><option value="registered">분석 대기</option><option value="needs_side">결정 쪽 선택 필요</option><option value="analyzed">분석 완료 · 검토 전</option><option value="reviewed">검토됨</option><option value="failed">분석 실패</option></select>
         <select id="fPre" aria-label="전구체"><option value="">전구체 전체</option><option value="H2S">H₂S</option><option value="DMS">DMS</option><option value="unknown">미확인</option></select>
+        <select id="fTxt" aria-label="장비 TXT"><option value="">TXT 전체</option><option value="yes">TXT 있음</option><option value="no">TXT 없음</option></select>
         <button id="btnRefresh">새로 고침</button>
       </div>
-      <p class="muted small" id="listInfo" style="margin:10px 0 6px"></p>
-      <div class="tablewrap"><table id="tbl"><thead><tr>
-        <th>런</th><th>위치</th><th class="num">배율</th><th>전구체</th><th>상태</th><th class="num">자동 판독 수</th><th class="num">사진 전체 S3</th><th class="num">검토 영역 S3</th><th>마지막 검토</th><th>파일</th><th>등록</th>
+      <p class="muted small" id="listInfo" style="margin:8px 0 6px"></p>
+      <div class="tablewrap" style="max-height:72vh"><table id="tbl"><thead><tr>
+        <th>런</th><th>위치</th><th class="num">배율</th><th>전구체</th><th>상태</th><th class="num">자동 방향 수</th><th class="num">자동 S3</th><th class="num">수정 반영 S3</th><th>주방향 (수정 반영)</th><th>검토 범위</th><th>마지막 검토</th><th>파일 (상대 경로)</th><th>등록</th>
       </tr></thead><tbody></tbody></table></div>
     </div>
   </section>
@@ -92,16 +119,44 @@ a { color:var(--accent); }
   <section id="detail" hidden></section>
 </main>
 
-<dialog id="dlgUpload">
-  <h2>SEM 사진 등록</h2>
-  <p class="muted small">원본 그대로 올립니다(정보 띠 포함). 등록하면 분석 대기 상태가 되고, 계산 담당이 Colab의 "새 사진 분석"을 실행하면 결과가 붙습니다.</p>
-  <label for="upFile">사진 파일 (jpg, tif, png · 여러 장 가능)</label><input id="upFile" type="file" accept=".jpg,.jpeg,.png,.tif,.tiff,image/*" multiple>
-  <label for="upRun">런 번호 (비워 두면 파일 이름에서 읽음. 예: R237)</label><input id="upRun" type="text" maxlength="20">
-  <label for="upPos">위치 (비워 두면 파일 이름에서 읽음. 예: P1)</label><input id="upPos" type="text" maxlength="30">
-  <label for="upPre">전구체</label><select id="upPre"><option value="unknown">미확인</option><option value="H2S">H₂S</option><option value="DMS">DMS</option></select>
-  <label for="upNote">메모 (선택)</label><input id="upNote" type="text" maxlength="200">
-  <p class="err" id="upErr"></p><p class="small muted" id="upProg"></p>
-  <div class="row" style="justify-content:flex-end"><button id="upCancel">닫기</button><button class="primary" id="upGo">등록</button></div>
+<dialog id="dlgUpload" class="wide">
+  <div class="row"><h2 style="margin:0">SEM 폴더·사진 등록</h2><span class="sp" style="flex:1"></span><button id="upCancel">닫기</button></div>
+  <p class="muted small" style="margin:6px 0">촬영 폴더를 통째로 고르거나 끌어다 놓으세요. 하위 폴더까지 읽습니다. 원본 사진은 그대로 올라가고(정보 띠 포함), 같은 이름의 장비 TXT가 있으면 함께 올라가 화소 크기(nm/px)에 쓰입니다. 등록하면 분석 대기 상태가 되고, 계산 담당이 Colab을 한 번 실행하면 결과가 붙습니다.</p>
+  <div id="drop">
+    <div class="row" style="justify-content:center">
+      <label class="primary" for="upDir" style="margin:0; display:inline-block; background:var(--accent); color:#fff; border-radius:8px; padding:7px 14px; cursor:pointer">폴더 선택</label>
+      <input id="upDir" type="file" webkitdirectory directory multiple hidden>
+      <label for="upFile" style="margin:0; display:inline-block; border:1px solid var(--line); background:#fff; border-radius:8px; padding:7px 14px; cursor:pointer; color:var(--ink)">파일 선택</label>
+      <input id="upFile" type="file" multiple hidden accept=".jpg,.jpeg,.png,.tif,.tiff,.bmp,.txt,image/*,text/plain">
+    </div>
+    <p class="small muted" style="margin:8px 0 0">또는 폴더를 여기에 끌어다 놓으세요 (Chrome·Edge).</p>
+  </div>
+  <div id="regBox" hidden>
+    <div class="row" style="margin:10px 0 6px">
+      <span id="regSum" class="small"></span><span class="sp" style="flex:1"></span>
+      <label class="small" style="display:flex; gap:6px; align-items:center; margin:0">전구체를 폴더 이름에서 못 읽은 사진
+        <select id="regPre"><option value="unknown">미확인</option><option value="H2S">H₂S</option><option value="DMS">DMS</option></select></label>
+      <label class="small" style="display:flex; gap:6px; align-items:center; margin:0">메모 <input id="regNote" type="text" maxlength="200" style="width:200px"></label>
+    </div>
+    <p class="small muted" id="regMagNote" style="margin:0 0 6px"></p>
+    <div class="tablewrap" style="max-height:52vh; border:1px solid var(--line); border-radius:8px"><table id="regTbl"><thead><tr>
+      <th>등록</th><th>상대 경로</th><th>런</th><th>위치</th><th class="num">배율 (파일 이름)</th><th>전구체</th><th>장비 TXT</th><th class="num">nm/px (TXT)</th><th>처리</th>
+    </tr></thead><tbody></tbody></table></div>
+    <p class="err" id="upErr"></p><p class="small" id="upProg"></p>
+    <div class="row" style="justify-content:flex-end"><button id="upRetry" hidden>실패한 것만 다시 올리기</button><button class="primary" id="upGo">선택한 사진 등록</button></div>
+  </div>
+</dialog>
+
+<dialog id="dlgMeta">
+  <h2>사진 정보 고치기</h2>
+  <p class="muted small">고친 내용은 기록에 남습니다. 배율은 파일 이름에서 읽은 값이며, 화소 크기(nm/px)는 장비 TXT가 있으면 TXT를 씁니다.</p>
+  <label for="mRun">런</label><input id="mRun" type="text" maxlength="20">
+  <label for="mPos">위치</label><input id="mPos" type="text" maxlength="40">
+  <label for="mMag">배율 (비우면 미입력)</label><input id="mMag" type="number" min="1" step="1">
+  <label for="mPre">전구체</label><select id="mPre"><option value="unknown">미확인</option><option value="H2S">H₂S</option><option value="DMS">DMS</option></select>
+  <label for="mNote">메모</label><input id="mNote" type="text" maxlength="200">
+  <p class="err" id="mErr"></p>
+  <div class="row" style="justify-content:flex-end"><button id="mCancel">닫기</button><button class="primary" id="mSave">저장</button></div>
 </dialog>
 
 <dialog id="dlgStart">
@@ -116,15 +171,14 @@ a { color:var(--accent); }
     <span class="small" id="rvMsg"></span>
     <button class="primary" id="rvSave">저장 (새 판으로)</button><button id="rvClose">닫기</button>
   </div>
-  <iframe id="rvFrame" title="검토 화면"></iframe>
+  <iframe id="rvFrame" title="검토 화면 (이전 형식)"></iframe>
 </div>
 <div id="toast" hidden></div>
-
 <script>
-/* ============================== settings ==============================
-   Put the storage-link address (Apps Script web app URL) here once it exists; while it is empty the page asks for it. */
+/* ============================== settings ============================== */
 const API_URL_FIXED = 'https://script.google.com/macros/s/AKfycbwmhgggtNJAvEmEgAFj3a-7XnMAHLRpmxjmt5a3oA8XJ4-5dCfpb2W3Mrxa5izgNBIqrA/exec';
-const APP_VERSION = 'sem web 0.1.2';
+const APP_VERSION = 'sem web 0.3.0';
+const CONFIRM_MAGS = [1000, 2500, 10000, 15000, 20000, 40000, 50000];   // magnifications of the photos in the 11-23 confirmation set
 
 /* ============================== small helpers ============================== */
 const $ = s => document.querySelector(s);
@@ -134,13 +188,19 @@ const SS = { get(k){ try { return sessionStorage.getItem(k); } catch (e){ return
 let toastTimer = 0;
 function toast(t, ms){ const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms || 3500); }
 const fmt = (v, d) => v == null || Number.isNaN(v) ? '–' : Number(v).toFixed(d == null ? 3 : d);
+const fmtN = v => v == null ? '–' : Number(v).toLocaleString();
 const when = t => { if (!t) return ''; const d = new Date(t); if (isNaN(d)) return String(t); const p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
-function lkey(n){ let h = 2166136261; for (const ch of String(n).toLowerCase()) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(16).padStart(8, '0'); }   // same as the review page
+function lkey(n){ let h = 2166136261; for (const ch of String(n).toLowerCase()) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(16).padStart(8, '0'); }
+const clone = o => o == null ? o : JSON.parse(JSON.stringify(o));
 const PRE_KO = {H2S: 'H₂S', DMS: 'DMS', unknown: '미확인'};
 const STATUS = { registered: ['분석 대기', 'wait'], reread_requested: ['다시 판독 대기', 'wait'], needs_side: ['결정 쪽 선택 필요', 'warn'], analyzed: ['분석 완료 · 검토 전', ''], reviewed: ['검토됨', 'ok'], failed: ['분석 실패', 'bad'] };
 const SIDE_KO = {auto: '자동', dark: '어두운 쪽이 결정', bright: '밝은 쪽이 결정', off: '적용 안 함'};
 const STATE_KO = {confirmed: '확인 완료', partial: '부분 검토', not_reviewed: '미검토'};
-const HOLD_KO = {border: '사진 끝에 닿음', small: '작음', round: '둥긂', 'merged-shape': '붙은 모양', background: '바탕(결정 사이 빈 곳)'};
+const HOLD_KO = {used: '판독', border: '보류: 사진 끝에 닿음', small: '보류: 작음 (지름 8 px 미만)', round: '보류: 둥긂 (삼각형 모양 약함)', 'merged-shape': '보류: 붙은 모양 (여러 결정이 한 윤곽)', background: '보류: 바탕 (결정 사이 빈 공간으로 판단)'};
+const TAG_KO = {iso: '떨어진', touch: '붙은', round: '꼭짓점 둥근', clump: '덩어리'};
+const CONF_KO = {unreviewed: '미검토', kept: '확인 후 유지', edited: '사람 수정', hard: '판독 어려움', excluded: '제외'};
+const EXCL_KO = {background: '바탕', duplicate: '중복', other: '기타', split: '분리됨 (자식 윤곽으로 대체)', merged: '병합됨 (합친 윤곽으로 대체)'};
+const ORIGIN_KO = {auto: '자동 (SAM)', person: '사람이 추가', split: '분리로 생김', merge: '병합으로 생김'};
 const statusTag = s => { const v = STATUS[s] || [s, '']; return `<span class="tag ${v[1]}">${esc(v[0])}</span>`; };
 
 /* ============================== storage link ============================== */
@@ -155,10 +215,10 @@ async function api(action, params){
 }
 const fileText = async (id, path) => (await api('file', {photo_id: id, path, as: 'text'})).text;
 const fileUrl = async (id, path) => { const r = await api('file', {photo_id: id, path}); return `data:${r.mime || 'image/jpeg'};base64,${r.b64}`; };
+async function sha16text(t){ const h = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t))); return Array.from(h.slice(0, 8)).map(x => x.toString(16).padStart(2, '0')).join(''); }
 
-/* ============================== review arithmetic ==============================
-   The same rules as ws2read.review.apply_review / core.alignment (Python).  Colab recomputes every saved review in Python
-   and records whether the two agree. */
+/* ============================== legacy 512 px box review (schema 1) ==============================
+   Same rules as ws2read.review.apply_review / core.alignment.  Used only for readings made before 1.4.1 and for opening old saved boxes. */
 const SINGLE = new Set(['iso', 'touch', 'round']);
 function norm(x){
   if (typeof x === 'boolean' || x == null) return !!x;
@@ -198,7 +258,146 @@ function computeResult(payload, preDoc){
           before: {n: b3.n, S3: b3.S, S6: b6.S}, changes: {program_outlines: preDoc.polys.length, kept_untouched: kept, changed, deleted: Object.keys(pre).filter(i => !(i in now)).length, added}, computed_by: APP_VERSION};
 }
 
-/* ============================== views ============================== */
+/* ============================== whole-photo review (schema 2) ==============================
+   The same rules as ws2read/wholereview.py and ws2read/orient.py (Python).  Colab recomputes every saved version in Python and
+   records whether the numbers agree.  Directions: degrees, y up, period 120. */
+const SIZE_TAGS = new Set(['iso', 'round']);
+const STATUS_TAG = {used: 'iso', border: 'iso', small: 'iso', round: 'round', 'merged-shape': 'clump'};
+const RULE = {name: 'main-direction draft 2026-11-25', tol_deg: 15, n_min: 10, p_max: 0.01, similar_ratio: 0.75, period_deg: 120};
+const MAIN_KO = {few: '사진 주방향 판단 보류 (방향 수 부족)', unclear: '사진 주방향 판단 보류 (우세한 방향 불분명)', one: '주방향 있음', two: '두 방향이 비슷하게 나타남'};
+const CLASS_KO = {main: '주방향과 일치', sixty: '주방향에서 약 60°', other: '기타 방향', no_main: '사진 주방향 판단 보류', no_dir: '결정 방향 판독 보류'};
+const r3 = x => x == null ? null : Math.round(x * 1000) / 1000;
+const r1 = x => x == null ? null : Math.round(x * 10) / 10;
+function initialState(o){
+  const st = o.status, before = o.status_before_background || st;
+  const s = {id: String(o.id), num: o.id, origin: 'auto', parents: [], pts: o.pts, redrawn: false, tag: STATUS_TAG[st !== 'background' ? st : before] || 'iso',
+             v: null, v_src: null, nodir: false, marks: [], cut: st === 'border' || before === 'border', u_edge: false, u_dir: false, excluded: null, confirm: 'unreviewed', who: null, at: null};
+  if (st === 'used'){ s.v = o.v; s.v_src = 'auto'; }
+  else if (['border', 'small', 'round'].includes(st)) s.nodir = true;
+  else if (st === 'background'){ s.excluded = {reason: 'background', by: 'auto'}; if (['border', 'small', 'round'].includes(before)) s.nodir = true; }
+  return s;
+}
+function polyAC(pts){ let A = 0, cx = 0, cy = 0; const n = pts.length;
+  for (let i = 0; i < n; i++){ const [x, y] = pts[i], [x2, y2] = pts[(i + 1) % n]; const c = x * y2 - x2 * y; A += c; cx += (x + x2) * c; cy += (y + y2) * c; }
+  A /= 2; if (Math.abs(A) < 1e-9){ const m = centre(pts); return [0, m[0], m[1]]; } return [Math.abs(A), cx / (6 * A), cy / (6 * A)]; }
+const samePt = (a, b) => !!a && !!b && Math.abs(a[0] - b[0]) < 1e-3 && Math.abs(a[1] - b[1]) < 1e-3;
+function centreOf(s, A){ const o = A[s.id]; if (o && s.origin === 'auto' && !s.redrawn) return [o.cx, o.cy]; const r = polyAC(s.pts); return [r[1], r[2]]; }
+function areaOf(s, A){ const o = A[s.id]; if (o && s.origin === 'auto' && !s.redrawn) return o.area_px; return polyAC(s.pts)[0]; }
+function thetaOf(s, A){
+  if (s.excluded || !SINGLE.has(s.tag) || !s.v || s.nodir) return null;
+  const o = A[s.id]; if (o && s.origin === 'auto' && o.moment_ref != null && samePt(s.v, o.v) && s.v_src === 'auto') return r3(o.moment_ref);
+  return r3(vertexDir(s.pts, s.v));
+}
+function cellOf(x, y, cells){ const c = Math.min(Math.floor(x / cells.w), cells.nx - 1), r = Math.min(Math.floor(y / cells.h), cells.ny - 1); return `r${Math.max(r, 0)}c${Math.max(c, 0)}`; }
+function cellRect(key, cells){ const r = Number(key.slice(1, key.indexOf('c'))), c = Number(key.slice(key.indexOf('c') + 1)); return [c * cells.w, r * cells.h, cells.w, cells.h]; }
+function effConfirm(s, A, cells, done){ if (s.excluded) return 'excluded'; const c = s.confirm || 'unreviewed'; if (c === 'unreviewed'){ const [x, y] = centreOf(s, A); if (done.has(cellOf(x, y, cells))) return 'kept'; } return c; }
+function directionsOf(S, A, cells, done){      // done = null: whole photo
+  const out = [];
+  Object.values(S).forEach(s => { if (s.excluded) return; const [x, y] = centreOf(s, A); const t = thetaOf(s, A);
+    if (t != null && (!done || done.has(cellOf(x, y, cells)))) out.push([t, 'single', s.id]);
+    (s.marks || []).forEach((m, i) => { if (!done || done.has(cellOf(m.v[0], m.v[1], cells))) out.push([r3(markDir(m)), 'mark', s.id + '#' + i]); }); });
+  return out;
+}
+function meanK(th, k){ if (!th.length) return [null, 0]; let c = 0, s = 0; th.forEach(t => { c += Math.cos(k * t * Math.PI / 180); s += Math.sin(k * t * Math.PI / 180); }); c /= th.length; s /= th.length;
+  return [mod(deg(Math.atan2(s, c)) / k, 360 / k), Math.hypot(c, s)]; }
+const d120 = (a, b) => { const x = mod(a - b, 120); return Math.min(x, 120 - x); };
+const LF = [0]; function logFact(n){ while (LF.length <= n) LF.push(LF[LF.length - 1] + Math.log(LF.length)); return LF[n]; }
+function binomSf(k, n){ if (k <= 0) return 1; if (k > n) return 0; let t = 0; for (let j = k; j <= n; j++) t += Math.exp(logFact(n) - logFact(j) - logFact(n - j) + n * Math.log(0.5)); return Math.min(1, t); }
+function mainDirection(theta){
+  const th = theta.filter(t => t != null).map(t => mod(t, 120)), n = th.length, T = RULE.tol_deg;
+  const out = {n, state: null, main: null, second: null, n_main: null, n_second: null, n_other: null, p_value: null, ratio: null};
+  if (n < RULE.n_min){ out.state = 'few'; return out; }
+  const ax = meanK(th, 6)[0]; let cen = [mod(ax, 120), mod(ax + 60, 120)];
+  cen = cen.map(c => { const mem = th.filter(t => d120(t, c) <= T); const m = meanK(mem, 3)[0]; return m != null ? m : c; });
+  const cnt = cen.map(c => th.filter(t => d120(t, c) <= T).length); const both = th.filter(t => d120(t, cen[0]) <= T || d120(t, cen[1]) <= T).length;
+  const p = binomSf(both, n); const i = cnt[0] >= cnt[1] ? 0 : 1; const ratio = cnt[i] ? cnt[1 - i] / cnt[i] : 0;
+  Object.assign(out, {p_value: Math.round(p * 1e6) / 1e6, ratio: Math.round(ratio * 1000) / 1000, main: r1(mod(cen[i], 120)), second: r1(mod(cen[1 - i], 120)), n_main: cnt[i], n_second: cnt[1 - i], n_other: n - both});
+  out.state = p > RULE.p_max ? 'unclear' : ratio >= RULE.similar_ratio ? 'two' : 'one';
+  if (out.state === 'unclear'){ out.main = null; out.second = null; }
+  return out;
+}
+function classify(t, M){
+  if (t == null) return {cls: 'no_dir', diff: null};
+  if (!M || !['one', 'two'].includes(M.state)) return {cls: 'no_main', diff: null};
+  const d = d120(t, M.main), T = RULE.tol_deg; return {cls: d <= T ? 'main' : Math.abs(d - 60) <= T ? 'sixty' : 'other', diff: r1(d)};
+}
+function median(a){ const s = a.slice().sort((x, y) => x - y), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; }
+function sizeStats(S, A, nm, cells, done){
+  const sides = [], areas = [];
+  Object.values(S).forEach(s => { if (s.excluded || !SIZE_TAGS.has(s.tag) || s.cut) return; const [x, y] = centreOf(s, A); if (done && !done.has(cellOf(x, y, cells))) return;
+    const a = areaOf(s, A); areas.push(a); sides.push(Math.sqrt(4 * a / Math.sqrt(3))); });
+  const k = nm || null, n = sides.length; if (!n) return {n: 0, unit: k ? 'nm' : 'px'};
+  const f = k || 1, sd = sides.map(x => x * f), ar = areas.map(x => x * f * f); const mean = sd.reduce((a, b) => a + b, 0) / n;
+  const sdev = n > 1 ? Math.sqrt(sd.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1)) : null;
+  return {n, unit: k ? 'nm' : 'px', side_mean: r1(mean), side_median: r1(median(sd)), side_sd: sdev == null ? null : r1(sdev), area_mean: r1(ar.reduce((a, b) => a + b, 0) / n), area_median: r1(median(ar)), sides: sd};
+}
+function densCov(S, A, cells, done, nm, W, H){     // reference values: individual crystals per um^2 and outline coverage (same rule as wholereview.density_coverage)
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d'); g.fillStyle = '#000'; let n = 0;
+  const inReg = (x, y) => !done || done.has(cellOf(x, y, cells));
+  Object.values(S).forEach(s => { if (s.excluded) return; g.beginPath(); s.pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill();
+    const [x, y] = centreOf(s, A); if (SINGLE.has(s.tag) && x >= 0 && y >= 0 && x < W && y < H && inReg(x, y)) n++; });
+  const D = g.getImageData(0, 0, W, H).data; let npx = 0, cov = 0;
+  if (!done){ npx = W * H; for (let i = 3; i < D.length; i += 4) if (D[i] >= 128) cov++; }
+  else done.forEach(key => { const r = Number(key.slice(1, key.indexOf('c'))), c = Number(key.slice(key.indexOf('c') + 1)); const y0 = Math.round(r * cells.h), y1 = Math.round((r + 1) * cells.h), x0 = Math.round(c * cells.w), x1 = Math.round((c + 1) * cells.w);
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++){ npx++; if (D[(y * W + x) * 4 + 3] >= 128) cov++; } });
+  if (!npx) return {n_single: 0, area_px: 0, area_um2: null, per_um2: null, coverage: null};
+  const um2 = nm ? npx * nm * nm / 1e6 : null; return {n_single: n, area_px: npx, area_um2: um2 ? Math.round(um2 * 1000) / 1000 : null, per_um2: um2 ? Math.round(n / um2 * 1e4) / 1e4 : null, coverage: Math.round(cov / npx * 1e4) / 1e4};
+}
+function scopeResult(S, A, cells, done, nm, scope){
+  const D = directionsOf(S, A, cells, scope === 'done' ? done : null), th = D.map(d => d[0]); const a3 = alignment(th, 3), a6 = alignment(th, 6), M = mainDirection(th);
+  return {scope, n: a3.n, S3: a3.S, S6: a6.S, S3_raw: a3.raw, S6_raw: a6.raw, single: D.filter(d => d[1] === 'single').length, marks: D.filter(d => d[1] === 'mark').length,
+          main: {state: M.state, main: M.main, n_main: M.n_main, n_second: M.n_second, n_other: M.n_other, p_value: M.p_value, ratio: M.ratio}, size: sizeStats(S, A, nm, cells, scope === 'done' ? done : null), dens: EDIT && EDIT.J ? densCov(S, A, cells, scope === 'done' ? done : null, nm, EDIT.J.picture_size[0], EDIT.J.picture_size[1]) : null, _th: th};
+}
+function allResults(J, A, S0, S, cellsDone){
+  const done = new Set(Object.keys(cellsDone || {})), cells = J.cells, nm = J.nm_per_px;
+  const out = {auto: scopeResult(S0, A, cells, null, nm, 'auto'), current: scopeResult(S, A, cells, null, nm, 'current'), done: scopeResult(S, A, cells, done, nm, 'done')};
+  const conf = {}; Object.values(S).forEach(s => { const c = effConfirm(s, A, cells, done); conf[c] = (conf[c] || 0) + 1; });
+  out.cells = {total: cells.nx * cells.ny, done: Array.from(done).sort()}; out.confirm_counts = conf; out.rule = RULE; return out;
+}
+function stripResult(R){ const c = clone(R); ['auto', 'current', 'done'].forEach(k => { if (c[k]){ delete c[k]._th; if (c[k].size) delete c[k].size.sides; } }); c.computed_by = APP_VERSION; return c; }
+
+/* ---- geometry for editing */
+function pip(x, y, pts){ let ins = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++){ const [xi, yi] = pts[i], [xj, yj] = pts[j];
+  if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins; } return ins; }
+function bbox(pts){ let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; pts.forEach(([x, y]) => { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }); return [x0, y0, x1, y1]; }
+function clipHalf(pts, p, q, side){       // keep the part of the polygon on one side of the line p-q (Sutherland–Hodgman with one edge)
+  const f = ([x, y]) => side * ((q[0] - p[0]) * (y - p[1]) - (q[1] - p[1]) * (x - p[0])); const out = [];
+  for (let i = 0; i < pts.length; i++){ const a = pts[i], b = pts[(i + 1) % pts.length], fa = f(a), fb = f(b);
+    if (fa >= 0) out.push(a);
+    if ((fa >= 0) !== (fb >= 0)){ const t = fa / (fa - fb); out.push([r2(a[0] + t * (b[0] - a[0])), r2(a[1] + t * (b[1] - a[1]))]); } }
+  return out; }
+function rdp(pts, eps){ if (pts.length < 3) return pts; let dmax = 0, idx = 0; const [a, b] = [pts[0], pts[pts.length - 1]];
+  for (let i = 1; i < pts.length - 1; i++){ const p = pts[i]; const L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; const d = Math.abs((b[0] - a[0]) * (a[1] - p[1]) - (a[0] - p[0]) * (b[1] - a[1])) / L; if (d > dmax){ dmax = d; idx = i; } }
+  if (dmax > eps){ const l = rdp(pts.slice(0, idx + 1), eps), r = rdp(pts.slice(idx), eps); return l.slice(0, -1).concat(r); } return [a, b]; }
+function unionOutline(polys){          // outline of the union of polygons: rasterise at 1 px, trace the outer boundary (Moore neighbour), simplify
+  const bb = polys.map(bbox); const x0 = Math.floor(Math.min(...bb.map(b => b[0]))) - 2, y0 = Math.floor(Math.min(...bb.map(b => b[1]))) - 2;
+  const W = Math.ceil(Math.max(...bb.map(b => b[2]))) - x0 + 3, H = Math.ceil(Math.max(...bb.map(b => b[3]))) - y0 + 3; const M = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++){ const px = x + x0 + 0.5, py = y + y0 + 0.5; if (polys.some(P => pip(px, py, P))) M[y * W + x] = 1; }
+  // close gaps of up to ~3 px between outlines that touch on the photo (SAM outlines of neighbours rarely share exact edges): dilate, then erode, by 2 px
+  const morph = (src, grow) => { const out = new Uint8Array(W * H); for (let y = 0; y < H; y++) for (let x = 0; x < W; x++){ let v = grow ? 0 : 1;
+      for (let dy = -2; dy <= 2 && (grow ? !v : v); dy++) for (let dx = -2; dx <= 2; dx++){ const xx = x + dx, yy = y + dy; const s = xx < 0 || yy < 0 || xx >= W || yy >= H ? 0 : src[yy * W + xx]; if (grow && s){ v = 1; break; } if (!grow && !s){ v = 0; break; } }
+      out[y * W + x] = v; } return out; };
+  const Mc = morph(morph(M, true), false); for (let i = 0; i < W * H; i++) M[i] = M[i] || Mc[i];
+  // largest 4-connected component only
+  const lab = new Int32Array(W * H); let best = 0, bestN = 0, cur = 0;
+  for (let i = 0; i < W * H; i++){ if (!M[i] || lab[i]) continue; cur++; let n = 0; const st = [i]; lab[i] = cur;
+    while (st.length){ const j = st.pop(); n++; const x = j % W, y = (j / W) | 0; [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return; const k = yy * W + xx; if (M[k] && !lab[k]){ lab[k] = cur; st.push(k); } }); }
+    if (n > bestN){ bestN = n; best = cur; } }
+  let total = 0; for (let i = 0; i < W * H; i++) if (M[i]) total++; if (bestN < 0.97 * total) return 'apart';
+  const inside = (x, y) => x >= 0 && y >= 0 && x < W && y < H && lab[y * W + x] === best;
+  let s = -1; for (let i = 0; i < W * H; i++) if (lab[i] === best){ s = i; break; } if (s < 0) return null;
+  const dirs = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]; const sx = s % W, sy = (s / W) | 0; const path = [[sx, sy]];
+  let cx = sx, cy = sy, back = 4, guard = 0;
+  while (guard++ < 200000){ let found = false;
+    for (let k = 1; k <= 8; k++){ const d = (back + k) % 8; const nx = cx + dirs[d][0], ny = cy + dirs[d][1]; if (inside(nx, ny)){ cx = nx; cy = ny; back = (d + 4) % 8; found = true; break; } }
+    if (!found || (cx === sx && cy === sy)) break; path.push([cx, cy]); }
+  const pts = path.map(([x, y]) => [x + x0 + 0.5, y + y0 + 0.5]); if (pts.length < 3) return null;
+  let far = 0, fd = -1; pts.forEach((p, i) => { const d = Math.hypot(p[0] - pts[0][0], p[1] - pts[0][1]); if (d > fd){ fd = d; far = i; } });   // a closed loop is simplified as two open halves
+  const simp = rdp(pts.slice(0, far + 1), 0.8).slice(0, -1).concat(rdp(pts.slice(far).concat([pts[0]]), 0.8).slice(0, -1));
+  return simp.map(([x, y]) => [r2(x), r2(y)]);
+}
+
+/* ============================== list ============================== */
 let INDEX = null, CUR = null;
 function show(id){ ['#login', '#list', '#detail'].forEach(s => { $(s).hidden = s !== id; }); const inside = id !== '#login';
   ['#btnUpload', '#btnLogout'].forEach(s => { $(s).hidden = !inside; }); $('#btnList').hidden = id !== '#detail'; $('#whoami').textContent = inside ? WHO : ''; }
@@ -211,166 +410,484 @@ async function doLogin(){
   catch (e){ $('#loginErr').textContent = e.message; }
   $('#btnLogin').disabled = false;
 }
-async function loadList(){ show('#list'); $('#listInfo').textContent = '불러오는 중…'; try { INDEX = (await api('list')).index; renderList(); } catch (e){ if (e.code === 'password') return showLogin(e.message); $('#listInfo').textContent = e.message; } }
+async function loadList(){ if (!(await leaveOk())) return; EDIT = null; show('#list'); $('#listInfo').textContent = '불러오는 중…';
+  try { INDEX = (await api('list')).index; renderList();
+    // photos still waiting: ask the storage link to pick up results Colab may have left (cheap: only those photos)
+    const wait = Object.values(INDEX.photos || {}).filter(r => r.status === 'registered' || r.status === 'reread_requested').map(r => r.photo_id);
+    if (wait.length){ const r = await api('sync', {photo_ids: wait.slice(0, 30)}); if (r.synced && r.synced.length){ INDEX = (await api('list')).index; renderList(); } } }
+  catch (e){ if (e.code === 'password') return showLogin(e.message); $('#listInfo').textContent = e.message; } }
+function mainText(m){ if (!m) return '–'; if (m.state === 'one') return `${fmt(m.main, 1)}°`; if (m.state === 'two') return `${fmt(m.main, 1)}° (두 방향 비슷)`; return m.state === 'few' ? '판단 보류 (수 부족)' : '판단 보류'; }
 function renderList(){
-  const q = $('#q').value.trim().toLowerCase(), fs = $('#fStatus').value, fp = $('#fPre').value;
+  const q = $('#q').value.trim().toLowerCase(), fs = $('#fStatus').value, fp = $('#fPre').value, ft = $('#fTxt').value;
   let rows = Object.values((INDEX && INDEX.photos) || {});
-  rows = rows.filter(r => (!fs || r.status === fs || (fs === 'registered' && r.status === 'reread_requested')) && (!fp || r.precursor === fp) &&
-    (!q || [r.run, r.position, r.file, r.uploader, r.photo_id, r.note].some(v => String(v || '').toLowerCase().includes(q))));
+  rows = rows.filter(r => (!fs || r.status === fs || (fs === 'registered' && r.status === 'reread_requested')) && (!fp || r.precursor === fp) && (!ft || (ft === 'yes') === !!r.instrument_txt) &&
+    (!q || [r.run, r.position, r.file, r.rel_path, r.uploader, r.photo_id, r.note].some(v => String(v || '').toLowerCase().includes(q))));
   rows.sort((a, b) => String(a.run).localeCompare(String(b.run)) || String(a.position).localeCompare(String(b.position)) || (a.magnification || 0) - (b.magnification || 0));
   const total = Object.keys((INDEX && INDEX.photos) || {}).length;
-  $('#listInfo').textContent = total ? `사진 ${total}장 중 ${rows.length}장 표시` : '아직 등록된 사진이 없습니다. 오른쪽 위 "사진 등록"으로 시작하세요.';
-  $('#tbl tbody').innerHTML = rows.map(r => { const a = r.auto, v = r.review;
-    return `<tr class="pick" data-id="${esc(r.photo_id)}"><td><b>${esc(r.run || '–')}</b></td><td>${esc(r.position || '–')}</td><td class="num">${r.magnification ? Number(r.magnification).toLocaleString() : '–'}</td><td>${esc(PRE_KO[r.precursor] || r.precursor)}</td>
-      <td>${statusTag(r.status)}</td><td class="num">${a ? a.whole.read : '–'}</td><td class="num">${a ? fmt(a.whole.S3) : '–'}</td><td class="num">${v ? fmt(v.S3) : '–'}</td>
-      <td>${v ? esc(v.who) + ' · ' + esc(when(v.at)) : '–'}</td><td class="muted small">${esc(r.file)}</td><td class="muted small">${esc(r.uploader || '')} ${esc(when(r.registered_at))}</td></tr>`; }).join('');
+  $('#listInfo').textContent = total ? `사진 ${total}장 중 ${rows.length}장 표시` : '아직 등록된 사진이 없습니다. 오른쪽 위 "폴더·사진 등록"으로 시작하세요.';
+  $('#tbl tbody').innerHTML = rows.map(r => { const a = r.auto, v = r.review, v2 = v && v.schema === 2;
+    return `<tr class="pick" data-id="${esc(r.photo_id)}"><td><b>${esc(r.run || '–')}</b></td><td>${esc(r.position || '–')}</td><td class="num">${r.magnification ? fmtN(r.magnification) : '<span class="muted">미입력</span>'}</td><td>${esc(PRE_KO[r.precursor] || r.precursor)}</td>
+      <td>${statusTag(r.status)}</td><td class="num">${a ? a.whole.read : '–'}</td><td class="num">${a ? fmt(a.whole.S3) : '–'}</td><td class="num">${v2 ? fmt(v.S3) : '–'}</td><td>${v2 ? esc(mainText(v.main)) : '–'}</td>
+      <td>${v2 ? `칸 ${v.cells_done}/${v.cells_total}` + (v.edited ? ` · 결정 ${v.edited}개 손봄` : '') : (v ? '상자(이전 형식)' : '–')}</td>
+      <td>${v ? esc(v.who) + ' · ' + esc(when(v.at)) + ` (${v.n}판)` : '–'}</td><td class="muted small" title="${esc(r.rel_path || r.file)}">${esc(r.rel_path || r.file)}${r.instrument_txt ? '' : ' <span class="tag wait">TXT 없음</span>'}</td><td class="muted small">${esc(r.uploader || '')} ${esc(when(r.registered_at))}</td></tr>`; }).join('');
 }
 $('#tbl tbody').addEventListener('click', e => { const tr = e.target.closest('tr.pick'); if (tr) openDetail(tr.dataset.id); });
 
-/* ----- detail ----- */
+/* ============================== detail ============================== */
 function currentAuto(m){ const A = m.auto || []; if (!A.length) return null; return A.find(x => x.k === m.auto_current) || A[A.length - 1]; }
+let EDIT = null;          // whole-photo review state of the open photo
+async function leaveOk(){ if (EDIT && EDIT.dirty){ return window.confirm ? confirm('저장하지 않은 수정이 있습니다. 이 PC에는 임시로 남아 있어 다시 열면 이어서 할 수 있습니다. 나갈까요?') : true; } return true; }
 async function openDetail(id){
+  if (!(await leaveOk())) return; EDIT = null;
   show('#detail'); const el = $('#detail'); el.innerHTML = '<div class="card">불러오는 중…</div>';
-  try { CUR = await api('get', {photo_id: id}); } catch (e){ if (e.code === 'password') return showLogin(e.message); el.innerHTML = `<div class="card err">${esc(e.message)}</div>`; return; }
+  try { CUR = await api('get', {photo_id: id}); CUR.viewK = null; } catch (e){ if (e.code === 'password') return showLogin(e.message); el.innerHTML = `<div class="card err">${esc(e.message)}</div>`; return; }
   renderDetail();
 }
-function renderDetail(){
-  const m = CUR.meta, a = currentAuto(m), el = $('#detail'); const A = m.auto || [];
-  const head = `<div class="row" style="margin-bottom:12px"><h2 style="margin:0">${esc(m.run || '런 미입력')} · ${esc(m.position || '위치 미입력')}${m.magnification ? ' · ' + Number(m.magnification).toLocaleString() + '배' : ''}</h2>${statusTag(m.status)}
-    <span class="muted small">${esc(m.file)} · 사진 ID ${esc(m.photo_id)}</span></div>`;
-  let left = '', right = '';
-  if (!a){
-    left = `<div class="card"><p>${m.status === 'failed' ? '분석에 실패했습니다.' : '아직 분석 전입니다.'}</p>
-      ${m.status === 'failed' ? `<p class="err small">${esc(m.error || '')}</p><button id="btnRetry">다시 시도 요청</button>` : '<p class="muted">계산 담당이 Colab의 "새 사진 분석"을 실행하면 결과가 여기에 붙습니다.</p>'}</div>`;
-  } else {
-    const hold = Object.entries(a.whole.set_aside || {}).map(([k, v]) => `${esc(HOLD_KO[k] || k)} ${v}`).join(' · ');
-    const variants = A.length > 1 ? `<h3>자동 판독본 (결정 쪽)</h3><div class="row">${A.map(x => `<button data-k="${x.k}" class="pickAuto ${x.k === a.k ? 'primary' : ''}">${esc(SIDE_KO[x.crystal_side_asked] || x.crystal_side_asked)}${x.crystal_side_asked === 'auto' && !x.background_applied ? ' (건너뜀)' : ''} · 판독 ${x.whole.read}</button>`).join('')}</div>` : '';
-    const sideNote = m.status === 'needs_side' ? `<div class="note" style="margin-bottom:12px"><b>결정 쪽을 골라 주세요.</b> 이 사진은 밝은 쪽과 어두운 쪽 윤곽이 비슷하게 섞여 있어(반대쪽 ${fmt((a.background_minority_share || 0) * 100, 0)} %) 프로그램이 정하지 않았습니다. 원본을 보고 결정이 어느 쪽인지 아래에서 고르세요. 밝고 어두운 결정이 실제로 섞여 있으면 "자동 (건너뜀)"을 그대로 두면 됩니다.</div>` : '';
-    const v = m.latest_review; const vOk = v && v.auto_k === a.k;
-    left = `<div class="card">${sideNote}<div class="row" style="margin-bottom:8px">${vOk ? `<button data-img="reviewed" class="imgTab">검토 후 그림 (${v.n}판)</button>` : ''}<button data-img="overlay" class="imgTab primary">${vOk ? '자동 판독 그림 (검토 전)' : '판독 그림'}</button><button data-img="original" class="imgTab">원본</button><button data-img="dist" class="imgTab">방향 분포</button></div>
-      <div id="imgBox" class="muted">그림을 불러오는 중…</div><p class="muted small" id="imgLegend"></p></div>`;
-    right = `<div class="card">
-      <h2>사진 전체 · 자동 결과 <span class="muted small">(사람 검토 전)</span></h2>
-      <div class="stat"><div><b>${a.whole.read}</b><span>방향을 낸 결정</span></div><div><b>${a.whole.outlines - a.whole.read}</b><span>보류</span></div><div><b>${fmt(a.whole.S3)}</b><span>S3 (n=${a.whole.n})</span></div><div><b>${fmt(a.whole.S6)}</b><span>S6</span></div></div>
-      <p class="muted small" style="margin:8px 0 0">보류 내용: ${hold || '없음'}</p>
-      <p class="muted small" style="margin:4px 0 0">배경 보류: ${a.background_applied ? '결정 = ' + (a.background_side === 'dark' ? '어두운 쪽' : '밝은 쪽') + ' (' + esc(SIDE_KO[a.crystal_side_asked] || '') + ')' : '적용 안 됨' + (a.background_needs_person ? ' (자동 판정 건너뜀)' : '')}</p>
-      ${variants}
-      <h3>검토 영역 x ${a.box.xywh[0]}~${a.box.xywh[0] + a.box.xywh[2]}, y ${a.box.xywh[1]}~${a.box.xywh[1] + a.box.xywh[3]} px</h3>
-      <div class="stat"><div><b>${a.box.read}</b><span>자동 · 방향 수</span></div><div><b>${fmt(a.box.S3)}</b><span>자동 S3 (n=${a.box.n})</span></div>
-        <div><b>${vOk ? v.n_dir : '–'}</b><span>검토 후 · 방향 수</span></div><div><b>${vOk ? fmt(v.S3) : '–'}</b><span>검토 후 S3</span></div><div><b>${vOk ? fmt(v.S6) : '–'}</b><span>검토 후 S6</span></div></div>
-      <p class="small" style="margin:8px 0 0">${vOk ? `최신 검토본: <b>${v.n}판</b> · ${esc(v.who)} · ${esc(when(v.at))} · ${esc(STATE_KO[v.state] || v.state || '')}${v.python_checked ? (v.python_same ? ' · <span class="tag ok">파이썬 재계산과 같음</span>' : ' · <span class="tag bad">파이썬 재계산과 다름</span>') : ' · <span class="tag wait">파이썬 재계산 전</span>'}` : (v ? '<span class="muted">검토본은 다른 자동 판독본(결정 쪽)에서 만든 것입니다. 아래 기록에서 볼 수 있습니다.</span>' : '<span class="muted">아직 검토본이 없습니다.</span>')}</p>
-      <div class="row" style="margin-top:12px"><button class="primary" id="btnReview">결과 보기·수정</button><button id="btnCsv">결정별 표 보기</button></div>
-      <h3>촬영·분석 정보</h3>
-      <dl class="kv small"><dt>전구체</dt><dd>${esc(PRE_KO[m.precursor] || m.precursor)}</dd><dt>화소 크기</dt><dd>${m.nm_per_px ? fmt(m.nm_per_px, 4) + ' nm/px' + (m.nm_status ? ' · ' + esc(m.nm_status) : '') : '–'}</dd>
-        <dt>프로그램</dt><dd>${esc(a.program)} · ${esc(a.model)} · 자동 판독본 ${a.k}/${A.length}</dd><dt>분석 시각</dt><dd>${esc(when(a.at))} · 검산 ${a.checks_passed}/${a.checks_total}${a.checks_failed && a.checks_failed.length ? ' <span class="tag bad">검산 실패 있음</span>' : ''}</dd>
-        <dt>등록</dt><dd>${esc(m.uploader || '')} · ${esc(when(m.registered_at))}${m.note ? ' · ' + esc(m.note) : ''}</dd></dl>
-      <h3>기록</h3>
-      <div class="scrollbox small" style="max-height:170px"><table><tbody>${(m.log || []).slice().reverse().map(g => `<tr><td>${esc(when(g.at))}</td><td>${esc(g.who || '')}</td><td>${esc(logKo(g))}</td><td>${g.what === 'review saved' ? `<button class="openRev" data-n="${g.n}">이 판 열기</button>` : ''}</td></tr>`).join('')}</tbody></table></div>
-    </div>`;
-  }
-  el.innerHTML = head + `<div class="grid2"><div>${left}<div id="csvBox"></div></div><div>${right}</div></div>`;
-  if (a){ const v = m.latest_review; loadImg(v && v.auto_k === a.k ? 'reviewed' : 'overlay'); }
+function headHtml(m){
+  const ins = m.instrument || {}; const magNote = m.magnification && (m.magnification < CONFIRM_MAGS[0] || m.magnification > CONFIRM_MAGS[CONFIRM_MAGS.length - 1]) ? ' <span class="tag warn" title="이번 확인 자료에 포함된 촬영 배율: ' + CONFIRM_MAGS.map(fmtN).join(', ') + '배">확인 자료 배율 범위 밖</span>' : '';
+  return `<div class="row" id="dHead" style="margin-bottom:10px"><h2 style="margin:0">${esc(m.run || '런 미입력')} · ${esc(m.position || '위치 미입력')} · ${m.magnification ? fmtN(m.magnification) + '배' : '배율 미입력'}</h2>${statusTag(m.status)}${magNote}
+    <span class="muted small">${esc(m.rel_path || m.file)} · 사진 ID ${esc(m.photo_id)} · 화소 ${m.nm_per_px ? fmt(m.nm_per_px, 4) + ' nm/px' + (m.nm_per_px_source ? ' (' + esc(m.nm_per_px_source) + ')' : '') : '미정 (px 단위로만 표시)'}${ins.file ? ' · TXT ' + esc(ins.file) + (ins.paired_by === 'person' ? ' (사람이 연결)' : '') : ' · TXT 없음'}</span>
+    <span style="flex:1"></span><button id="btnMeta">정보 고치기</button></div>`;
 }
-function logKo(g){ if (g.what === 'registered') return '사진 등록'; if (g.what === 'analyzed') return `자동 판독 완료 (판독본 ${g.k})`; if (g.what === 'failed') return '분석 실패: ' + (g.error || ''); if (g.what === 'review saved') return `검토본 ${g.n}판 저장`;
+function renderDetail(){
+  const m = CUR.meta, a = currentAutoView(m), el = $('#detail'); const A = m.auto || [];
+  if (!a){
+    el.innerHTML = headHtml(m) + `<div class="card"><p>${m.status === 'failed' ? '분석에 실패했습니다.' : '아직 분석 전입니다.'}</p>
+      ${m.status === 'failed' ? `<p class="err small">${esc(m.error || '')}</p><button id="btnRetry">다시 시도 요청</button>` : '<p class="muted">계산 담당이 Colab의 "새 사진 분석"을 실행하면 결과가 여기에 붙습니다.</p>'}</div>` + logHtml(m);
+    return;
+  }
+  if (!a.objects){ renderLegacy(); return; }
+  const variants = A.length > 1 ? `<div class="row small" style="margin:6px 0"><span class="muted">자동 판독본 (결정 쪽):</span>${A.filter(x => x.objects).map(x => `<button data-k="${x.k}" class="pickAuto ${x.k === a.k ? 'on' : ''}">${esc(SIDE_KO[x.crystal_side_asked] || x.crystal_side_asked)}${x.crystal_side_asked === 'auto' && !x.background_applied ? ' (건너뜀)' : ''} · 판독 ${x.whole.read}</button>`).join('')}</div>` : '';
+  const sideNote = m.status === 'needs_side' ? `<div class="note small banner"><b>결정 쪽을 골라 주세요.</b> 밝은 쪽과 어두운 쪽 윤곽이 비슷하게 섞여 있어(반대쪽 ${fmt((a.background_minority_share || 0) * 100, 0)} %) 프로그램이 정하지 않았습니다. 원본을 보고 위의 판독본 중 결정 쪽을 고르세요.</div>` : '';
+  el.innerHTML = headHtml(m) + sideNote + variants + `
+    <div id="draftBanner"></div>
+    <div class="res3" id="res3"></div>
+    <div class="tb" id="viewBar">
+      <span class="small muted">보기</span><button id="vAuto">최초 자동</button><button id="vCur" class="on">수정 반영</button><span class="sep"></span>
+      <label><input type="checkbox" id="tOut" checked>윤곽</label><label><input type="checkbox" id="tNum">번호</label><label><input type="checkbox" id="tArr" checked>방향</label>
+      <label><input type="checkbox" id="tExc">바탕·제외 윤곽</label><label><input type="checkbox" id="tGrid" checked>칸</label><span class="sep"></span>
+      <button id="zFit">전체</button><button id="zIn">＋</button><button id="zOut">－</button><span class="sep"></span>
+      <button id="tAdd">누락 추가</button><button id="tUndo" disabled>↶ 되돌리기</button>
+      <span style="flex:1"></span><span class="small" id="saveMsg"></span><button class="primary" id="btnSave" disabled>저장 (새 판)</button>
+    </div>
+    <div class="wgrid">
+      <div>
+        <div id="pv"><canvas id="pvCv"></canvas><div id="pvHud"></div><div id="pvTool" hidden></div></div>
+        <div class="small muted legend" style="margin-top:6px"><i style="background:#22c55e"></i>자동 · 방향 있음<i style="background:#facc15"></i>자동 · 방향 없음(보류·덩어리)<i style="background:#38bdf8"></i>사람이 고침<i style="background:#f472b6"></i>사람이 추가·분리·병합<i style="background:#94a3b8"></i>바탕·제외<i style="background:#fff"></i>흰 화살표 = 방향, 노란 화살표 = 덩어리 안 방향. 휠 = 확대, 끌기 = 이동, 클릭 = 결정 선택.</div>
+        <div class="card" style="margin-top:10px"><div class="row"><h2 style="margin:0">결정 목록</h2>
+          <input id="tq" type="search" placeholder="번호 찾기 (예: 37)" style="width:150px"><select id="tf"><option value="">전체</option><option value="dir">방향 있음</option><option value="nodir">방향 없음(보류·덩어리)</option><option value="edited">사람이 손댐</option><option value="unreviewed">미검토</option><option value="excluded">바탕·제외</option></select>
+          <span class="small muted" id="tInfo"></span><span style="flex:1"></span><button id="tCsv">표 CSV 저장</button></div>
+          <div class="tablewrap" style="max-height:360px; margin-top:8px"><table id="otbl" class="small"><thead><tr><th class="num">번호</th><th>유형</th><th>자동 상태</th><th class="num">방향 (자동 → 현재)</th><th>주방향 분류</th><th class="num">차이</th><th class="num">한 변 (nm)</th><th>칸</th><th>검토</th></tr></thead><tbody></tbody></table></div></div>
+      </div>
+      <div id="side">
+        <div class="card" id="cellCard"></div>
+        <div class="card" id="selCard"><p class="muted small">사진에서 결정을 누르거나 목록에서 번호를 고르면 여기에 확대 원본과 판독 내용이 나옵니다.</p></div>
+        <div class="card" id="distCard"></div>
+      </div>
+    </div>` + logHtml(m);
+  const n = CUR.openN; CUR.openN = null; loadEdit(a, n).catch(e => { toast(e.message, 7000); });
+}
+function logKo(g){ if (g.what === 'registered') return '사진 등록'; if (g.what === 'analyzed') return `자동 판독 완료 (판독본 ${g.k})`; if (g.what === 'failed') return '분석 실패: ' + (g.error || ''); if (g.what === 'review saved') return `검토본 ${g.n}판 저장` + (g.schema === 2 ? ` (사진 전체${g.base_n ? ', ' + g.base_n + '판에서 이어서' : ''})` : ' (상자 · 이전 형식)');
+  if (g.what === 'details changed') return '정보 고침: ' + Object.entries(g.changes || {}).map(([k, v]) => `${k} ${v[0] == null ? '–' : v[0]} → ${v[1] == null ? '–' : v[1]}`).join(', ');
   if (/^automatic reading/.test(g.what)) return g.what.replace(/automatic reading (\d+) chosen/, '자동 판독본 $1 선택'); if (/^crystal side/.test(g.what)) return '결정 쪽 다시 판독 요청'; if (g.what === 'retry requested') return '다시 시도 요청'; return g.what; }
+function logHtml(m){
+  return `<div class="card" style="margin-top:12px"><h2>기록</h2><div class="scrollbox small" style="max-height:220px"><table><tbody>${(m.log || []).slice().reverse().map(g => `<tr><td>${esc(when(g.at))}</td><td>${esc(g.who || '')}</td><td style="white-space:normal">${esc(logKo(g))}</td><td>${g.what === 'review saved' ? (g.schema === 2 ? `<button class="openV2" data-n="${g.n}">이 판 열기</button>` : `<button class="openRev" data-n="${g.n}">이 판 열기 (이전 형식)</button>`) : ''}</td></tr>`).join('')}</tbody></table></div>
+    <p class="small muted" style="margin:6px 0 0">검토본은 저장할 때마다 새 판으로 쌓이고 지워지지 않습니다. "이 판 열기"는 그 판을 화면에 불러오고, 고쳐서 저장하면 그 판에서 이어진 새 판이 됩니다.</p></div>`;
+}
+
+/* ============================== whole-photo review: loading ============================== */
 const IMG_CACHE = {};
+async function loadEdit(a, versionN){
+  const m = CUR.meta; const pid = m.photo_id;
+  const draftKey = `ws2sem.draft.${pid}.${a.k}`;
+  const [jt, imgUrl] = await Promise.all([fileText(pid, `auto/${a.k}/objects.json`), IMG_CACHE[pid + '|' + (a.view || '')] || fileUrl(pid, a.view || `original/${m.file}`)]);
+  IMG_CACHE[pid + '|' + (a.view || '')] = imgUrl;
+  const J = JSON.parse(jt), A = {}; J.objects.forEach(o => { A[String(o.id)] = o; }); const fp = await sha16text(jt);
+  if (CUR.meta.photo_id !== pid) return;
+  const S0 = {}; J.objects.forEach(o => { S0[String(o.id)] = initialState(o); });
+  // starting point: the version asked for, else the latest whole-photo version on this automatic reading, else the automatic start
+  let base = null; const lr = m.latest_review; const wantN = versionN != null ? versionN : (lr && lr.schema === 2 && lr.auto_k === a.k ? lr.n : null);
+  if (wantN != null){ const f = (CUR.reviews || []).find(x => Number(x.slice(0, 4)) === wantN); if (f){ base = JSON.parse(await fileText(pid, 'reviews/' + f)); if (base.auto_k !== a.k) base = null; } }
+  const S = clone(S0); if (base) Object.entries(base.objs || {}).forEach(([k, v]) => { S[k] = v; });
+  const img = new Image(); await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error('사진을 열지 못했습니다.')); img.src = imgUrl; });
+  EDIT = {pid, a, J, A, fp, S0, S, img, base_n: base ? base.n : 0, baseRec: base, cellsDone: clone(base ? base.cells_done || {} : {}), events: [], undo: [], dirty: false, sel: null, mode: 'cur', tool: null, tpts: [],
+          view: {s: 1, ox: 0, oy: 0}, versions: null, draftKey, nextNum: Math.max(...Object.values(S).map(s => Number(s.num) || 0), ...J.objects.map(o => o.id)) + 1, curCell: null};
+  const dr = (() => { try { return JSON.parse(LS.get(draftKey) || 'null'); } catch (e){ return null; } })();
+  if (dr && dr.events && dr.events.length && dr.base_n === EDIT.base_n){
+    $('#draftBanner').innerHTML = `<div class="note small banner">이 PC에 저장하지 않은 수정 ${dr.events.length}건이 있습니다 (${esc(when(dr.at))}, ${dr.base_n ? dr.base_n + '판' : '자동 판독본'}에서 시작). <button id="drUse">이어서 하기</button> <button id="drDrop">버리기</button></div>`;
+    $('#drUse').onclick = () => { EDIT.S = clone(EDIT.S0); Object.entries(dr.objs || {}).forEach(([k, v]) => { EDIT.S[k] = v; });
+      EDIT.cellsDone = dr.cells_done || {}; EDIT.events = dr.events; EDIT.dirty = true; EDIT.nextNum = Math.max(EDIT.nextNum, ...Object.values(EDIT.S).map(s => Number(s.num) + 1 || 0)); $('#draftBanner').innerHTML = ''; refreshAll(); };
+    $('#drDrop').onclick = () => { LS.del(draftKey); $('#draftBanner').innerHTML = ''; };
+  }
+  wireViewer(); fitView(); refreshAll();
+  if (base) $('#saveMsg').innerHTML = `<span class="muted">${base.n}판 (${esc(base.who)} · ${esc(when(base.saved_at))})을 불러왔습니다</span>`;
+}
+function diffObjs(){       // what a saved version holds: every object that differs from the automatic start, or was confirmed, or is new
+  const out = {}; Object.values(EDIT.S).forEach(s => { const s0 = EDIT.S0[s.id]; if (!s0 || JSON.stringify(s) !== JSON.stringify(s0)) out[s.id] = s; }); return out; }
+function saveDraft(){ try { LS.set(EDIT.draftKey, JSON.stringify({base_n: EDIT.base_n, objs: diffObjs(), cells_done: EDIT.cellsDone, events: EDIT.events, at: new Date().toISOString()})); } catch (e){} }
+
+/* ============================== results strip, cells, distribution ============================== */
+let RES = null;
+function refreshAll(){ if (!EDIT) return; RES = allResults(EDIT.J, EDIT.A, EDIT.S0, EDIT.S, EDIT.cellsDone); renderRes(); renderCells(); renderDist(); renderTable(); renderSel(); draw();
+  $('#btnSave').disabled = !EDIT.dirty; $('#tUndo').disabled = !EDIT.undo.length; }
+function resCard(R, title, scopeTxt, cur){
+  const M = R.main, sz = R.size;
+  return `<div class="res ${cur ? 'cur' : ''}"><h4>${title}</h4><div class="row" style="gap:14px"><div><div class="big">${R.n}</div><div class="l">방향 수${R.marks ? ` (덩어리 안 ${R.marks})` : ''}</div></div><div><div class="big">${fmt(R.S3)}</div><div class="l">S3</div></div><div><div class="big">${fmt(R.S6)}</div><div class="l">S6</div></div>
+    <div><div class="big" style="font-size:15px">${M.state === 'one' || M.state === 'two' ? fmt(M.main, 1) + '°' : '–'}</div><div class="l">${esc(MAIN_KO[M.state] || '')}</div></div>
+    <div><div class="big" style="font-size:15px">${sz.n ? fmt(sz.side_median, 0) + ' ' + sz.unit : '–'}</div><div class="l">한 변 중앙값 (n=${sz.n})</div></div></div>
+    ${R.dens && R.dens.coverage != null ? `<div class="l" style="margin-top:3px"><span class="tag wait">참고값</span> 개별 결정 밀도 ${R.dens.per_um2 != null ? fmt(R.dens.per_um2, 3) + ' 개/µm²' : '– (화소 크기 미정)'} (${R.dens.n_single}개${R.dens.area_um2 != null ? ' / ' + fmt(R.dens.area_um2, 1) + ' µm²' : ''}) · 피복률 ${fmt(R.dens.coverage * 100, 1)} %</div>` : ''}
+    <div class="l" style="margin-top:4px">${scopeTxt}</div></div>`;
+}
+function renderRes(){
+  const R = RES, c = R.cells, cc = R.confirm_counts; const doneN = c.done.length;
+  $('#res3').innerHTML = resCard(R.auto, '사진 전체 · 최초 자동', `계산 범위: 사진 전체 ${EDIT.J.picture_size.join('×')} px, SAM 최초 판독 그대로`, EDIT.mode === 'auto') +
+    resCard(R.current, '사진 전체 · 수정 반영', `계산 범위: 사진 전체. 사람이 고친 결정 + 아직 안 본 자동 결정. 검토: 사람 수정 ${cc.edited || 0} · 확인 후 유지 ${cc.kept || 0} · 판독 어려움 ${cc.hard || 0} · 미검토 ${cc.unreviewed || 0} · 제외 ${cc.excluded || 0}`, EDIT.mode === 'cur') +
+    resCard(R.done, '검토 완료 영역', doneN ? `완료한 칸 ${doneN}/${c.total}: ${c.done.join(', ')}` : `완료한 칸 0/${c.total} — 칸을 다 보았으면 오른쪽 "이 칸 완료"를 누르세요`, false);
+}
+function renderCells(){
+  const C = EDIT.J.cells, keys = []; for (let r = 0; r < C.ny; r++) for (let c = 0; c < C.nx; c++) keys.push(`r${r}c${c}`);
+  const cur = EDIT.curCell; const done = EDIT.cellsDone;
+  $('#cellCard').innerHTML = `<div class="row"><h2 style="margin:0">칸 검토</h2><span class="small muted">${C.nx}×${C.ny}칸 · 한 칸 ${Math.round(C.w)}×${Math.round(C.h)} px (512 px 이하)</span></div>
+    <div class="chips" style="margin-top:6px">${keys.map(k => `<button class="cellBtn ${k === cur ? 'on' : ''}" data-k="${k}" title="${done[k] ? '완료: ' + esc(done[k].who) + ' ' + esc(when(done[k].at)) : '미완료'}">${done[k] ? '✓ ' : ''}${k}</button>`).join('')}</div>
+    <div class="row" style="margin-top:6px"><button id="cPrev">‹ 이전 칸</button><button id="cNext">다음 칸 ›</button>${cur ? `<button id="cDone" class="${done[cur] ? '' : 'primary'}" ${EDIT.mode === 'auto' ? 'disabled' : ''}>${done[cur] ? '이 칸 완료 취소' : '이 칸 완료'}</button>` : ''}</div>
+    <p class="small muted" style="margin:6px 0 0">칸을 완료하면 그 칸 안(윤곽 중심 기준)에서 손대지 않은 자동 결정은 "확인 후 유지"가 됩니다. 칸을 완료하기 전이라도 저장한 수정은 사진 전체 결과에 바로 반영됩니다.</p>`;
+}
+function histSvg(sides, unit){
+  if (!sides || !sides.length) return '<p class="small muted">대상 없음</p>';
+  const mx = Math.max(...sides), nb = 12, w = mx / nb || 1, cnt = new Array(nb).fill(0); sides.forEach(s => { cnt[Math.min(nb - 1, Math.floor(s / w))]++; });
+  const H = 90, W = 330, bw = W / nb, cm = Math.max(...cnt);
+  return `<svg viewBox="0 0 ${W} ${H + 18}" width="100%" role="img" aria-label="한 변 길이 분포">${cnt.map((c, i) => `<rect x="${i * bw + 1}" y="${H - c / cm * H}" width="${bw - 2}" height="${c / cm * H}" rx="2" fill="#1f5fbf"><title>${fmt(i * w, 0)}–${fmt((i + 1) * w, 0)} ${unit}: ${c}개</title></rect>`).join('')}
+    <text x="0" y="${H + 14}" font-size="10" fill="#5b6577">0</text><text x="${W}" y="${H + 14}" font-size="10" fill="#5b6577" text-anchor="end">${fmt(mx, 0)} ${unit}</text></svg>`;
+}
+function dirHistSvg(th, M){
+  const nb = 24, cnt = new Array(nb).fill(0); th.forEach(t => { cnt[Math.min(nb - 1, Math.floor(mod(t, 120) / 5))]++; }); const cm = Math.max(1, ...cnt), H = 90, W = 330, bw = W / nb;
+  const mk = M && (M.state === 'one' || M.state === 'two') ? [[M.main, '#b3261e'], [mod(M.main + 60, 120), '#a15c00']] : [];
+  return `<svg viewBox="0 0 ${W} ${H + 18}" width="100%" role="img" aria-label="방향 분포">${cnt.map((c, i) => `<rect x="${i * bw + 1}" y="${H - c / cm * H}" width="${bw - 2}" height="${c / cm * H}" rx="2" fill="#16a34a"><title>${i * 5}–${i * 5 + 5}°: ${c}개</title></rect>`).join('')}
+    ${mk.map(([x, c]) => `<line x1="${x / 120 * W}" x2="${x / 120 * W}" y1="0" y2="${H}" stroke="${c}" stroke-dasharray="3 3"/>`).join('')}
+    ${[0, 30, 60, 90, 120].map(x => `<text x="${x / 120 * W}" y="${H + 14}" font-size="10" fill="#5b6577" text-anchor="${x === 0 ? 'start' : x === 120 ? 'end' : 'middle'}">${x}°</text>`).join('')}</svg>`;
+}
+function renderDist(){
+  const R = EDIT.mode === 'auto' ? RES.auto : RES.current, M = R.main;
+  $('#distCard').innerHTML = `<h2>${EDIT.mode === 'auto' ? '최초 자동' : '수정 반영'} · 사진 전체</h2>
+    <h3 style="margin-top:0">방향 분포 (5° 칸, 0–120°)</h3>${dirHistSvg(R._th, M)}
+    <p class="small" style="margin:2px 0 0">${esc(MAIN_KO[M.state])}${M.state === 'one' || M.state === 'two' ? ` · 주방향 ${fmt(M.main, 1)}° (${M.n_main}개) · 약 60° 쪽 ${M.n_second}개 · 기타 ${M.n_other}개` : (M.state === 'unclear' ? ` · 두 방향군 안 ${M.n_main + M.n_second}/${R.n}개 (우연 확률 ${fmt(M.p_value, 3)})` : ` · 방향 ${R.n}개 (최소 ${RULE.n_min}개)`)}</p>
+    <p class="tiny muted" style="margin:2px 0 0">주방향 규칙(초안): 허용각 ±${RULE.tol_deg}°, 최소 ${RULE.n_min}개, 두 방향군 안 비율의 우연 확률 ≤ ${RULE.p_max}, 작은 쪽/큰 쪽 ≥ ${RULE.similar_ratio}이면 "두 방향이 비슷". 빨간 점선 = 주방향, 주황 점선 = 주방향 + 60°.</p>
+    <h3>크기 (떨어진 결정 중 사진 끝에 안 잘린 것)</h3>${histSvg(R.size.sides, R.size.unit)}
+    <p class="small" style="margin:2px 0 0">${R.size.n ? `대상 ${R.size.n}개 · 등가 정삼각형 한 변 평균 ${fmt(R.size.side_mean, 0)} ${R.size.unit}, 중앙값 ${fmt(R.size.side_median, 0)} ${R.size.unit}${R.size.side_sd != null ? ', 표준편차 ' + fmt(R.size.side_sd, 0) : ''} · 면적 중앙값 ${fmtN(Math.round(R.size.area_median))} ${R.size.unit}²` : '대상 없음'}</p>
+    <p class="tiny muted" style="margin:2px 0 0">${EDIT.mode === 'auto' ? '최초 자동에서 "떨어진"은 프로그램 표시입니다(프로그램은 떨어진·붙은을 구분하지 않음). 사람이 붙은 결정으로 바꾸면 크기 대상에서 빠집니다.' : '유형은 사람이 고친 값을 씁니다.'}</p>
+    <h3>밀도·피복률 (참고값)</h3><p class="tiny muted" style="margin:0">개별 결정 = 제외되지 않은 떨어진·붙은·꼭짓점 둥근 윤곽(덩어리 제외), 분모 = 정보 띠를 뺀 사진 넓이(검토 완료 영역은 완료한 칸 넓이). 피복률 = 제외되지 않은 모든 윤곽의 합집합(겹침은 한 번). 11/23 확인 자료 16칸에서 사람 라벨과 비교한 결과: 밀도 차이 중앙값 −3 %(확인용 4곳)·0 %(DMS), 칸별 범위 −20 ~ +146 %; 피복률 차이 중앙값 −4.1·−1.0 %p, 범위 −31.5 ~ +3.2 %p. 덩어리는 한 개로 세고, 50,000배·밝은 결정 사진에서 차이가 컸습니다.</p>`;
+}
+
+/* ============================== whole-photo review: viewer ============================== */
+const OP_KO = {keep: '확인 (그대로 유지)', vertex: '꼭짓점(방향) 지정', nodir: '방향 판독 어려움 표시', dir_ok: '방향 판독 어려움 해제', tag: '유형 변경', u_edge: '경계 확실성 변경', u_dir: '방향 확실성 변경',
+  redraw: '윤곽 다시 그림', exclude: '제외', restore: '복구', split: '분리', merge: '병합', add: '누락 추가', mark: '덩어리 안 방향 표시', unmark: '덩어리 안 방향 표시 지움', 'cell-done': '칸 완료', 'cell-undone': '칸 완료 취소'};
+const TOOL_KO = {vertex: '꼭짓점(방향): 선택한 결정의 꼭짓점 하나를 누르세요.', redraw: '윤곽 다시 그리기: 실제 경계를 따라 점을 찍고, 첫 점을 다시 누르거나 Enter·"닫기"로 마칩니다.',
+  add: '누락 추가: 빠진 결정의 경계를 따라 점을 찍고, 첫 점을 다시 누르거나 Enter·"닫기"로 마칩니다.', split: '분리: 선택한 윤곽을 가로지르는 선의 두 점을 누르세요 (선 양쪽이 두 결정이 됩니다).',
+  merge: '병합: 선택한 윤곽과 합칠 다른 윤곽을 누르세요.', mark: '덩어리 안 방향: ① 꼭짓점 → ② 한쪽 변 위의 점 → ③ 다른 쪽 변 위의 점을 누르세요.'};
+const viewS = () => EDIT.mode === 'auto' ? EDIT.S0 : EDIT.S;
+function isChanged(s){ const s0 = EDIT.S0[s.id]; if (!s0) return true; const a = Object.assign({}, s, {confirm: 0, who: 0, at: 0}), b = Object.assign({}, s0, {confirm: 0, who: 0, at: 0}); return JSON.stringify(a) !== JSON.stringify(b); }
+function colorOf(s){ if (s.excluded) return '#94a3b8'; if (s.origin !== 'auto') return '#f472b6'; if (EDIT.mode === 'cur' && isChanged(s)) return '#38bdf8'; return thetaOf(s, EDIT.A) != null ? '#22c55e' : '#facc15'; }
+function sizeCanvas(){ const cv = $('#pvCv'); if (!cv) return; const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1; cv.width = Math.max(1, Math.round(r.width * d)); cv.height = Math.max(1, Math.round(r.height * d)); }
+function fitView(){ const cv = $('#pvCv'); if (!cv || !EDIT) return; sizeCanvas(); const r = cv.getBoundingClientRect(), [W, H] = EDIT.J.picture_size; const s = Math.min(r.width / W, r.height / H);
+  EDIT.view = {s, ox: (r.width - W * s) / 2, oy: (r.height - H * s) / 2, fit: s}; draw(); }
+function zoomAt(f, sx, sy){ const V = EDIT.view; const ns = Math.max(V.fit * 0.8, Math.min(V.fit * 40, V.s * f)); V.ox = sx - (sx - V.ox) * ns / V.s; V.oy = sy - (sy - V.oy) * ns / V.s; V.s = ns; draw(); }
+function showRect(x, y, w, h, pad){ const cv = $('#pvCv'), r = cv.getBoundingClientRect(), V = EDIT.view; pad = pad == null ? 30 : pad;
+  const s = Math.min((r.width - 2 * pad) / w, (r.height - 2 * pad) / h); V.s = Math.max(V.fit, Math.min(V.fit * 40, s)); V.ox = r.width / 2 - (x + w / 2) * V.s; V.oy = r.height / 2 - (y + h / 2) * V.s; draw(); }
+function centerOn(s){ const b = bbox(s.pts), V = EDIT.view, cv = $('#pvCv'), r = cv.getBoundingClientRect(); const want = Math.max(V.s, V.fit * 2.2);
+  V.s = Math.min(want, V.fit * 40); const cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2; V.ox = r.width / 2 - cx * V.s; V.oy = r.height / 2 - cy * V.s; draw(); }
+const scr2img = (sx, sy) => [(sx - EDIT.view.ox) / EDIT.view.s, (sy - EDIT.view.oy) / EDIT.view.s];
+function arrow(ctx, x0, y0, x1, y1, col, lw){ const a = Math.atan2(y1 - y0, x1 - x0), h = lw * 4.2; ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = lw; ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - h * Math.cos(a - 0.45), y1 - h * Math.sin(a - 0.45)); ctx.lineTo(x1 - h * Math.cos(a + 0.45), y1 - h * Math.sin(a + 0.45)); ctx.closePath(); ctx.fill(); }
+function polyPath(ctx, pts){ ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); }
+function drawObjects(ctx, S, k, opts){        // k = screen px per image px (for line widths)
+  const A = EDIT.A, lw = 1.6 / k; const showOut = opts.out, showArr = opts.arr, showNum = opts.num;
+  Object.values(S).forEach(s => {
+    if (s.excluded && !opts.exc && s.id !== EDIT.sel) return; if (opts.only && s.id !== opts.only) return;
+    const col = colorOf(s);
+    if (showOut){ ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.setLineDash(s.excluded ? [2 / k, 3 / k] : (thetaOf(s, A) == null && s.origin === 'auto' && !isChanged(s)) || s.tag === 'clump' || s.nodir ? [5 / k, 4 / k] : []); polyPath(ctx, s.pts); ctx.stroke(); }
+    if (showArr && !s.excluded){ const t = thetaOf(s, A);
+      if (t != null){ const [cx, cy] = centreOf(s, A); const L = Math.max(7 / k, 0.4 * Math.sqrt(areaOf(s, A))); const a = t * Math.PI / 180; arrow(ctx, cx, cy, cx + L * Math.cos(a), cy - L * Math.sin(a), '#ffffff', 1.4 / k); }
+      (s.marks || []).forEach(m => { const t2 = markDir(m) * Math.PI / 180, L = 12 / k; arrow(ctx, m.v[0] - L * Math.cos(t2), m.v[1] + L * Math.sin(t2), m.v[0], m.v[1], '#fde047', 1.4 / k); }); }
+    if (showNum){ const [cx, cy] = centreOf(s, A); ctx.font = `${11 / k}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = 3 / k; ctx.strokeStyle = '#000c'; ctx.setLineDash([]); ctx.strokeText(String(s.num), cx, cy); ctx.fillStyle = '#fff'; ctx.fillText(String(s.num), cx, cy); }
+  });
+}
+function draw(){
+  const cv = $('#pvCv'); if (!cv || !EDIT) return; const ctx = cv.getContext('2d'), d = window.devicePixelRatio || 1, V = EDIT.view;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#0e1013'; ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.setTransform(d * V.s, 0, 0, d * V.s, d * V.ox, d * V.oy); ctx.imageSmoothingEnabled = V.s < 2; ctx.drawImage(EDIT.img, 0, 0, EDIT.J.picture_size[0], EDIT.J.picture_size[1]);
+  const C = EDIT.J.cells, k = V.s;
+  if ($('#tGrid') && $('#tGrid').checked){
+    for (let r = 0; r < C.ny; r++) for (let c = 0; c < C.nx; c++){ const key = `r${r}c${c}`; if (EDIT.cellsDone[key]){ ctx.fillStyle = 'rgba(34,197,94,.06)'; ctx.fillRect(c * C.w, r * C.h, C.w, C.h); } }
+    ctx.strokeStyle = 'rgba(250,204,21,.55)'; ctx.lineWidth = 1 / k; ctx.setLineDash([6 / k, 5 / k]);
+    for (let c = 1; c < C.nx; c++){ ctx.beginPath(); ctx.moveTo(c * C.w, 0); ctx.lineTo(c * C.w, C.ny * C.h); ctx.stroke(); }
+    for (let r = 1; r < C.ny; r++){ ctx.beginPath(); ctx.moveTo(0, r * C.h); ctx.lineTo(C.nx * C.w, r * C.h); ctx.stroke(); }
+    if (EDIT.curCell){ const R = cellRect(EDIT.curCell, C); ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.2 / k; ctx.setLineDash([]); ctx.strokeRect(R[0], R[1], R[2], R[3]); }
+    ctx.font = `${12 / k}px system-ui, sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    for (let r = 0; r < C.ny; r++) for (let c = 0; c < C.nx; c++){ const key = `r${r}c${c}`; ctx.fillStyle = EDIT.cellsDone[key] ? '#4ade80' : 'rgba(250,204,21,.85)'; ctx.fillText(key + (EDIT.cellsDone[key] ? ' ✓' : ''), c * C.w + 4 / k, r * C.h + 4 / k); }
+  }
+  drawObjects(ctx, viewS(), k, {out: $('#tOut').checked, arr: $('#tArr').checked, num: $('#tNum').checked, exc: $('#tExc').checked});
+  const sel = EDIT.sel && viewS()[EDIT.sel];
+  if (sel){ ctx.setLineDash([]); ctx.lineWidth = 4.5 / k; ctx.strokeStyle = '#000a'; polyPath(ctx, sel.pts); ctx.stroke(); ctx.lineWidth = 2.4 / k; ctx.strokeStyle = '#fff'; polyPath(ctx, sel.pts); ctx.stroke(); }
+  if (EDIT.tool && EDIT.tpts.length){ ctx.strokeStyle = '#f472b6'; ctx.fillStyle = '#f472b6'; ctx.lineWidth = 2 / k; ctx.setLineDash([]); ctx.beginPath(); EDIT.tpts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
+    EDIT.tpts.forEach(p => { ctx.beginPath(); ctx.arc(p[0], p[1], 3 / k, 0, 7); ctx.fill(); }); }
+  const R = EDIT.mode === 'auto' ? RES && RES.auto : RES && RES.current;
+  $('#pvHud').textContent = `${EDIT.mode === 'auto' ? '최초 자동 보기' : '수정 반영 보기'} · 확대 ${fmt(V.s / V.fit, 1)}배` + (R ? ` · 방향 ${R.n}개 · S3 ${fmt(R.S3)}` : '');
+}
+function pick(x, y){
+  const S = viewS(), exc = $('#tExc').checked; let best = null, ba = 1e18;
+  Object.values(S).forEach(s => { if (s.excluded && !exc) return; const b = bbox(s.pts); if (x < b[0] || x > b[2] || y < b[1] || y > b[3]) return; if (pip(x, y, s.pts)){ const a = areaOf(s, EDIT.A); if (a < ba){ ba = a; best = s.id; } } });
+  if (best) return best; let bd = 12 / EDIT.view.s;
+  Object.values(S).forEach(s => { if (s.excluded && !exc) return; const [cx, cy] = centreOf(s, EDIT.A); const d = Math.hypot(cx - x, cy - y); if (d < bd){ bd = d; best = s.id; } });
+  return best;
+}
+function setTool(t){ EDIT.tool = t; EDIT.tpts = []; const el = $('#pvTool');
+  if (!t){ el.hidden = true; draw(); return; }
+  el.hidden = false; el.innerHTML = `${esc(TOOL_KO[t])}${['redraw', 'add'].includes(t) ? '<button id="toolClose">닫기 ✓</button>' : ''}<button id="toolCancel">취소 (Esc)</button>`;
+  $('#toolCancel').onclick = () => setTool(null); if ($('#toolClose')) $('#toolClose').onclick = finishPoly; draw(); }
+function wireViewer(){
+  const cv = $('#pvCv'); let down = null, moved = false;
+  new ResizeObserver(() => { if (!EDIT) return; const V = EDIT.view, old = V.fit; sizeCanvas(); const r = cv.getBoundingClientRect(), [W, H] = EDIT.J.picture_size; V.fit = Math.min(r.width / W, r.height / H); if (!old) fitView(); else draw(); }).observe(cv);
+  cv.addEventListener('wheel', e => { e.preventDefault(); const r = cv.getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.18 : 1 / 1.18, e.clientX - r.left, e.clientY - r.top); }, {passive: false});
+  cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); down = {x: e.clientX, y: e.clientY, ox: EDIT.view.ox, oy: EDIT.view.oy}; moved = false; });
+  cv.addEventListener('pointermove', e => { if (!down) return; const dx = e.clientX - down.x, dy = e.clientY - down.y; if (!moved && Math.hypot(dx, dy) > 5) moved = true;
+    if (moved){ EDIT.view.ox = down.ox + dx; EDIT.view.oy = down.oy + dy; draw(); } });
+  cv.addEventListener('pointerup', e => { if (!down) return; const was = moved; down = null; if (was) return; const r = cv.getBoundingClientRect(); const [x, y] = scr2img(e.clientX - r.left, e.clientY - r.top); onClick(x, y, e); });
+  cv.addEventListener('dblclick', e => { if (EDIT && ['redraw', 'add'].includes(EDIT.tool)) finishPoly(); });
+}
+document.addEventListener('keydown', e => { if (!EDIT || $('#detail').hidden) return; if (e.target && ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+  if (e.key === 'Escape') setTool(null); if (e.key === 'Enter' && ['redraw', 'add'].includes(EDIT.tool)) finishPoly(); if ((e.ctrlKey || e.metaKey) && e.key === 'z'){ e.preventDefault(); undo(); } });
+function onClick(x, y, e){
+  const t = EDIT.tool;
+  if (!t){ EDIT.sel = pick(x, y); renderSel(); markRow(); draw(); return; }
+  const s = EDIT.sel && EDIT.S[EDIT.sel];
+  if (t === 'vertex'){ setTool(null); if (!s) return; mutate('vertex', [s.id], () => { Object.assign(s, {v: [r2(x), r2(y)], v_src: 'person', nodir: false, confirm: 'edited'}); }); return; }
+  if (t === 'redraw' || t === 'add'){ const P = EDIT.tpts; if (P.length >= 3){ const f = P[0]; if (Math.hypot((f[0] - x) * EDIT.view.s, (f[1] - y) * EDIT.view.s) < 9) return finishPoly(); } P.push([r2(x), r2(y)]); draw(); return; }
+  if (t === 'split'){ EDIT.tpts.push([x, y]); if (EDIT.tpts.length < 2){ draw(); return; } const [p, q] = EDIT.tpts; setTool(null); doSplit(s, p, q); return; }
+  if (t === 'merge'){ const o = pick(x, y); setTool(null); if (!o || o === s.id){ toast('다른 윤곽을 눌러야 합니다.'); return; } doMerge(s, EDIT.S[o]); return; }
+  if (t === 'mark'){ EDIT.tpts.push([r2(x), r2(y)]); if (EDIT.tpts.length < 3){ draw(); return; } const [v, a, b] = EDIT.tpts; setTool(null);
+    mutate('mark', [s.id], () => { s.marks = (s.marks || []).concat([{v, a, b}]); s.confirm = 'edited'; }); return; }
+}
+function finishPoly(){
+  const t = EDIT.tool, P = EDIT.tpts.slice(); setTool(null);
+  if (P.length < 3){ toast('점을 세 개 이상 찍어야 윤곽이 됩니다.'); return; }
+  if (polyAC(P)[0] < 20){ toast('윤곽이 너무 작습니다 (20 px² 미만).'); return; }
+  if (t === 'redraw'){ const s = EDIT.S[EDIT.sel]; mutate('redraw', [s.id], () => { s.pts = P; s.redrawn = true; s.confirm = 'edited'; }); }
+  else { let id; mutate('add', [], () => { const s = newState(P, 'person', [], 'iso'); EDIT.S[s.id] = s; id = s.id; return [s.id]; }); EDIT.sel = id; renderSel(); markRow(); draw(); toast(`#${id}을 추가했습니다. 유형을 확인하고 꼭짓점(방향)을 찍으세요.`, 5000); }
+}
+function newState(pts, origin, parents, tag){
+  const num = EDIT.nextNum++; return {id: String(num), num, uid: Math.random().toString(16).slice(2, 10), origin, parents, pts, redrawn: false, tag, v: null, v_src: null, nodir: false, marks: [], cut: false,
+    u_edge: false, u_dir: false, excluded: null, confirm: 'edited', who: WHO, at: new Date().toISOString()}; }
+function doSplit(s, p, q){
+  const L = clipHalf(s.pts, p, q, 1), R = clipHalf(s.pts, p, q, -1);
+  if (L.length < 3 || R.length < 3 || polyAC(L)[0] < 20 || polyAC(R)[0] < 20){ toast('선이 윤곽을 둘로 나누지 못했습니다. 윤곽을 완전히 가로지르게 두 점을 찍으세요.', 5000); return; }
+  let kids = [];
+  mutate('split', [s.id], () => { s.excluded = {reason: 'split', by: 'person'}; s.confirm = 'edited';
+    kids = [L, R].map(P => { const c = newState(P, 'split', [s.id], 'touch'); c.cut = !!s.cut; EDIT.S[c.id] = c; return c.id; }); return kids; });
+  EDIT.sel = kids[0]; renderSel(); markRow(); draw(); toast(`#${s.num}을 #${kids.join(', #')}로 나눴습니다. 각 결정의 꼭짓점(방향)을 찍으세요.`, 6000);
+}
+function doMerge(a, b){
+  const P = unionOutline([a.pts, b.pts]); if (P === 'apart'){ toast('두 윤곽이 서로 닿아 있지 않아 합칠 수 없습니다. 맞닿은 윤곽끼리만 합칩니다.', 5000); return; } if (!P || P.length < 3){ toast('두 윤곽을 합치지 못했습니다.'); return; }
+  let id; mutate('merge', [a.id, b.id], () => { [a, b].forEach(s => { s.excluded = {reason: 'merged', by: 'person'}; s.confirm = 'edited'; }); const c = newState(P, 'merge', [a.id, b.id], 'clump'); EDIT.S[c.id] = c; id = c.id; return [c.id]; });
+  EDIT.sel = id; renderSel(); markRow(); draw(); toast(`#${a.num}과 #${b.num}을 #${id} (덩어리)로 합쳤습니다.`, 5000);
+}
+function brief(s){ if (!s) return null; return {tag: s.tag, v: s.v ? [r2(s.v[0]), r2(s.v[1])] : null, v_src: s.v_src, nodir: !!s.nodir, excluded: s.excluded ? s.excluded.reason : null, confirm: s.confirm,
+  u_edge: !!s.u_edge, u_dir: !!s.u_dir, cut: !!s.cut, marks: (s.marks || []).length, pts_n: s.pts.length, area: Math.round(polyAC(s.pts)[0]), parents: s.parents || [], theta: thetaOf(s, EDIT.A)}; }
+function mutate(op, ids, fn){
+  const before = {}; ids.forEach(id => { before[id] = clone(EDIT.S[id]); }); const cellsBefore = clone(EDIT.cellsDone), evLen = EDIT.events.length, nextBefore = EDIT.nextNum;
+  const created = fn() || []; const at = new Date().toISOString(); const all = ids.concat(created);
+  all.forEach(id => { const s = EDIT.S[id]; if (s){ s.who = WHO; s.at = at; } });
+  EDIT.events.push({at, who: WHO, op, ids: all, before: Object.fromEntries(all.map(id => [id, brief(before[id] || null)])), after: Object.fromEntries(all.map(id => [id, brief(EDIT.S[id])]))});
+  EDIT.undo.push({before, created, cellsBefore, evLen, nextBefore}); EDIT.dirty = true; saveDraft(); refreshAll();
+}
+function cellEvent(op, key){ const cellsBefore = clone(EDIT.cellsDone), evLen = EDIT.events.length; const at = new Date().toISOString();
+  if (op === 'cell-done') EDIT.cellsDone[key] = {who: WHO, at}; else delete EDIT.cellsDone[key];
+  EDIT.events.push({at, who: WHO, op, ids: ['cell:' + key], before: {}, after: {}}); EDIT.undo.push({before: {}, created: [], cellsBefore, evLen, nextBefore: EDIT.nextNum}); EDIT.dirty = true; saveDraft(); refreshAll(); }
+function undo(){ const u = EDIT && EDIT.undo.pop(); if (!u) return; Object.entries(u.before).forEach(([id, s]) => { EDIT.S[id] = s; }); u.created.forEach(id => { delete EDIT.S[id]; });
+  EDIT.cellsDone = u.cellsBefore; EDIT.events.length = u.evLen; EDIT.nextNum = u.nextBefore; if (EDIT.sel && !EDIT.S[EDIT.sel]) EDIT.sel = null; EDIT.dirty = EDIT.events.length > 0; saveDraft(); refreshAll(); }
+function overlapShare(s){            // share of this outline covered by other (not excluded) outlines — decides 'duplicate' without asking
+  const b = bbox(s.pts), st = Math.max(1, Math.min(b[2] - b[0], b[3] - b[1]) / 25); let n = 0, k = 0; const others = Object.values(EDIT.S).filter(o => o.id !== s.id && !o.excluded).map(o => [o, bbox(o.pts)]);
+  for (let y = b[1]; y <= b[3]; y += st) for (let x = b[0]; x <= b[2]; x += st){ if (!pip(x, y, s.pts)) continue; n++; if (others.some(([o, ob]) => x >= ob[0] && x <= ob[2] && y >= ob[1] && y <= ob[3] && pip(x, y, o.pts))) k++; }
+  return n ? k / n : 0; }
+
+/* ============================== selection panel ============================== */
+function zoomCanvas(s, showOutline){
+  const cv = $('#zoomCv'); if (!cv) return; const d = window.devicePixelRatio || 1, r = cv.getBoundingClientRect(); cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d);
+  const ctx = cv.getContext('2d'); const b = bbox(s.pts), w = b[2] - b[0], h = b[3] - b[1], pad = Math.max(25, 0.6 * Math.max(w, h)); const [W, H] = EDIT.J.picture_size;
+  const x0 = Math.max(0, b[0] - pad), y0 = Math.max(0, b[1] - pad), x1 = Math.min(W, b[2] + pad), y1 = Math.min(H, b[3] + pad); const k = Math.min(cv.width / (x1 - x0), cv.height / (y1 - y0));
+  const ox = (cv.width - (x1 - x0) * k) / 2, oy = (cv.height - (y1 - y0) * k) / 2;
+  ctx.fillStyle = '#0e1013'; ctx.fillRect(0, 0, cv.width, cv.height); ctx.imageSmoothingEnabled = k < 3;
+  ctx.drawImage(EDIT.img, x0, y0, x1 - x0, y1 - y0, ox, oy, (x1 - x0) * k, (y1 - y0) * k);
+  if (showOutline){ ctx.setTransform(k, 0, 0, k, ox - x0 * k, oy - y0 * k); const kk = k / d;
+    drawObjects(ctx, viewS(), kk, {out: true, arr: true, num: false, exc: true, only: s.id}); ctx.lineWidth = 2.2 / kk; ctx.strokeStyle = '#fff'; ctx.setLineDash([]); polyPath(ctx, s.pts); ctx.stroke();
+    drawObjects(ctx, viewS(), kk, {out: false, arr: true, num: false, exc: false, only: s.id}); ctx.setTransform(1, 0, 0, 1, 0, 0); }
+  ctx.fillStyle = '#000b'; ctx.fillRect(4 * d, 4 * d, 150 * d, 20 * d); ctx.fillStyle = '#fff'; ctx.font = `${12 * d}px system-ui`; ctx.textBaseline = 'top'; ctx.fillText(`원본 확대 ${fmt(k / d, 1)}배 · ${Math.round(x1 - x0)}×${Math.round(y1 - y0)} px`, 8 * d, 7 * d);
+}
+function dirLine(s, S0s){
+  const A = EDIT.A, R = EDIT.mode === 'auto' ? RES.auto : RES.current, M = R.main; const t = thetaOf(s, A); const c = classify(t, M);
+  const mainTxt = M.state === 'one' || M.state === 'two' ? `사진 주방향 ${fmt(M.main, 1)}°` : MAIN_KO[M.state];
+  if (t == null) return `#${s.num} · ${CLASS_KO.no_dir}${s.tag === 'clump' ? ' (덩어리: 개별 방향 없음' + ((s.marks || []).length ? `, 안쪽에 표시한 방향 ${(s.marks || []).length}개` : '') + ')' : s.nodir ? ' (방향 판독 어려움)' : s.excluded ? ' (제외)' : ''} · ${mainTxt}`;
+  return `#${s.num} · 결정 방향 ${fmt(t, 1)}° · ${mainTxt}${c.diff != null ? ` · 차이 ${fmt(c.diff, 1)}°` : ''} · ${CLASS_KO[c.cls]}`;
+}
+function renderSel(){
+  const box = $('#selCard'); if (!box || !EDIT) return; const S = viewS(), s = EDIT.sel && S[EDIT.sel];
+  if (!s){ box.innerHTML = `<div class="row"><input id="selQ" type="search" placeholder="번호로 찾기" style="width:140px"><button id="selGo">찾기</button></div><p class="muted small">사진에서 결정을 누르거나 번호로 찾으면 여기에 확대 원본과 판독 내용이 나옵니다.</p>`; return; }
+  const A = EDIT.A, o = A[s.id], s0 = EDIT.S0[s.id], R = EDIT.mode === 'auto' ? RES.auto : RES.current; const [cx, cy] = centreOf(s, A); const cell = cellOf(cx, cy, EDIT.J.cells);
+  const a = areaOf(s, A), nm = EDIT.J.nm_per_px, side = Math.sqrt(4 * a / Math.sqrt(3)); const conf = effConfirm(s, A, EDIT.J.cells, new Set(Object.keys(EDIT.cellsDone)));
+  const t = thetaOf(s, A), t0 = s0 ? thetaOf(s0, A) : null; const cur = EDIT.mode === 'cur';
+  const autoTxt = o ? `${HOLD_KO[o.status] || o.status}${o.status === 'background' && o.status_before_background !== 'background' ? ` (바탕 보류 전: ${HOLD_KO[o.status_before_background] || o.status_before_background})` : ''}` : ORIGIN_KO[s.origin] + (s.parents && s.parents.length ? ` (부모 #${s.parents.join(', #')})` : '');
+  const used = t != null ? '정렬도에 반영됨' : s.excluded ? '반영 안 됨 (제외)' : s.tag === 'clump' ? `반영 안 됨 (덩어리)${(s.marks || []).length ? ` · 안쪽 방향 ${(s.marks || []).length}개는 반영` : ''}` : s.nodir ? '반영 안 됨 (방향 판독 어려움)' : !s.v ? '반영 안 됨 (꼭짓점 없음)' : '반영 안 됨';
+  const kids = Object.values(EDIT.S).filter(x => (x.parents || []).includes(s.id)).map(x => '#' + x.num);
+  box.innerHTML = `<div class="row"><h2 style="margin:0">#${esc(s.num)}</h2><span class="tag ${t != null ? 'ok' : s.excluded ? 'wait' : 'warn'}">${esc(TAG_KO[s.tag])}${s.excluded ? ' · 제외' : ''}</span><span class="tag ${conf === 'edited' ? 'blue' : conf === 'kept' ? 'ok' : conf === 'hard' ? 'warn' : 'wait'}">${CONF_KO[conf]}</span>
+      <span style="flex:1"></span><input id="selQ" type="search" placeholder="번호" style="width:80px"><button id="selGo">찾기</button></div>
+    <canvas id="zoomCv" style="margin-top:8px"></canvas>
+    <label class="small" style="display:flex; gap:6px; align-items:center; margin-top:4px"><input type="checkbox" id="zOut" ${EDIT.zOut === false ? '' : 'checked'}> 윤곽·화살표 보기 (끄면 실제 경계만)</label>
+    <p class="small" style="margin:6px 0; font-weight:600">${esc(dirLine(s))}</p>
+    <dl class="kv">
+      <dt>결정 식별</dt><dd>사진 ${esc(EDIT.pid)} · 결정 #${esc(s.num)} · 중심 (${fmt(cx, 0)}, ${fmt(cy, 0)}) px · 칸 ${cell}${s.uid ? ' · 고유 ID ' + esc(s.uid) : ''}</dd>
+      <dt>판독 상태</dt><dd>${esc(TAG_KO[s.tag])} · 자동: ${esc(autoTxt)}${s.excluded ? ` · 제외 이유: ${esc(EXCL_KO[s.excluded.reason] || s.excluded.reason)} (${s.excluded.by === 'auto' ? '프로그램' : '사람'})` : ''}${s.cut ? ' · 사진 끝에서 잘림' : ''}${s.u_edge ? ' · 경계 불확실' : ''}${s.u_dir ? ' · 방향 불확실' : ''}${kids.length ? ` · 자식 ${kids.join(', ')}` : ''}</dd>
+      <dt>방향</dt><dd>${t != null ? fmt(t, 1) + '°' : '없음'}${s0 && cur ? ` (자동 ${t0 != null ? fmt(t0, 1) + '°' : '없음'} → 현재 ${t != null ? fmt(t, 1) + '°' : '없음'})` : ''} · ${used} · 사진 전체 방향 ${R.n}개 기준</dd>
+      <dt>크기</dt><dd>${fmtN(Math.round(a))} px²${nm ? ` · ${fmtN(Math.round(a * nm * nm))} nm² · 등가 정삼각형 한 변 ${fmtN(Math.round(side * nm))} nm` : ' (화소 크기 미정: nm 환산 없음)'}${s.origin === 'auto' && !s.redrawn ? ' (SAM 마스크 화소 수)' : ' (윤곽 다각형 넓이)'}</dd>
+      <dt>검토</dt><dd>${CONF_KO[conf]}${s.who ? ` · ${esc(s.who)} · ${esc(when(s.at))}` : ''} <button id="histBtn" class="tiny" style="padding:1px 8px">이력 펼치기</button></dd>
+    </dl>
+    <div id="histBox"></div>
+    ${cur ? editButtons(s) : '<p class="small muted" style="margin-top:8px">최초 자동 보기입니다. 고치려면 위에서 "수정 반영" 보기로 바꾸세요.</p>'}`;
+  zoomCanvas(s, EDIT.zOut !== false);
+}
+function editButtons(s){
+  if (s.excluded) return `<div class="edits"><button data-op="restore" class="primary">복구</button><span class="small muted">${s.excluded.reason === 'split' || s.excluded.reason === 'merged' ? '복구하면 이 윤곽이 다시 쓰이고, 대신 생긴 윤곽은 그대로 남습니다(필요하면 따로 제외).' : '복구하면 다시 결정으로 쓰입니다.'}</span></div>`;
+  const single = SINGLE.has(s.tag);
+  return `<h3>고치기</h3><div class="chips">${['iso', 'touch', 'round', 'clump'].map(t => `<button data-op="tag" data-v="${t}" class="${s.tag === t ? 'on' : ''}">${TAG_KO[t]}</button>`).join('')}</div>
+    <div class="edits">
+      <button data-op="keep" ${s.confirm !== 'unreviewed' ? 'disabled' : ''}>확인 (그대로 유지)</button>
+      ${single ? `<button data-op="vertex">꼭짓점(방향) 찍기</button><button data-op="nodir">${s.nodir ? '방향 판독 어려움 해제' : '방향 판독 어려움'}</button>` : ''}
+      ${s.tag === 'clump' ? `<button data-op="mark">덩어리 안 방향 표시</button>${(s.marks || []).length ? '<button data-op="unmark">마지막 방향 표시 지우기</button>' : ''}` : ''}
+      <button data-op="u_edge">${s.u_edge ? '경계 확실로' : '경계 불확실'}</button>${single ? `<button data-op="u_dir">${s.u_dir ? '방향 확실로' : '방향 불확실'}</button>` : ''}
+      <button data-op="redraw">윤곽 다시 그리기</button><button data-op="split">분리</button><button data-op="merge">병합</button>
+      <button data-op="exclude" class="warnb">제외</button></div>
+    <div id="exclReason"></div>`;
+}
+function applyOp(op, v){
+  const s = EDIT.S[EDIT.sel]; if (!s) return;
+  if (op === 'tag') return mutate('tag', [s.id], () => { s.tag = v; s.confirm = 'edited'; });
+  if (op === 'keep') return mutate('keep', [s.id], () => { s.confirm = 'kept'; });
+  if (op === 'nodir') return mutate(s.nodir ? 'dir_ok' : 'nodir', [s.id], () => { s.nodir = !s.nodir; s.confirm = s.nodir ? 'hard' : 'edited'; });
+  if (op === 'u_edge') return mutate('u_edge', [s.id], () => { s.u_edge = !s.u_edge; s.confirm = 'edited'; });
+  if (op === 'u_dir') return mutate('u_dir', [s.id], () => { s.u_dir = !s.u_dir; s.confirm = 'edited'; });
+  if (op === 'unmark') return mutate('unmark', [s.id], () => { s.marks = (s.marks || []).slice(0, -1); s.confirm = 'edited'; });
+  if (op === 'restore') return mutate('restore', [s.id], () => { const o = EDIT.A[s.id];
+    if (s.excluded && s.excluded.by === 'auto' && o && o.status === 'background' && o.status_before_background === 'used'){ s.v = o.v; s.v_src = 'auto'; s.nodir = false; }
+    s.excluded = null; s.confirm = 'edited'; });
+  if (['vertex', 'redraw', 'split', 'merge', 'mark'].includes(op)){ setTool(op); return; }
+  if (op === 'exclude'){
+    const sh = overlapShare(s);
+    if (sh >= 0.5) return mutate('exclude', [s.id], () => { s.excluded = {reason: 'duplicate', by: 'person'}; s.confirm = 'edited'; toast(`다른 윤곽과 ${Math.round(sh * 100)} % 겹쳐 "중복"으로 제외했습니다.`); });
+    $('#exclReason').innerHTML = `<p class="small" style="margin:6px 0 3px">제외 이유를 고르세요:</p><div class="chips"><button data-op="excl" data-v="background">바탕 (결정 사이 빈 곳)</button><button data-op="excl" data-v="duplicate">중복</button><button data-op="excl" data-v="other">기타</button></div>`;
+    return; }
+  if (op === 'excl') return mutate('exclude', [s.id], () => { s.excluded = {reason: v, by: 'person'}; s.confirm = 'edited'; });
+}
+
+/* ============================== table ============================== */
+function tableRows(){
+  const S = viewS(), A = EDIT.A, R = EDIT.mode === 'auto' ? RES.auto : RES.current, M = R.main, done = new Set(Object.keys(EDIT.cellsDone)), nm = EDIT.J.nm_per_px; const f = $('#tf').value, q = $('#tq').value.trim();
+  return Object.values(S).filter(s => { const t = thetaOf(s, A);
+    if (q && !String(s.num).startsWith(q.replace(/^#/, ''))) return false;
+    if (f === 'excluded') return !!s.excluded; if (s.excluded) return f === '' && $('#tExc').checked;
+    if (f === 'dir') return t != null; if (f === 'nodir') return t == null; if (f === 'edited') return isChanged(s) || s.confirm !== 'unreviewed'; if (f === 'unreviewed') return effConfirm(s, A, EDIT.J.cells, done) === 'unreviewed'; return true; })
+    .sort((a, b) => a.num - b.num).map(s => { const t = thetaOf(s, A), s0 = EDIT.S0[s.id], t0 = s0 ? thetaOf(s0, A) : null, c = classify(t, M), [x, y] = centreOf(s, A), a = areaOf(s, A), o = A[s.id];
+      return {s, num: s.num, tag: TAG_KO[s.tag] + (s.excluded ? ' · 제외(' + (EXCL_KO[s.excluded.reason] || '') + ')' : ''), auto: o ? (HOLD_KO[o.status] || o.status).replace('보류: ', '보류 ') : ORIGIN_KO[s.origin], t0, t, cls: CLASS_KO[c.cls], diff: c.diff,
+              side: nm ? Math.sqrt(4 * a / Math.sqrt(3)) * nm : null, cell: cellOf(x, y, EDIT.J.cells), conf: CONF_KO[effConfirm(s, A, EDIT.J.cells, done)]}; });
+}
+function renderTable(){
+  const rows = tableRows(), shown = rows.slice(0, 1500);
+  $('#tInfo').textContent = `${rows.length}개${rows.length > shown.length ? ` (앞 ${shown.length}개 표시)` : ''}`;
+  $('#otbl tbody').innerHTML = shown.map(r => `<tr class="pick ${r.s.id === EDIT.sel ? 'sel' : ''}" data-id="${esc(r.s.id)}"><td class="num">${r.num}</td><td>${esc(r.tag)}</td><td>${esc(r.auto)}</td>
+    <td class="num">${EDIT.mode === 'cur' && r.s.origin === 'auto' && r.t0 !== r.t ? `${r.t0 != null ? fmt(r.t0, 1) : '–'} → ${r.t != null ? fmt(r.t, 1) : '–'}` : (r.t != null ? fmt(r.t, 1) : '–')}</td><td>${esc(r.cls)}</td><td class="num">${r.diff != null ? fmt(r.diff, 1) : '–'}</td>
+    <td class="num">${r.side != null ? fmtN(Math.round(r.side)) : '–'}</td><td>${r.cell}</td><td>${esc(r.conf)}</td></tr>`).join('');
+}
+function markRow(){ document.querySelectorAll('#otbl tr.sel').forEach(t => t.classList.remove('sel')); const tr = EDIT.sel && document.querySelector(`#otbl tr[data-id="${CSS.escape(EDIT.sel)}"]`); if (tr){ tr.classList.add('sel'); tr.scrollIntoView({block: 'nearest'}); } }
+function tableCsv(){
+  const rows = tableRows(); const H = ['photo_id', 'auto_k', 'version_base', 'view', 'num', 'id', 'origin', 'parents', 'tag', 'excluded', 'auto_status', 'theta_auto', 'theta_now', 'main_class', 'diff_from_main', 'equiv_side_nm', 'area_px', 'cell', 'confirm', 'who', 'at'];
+  const L = rows.map(r => [EDIT.pid, EDIT.a.k, EDIT.base_n, EDIT.mode, r.num, r.s.id, r.s.origin, (r.s.parents || []).join('/'), r.s.tag, r.s.excluded ? r.s.excluded.reason : '', EDIT.A[r.s.id] ? EDIT.A[r.s.id].status : '', r.t0, r.t, r.cls, r.diff, r.side != null ? Math.round(r.side) : '', Math.round(areaOf(r.s, EDIT.A)), r.cell, r.conf, r.s.who || '', r.s.at || '']);
+  const t = '﻿' + [H].concat(L).map(r => r.map(v => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(',')).join('\n');
+  const b = new Blob([t], {type: 'text/csv'}), u = URL.createObjectURL(b), l = document.createElement('a'); l.href = u; l.download = `${CUR.meta.run || 'photo'}_${EDIT.pid}_crystals_${EDIT.mode === 'auto' ? 'auto' : 'v' + EDIT.base_n + (EDIT.dirty ? '-unsaved' : '')}.csv`; document.body.appendChild(l); l.click(); setTimeout(() => { URL.revokeObjectURL(u); l.remove(); }, 1500);
+}
+
+/* ============================== history ============================== */
+async function loadVersions(){
+  if (EDIT.versions) return EDIT.versions; const files = (CUR.reviews || []).filter(f => /\.json$/.test(f)); const out = [];
+  for (let i = 0; i < files.length; i += 30){ const r = await api('files', {photo_id: EDIT.pid, paths: files.slice(i, i + 30).map(f => 'reviews/' + f)});
+    r.files.forEach(f => { if (f.text){ try { const R = JSON.parse(f.text); if (R.schema === 'ws2-sem-review/2' && R.auto_k === EDIT.a.k) out.push(R); } catch (e){} } }); }
+  out.sort((a, b) => a.n - b.n); EDIT.versions = out; return out;
+}
+const briefTxt = b => !b ? '없음' : `${TAG_KO[b.tag] || b.tag}${b.excluded ? ' · 제외(' + (EXCL_KO[b.excluded] || b.excluded) + ')' : ''}${b.theta != null ? ' · 방향 ' + fmt(b.theta, 1) + '°' : ' · 방향 없음'}${b.nodir ? ' (판독 어려움)' : ''}${b.v && b.v_src === 'person' ? ' · 꼭짓점 사람' : ''}${b.marks ? ' · 덩어리 안 방향 ' + b.marks : ''}${b.u_edge ? ' · 경계 불확실' : ''}${b.u_dir ? ' · 방향 불확실' : ''} · ${CONF_KO[b.confirm] || b.confirm} · 꼭짓점 ${b.pts_n}점/${fmtN(b.area)} px²`;
+async function showHistory(){
+  const s = EDIT.S[EDIT.sel] || EDIT.S0[EDIT.sel]; if (!s) return; const box = $('#histBox'); box.innerHTML = '<p class="small muted">이력을 불러오는 중…</p>';
+  try { const V = await loadVersions(); const id = s.id; const rows = [];
+    const s0 = EDIT.S0[id]; rows.push(['자동 (SAM 최초)', '', s0 ? briefTxt(brief(s0)) : `${ORIGIN_KO[s.origin]}${s.parents && s.parents.length ? ' (부모 #' + s.parents.join(', #') + ')' : ''}`]);
+    V.forEach(R => (R.events || []).forEach(e => { if ((e.ids || []).includes(id) || (s.parents || []).some(p => (e.ids || []).includes(p) && e.op !== 'cell-done')) rows.push([`${R.n}판${R.base_n != null ? ' (' + (R.base_n || '자동') + '에서)' : ''}`, `${esc(e.who)} · ${esc(when(e.at))}`, `${OP_KO[e.op] || e.op}${(e.ids || []).length > 1 ? ' [' + e.ids.join(', ') + ']' : ''}: ${briefTxt(e.before[id])} → ${briefTxt(e.after[id])}`]); }));
+    EDIT.events.forEach(e => { if ((e.ids || []).includes(id)) rows.push(['저장 전', `${esc(e.who)} · ${esc(when(e.at))}`, `${OP_KO[e.op] || e.op}: ${briefTxt(e.before[id])} → ${briefTxt(e.after[id])}`]); });
+    box.innerHTML = `<table class="hist"><tbody>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${esc(r[2])}</td></tr>`).join('')}</tbody></table>${rows.length === 1 ? '<p class="small muted">이 결정을 고친 기록이 없습니다.</p>' : ''}`; }
+  catch (e){ box.innerHTML = `<p class="err small">${esc(e.message)}</p>`; }
+}
+
+/* ============================== saving ============================== */
+async function saveV2(){
+  if (!EDIT || !EDIT.dirty) return; $('#btnSave').disabled = true; $('#saveMsg').textContent = '저장 중…';
+  try { const res = stripResult(RES);
+    const r = await api('saveReview', {schema: 2, photo_id: EDIT.pid, who: WHO, who_key: lkey(WHO), auto_k: EDIT.a.k, objects_fp: EDIT.fp, base_n: EDIT.base_n, objs: diffObjs(), cells_done: EDIT.cellsDone, events: EDIT.events, result: res, app: APP_VERSION});
+    CUR.meta = r.meta; CUR.reviews = (CUR.reviews || []).concat([r.file]); const was = EDIT.base_n; EDIT.base_n = r.n; EDIT.events = []; EDIT.undo = []; EDIT.dirty = false; EDIT.versions = null; LS.del(EDIT.draftKey);
+    $('#saveMsg').innerHTML = `<span class="tag ok">${r.n}판으로 저장</span> 사진 전체(수정 반영) 방향 ${res.current.n}개 · S3 ${fmt(res.current.S3)} · S6 ${fmt(res.current.S6)} · 파이썬 재계산은 다음 Colab 실행 때`
+      + (r.others_saved_meanwhile ? `<br><span class="tag warn">주의</span> 이 작업은 ${was ? was + '판' : '자동 판독본'}에서 시작했는데, 그 사이 다른 사람이 ${r.previous_latest}판을 저장했습니다. 두 작업 모두 따로 보존되었습니다 (기록에서 각각 열어 볼 수 있음).` : '');
+    const lg = document.querySelector('#detail > .card:last-child'); if (lg) lg.outerHTML = logHtml(CUR.meta); refreshAll(); }
+  catch (e){ if (e.code === 'password') return showLogin(e.message); $('#saveMsg').innerHTML = `<span class="err">저장 실패: ${esc(e.message)} — 수정 내용은 이 PC에 남아 있습니다. 다시 저장해 보세요.</span>`; $('#btnSave').disabled = false; }
+}
+
+/* ============================== readings made before 1.4.1 (no whole-photo list) ============================== */
+function renderLegacy(){
+  const m = CUR.meta, a = currentAutoView(m), el = $('#detail'), A = m.auto || [], v = m.latest_review, vOk = v && v.auto_k === a.k && v.schema !== 2;
+  el.innerHTML = headHtml(m) + `<div class="note small banner">이 판독본(${a.k})은 1.4.1 이전에 만들어져 <b>사진 전체 검토</b>(결정 선택·상세창·칸 검토)를 쓸 수 없습니다. 아래 <b>다시 판독 요청</b>을 누르고 Colab을 한 번 실행하면, 같은 SAM 결과로 새 판독본이 만들어집니다 (판독 숫자는 같고 SAM은 다시 돌리지 않음).
+      <button id="btnReread" class="primary" style="margin-left:6px">다시 판독 요청</button></div>
+    <div class="res3"><div class="res"><h4>사진 전체 · 자동</h4><div class="row" style="gap:14px"><div><div class="big">${a.whole.read}</div><div class="l">방향 수</div></div><div><div class="big">${fmt(a.whole.S3)}</div><div class="l">S3</div></div><div><div class="big">${fmt(a.whole.S6)}</div><div class="l">S6</div></div></div></div>
+      <div class="res"><h4>검토 상자 (이전 형식)</h4><div class="row" style="gap:14px"><div><div class="big">${vOk ? v.n_dir : '–'}</div><div class="l">검토 후 방향 수</div></div><div><div class="big">${vOk ? fmt(v.S3) : '–'}</div><div class="l">검토 후 S3</div></div></div>
+        <button id="btnReview" style="margin-top:6px">상자 검토 열기 (이전 형식)</button></div></div>
+    <div class="card" style="margin-top:10px"><div class="row" style="margin-bottom:8px"><button data-img="overlay" class="imgTab on">판독 그림</button><button data-img="original" class="imgTab">원본</button><button data-img="dist" class="imgTab">방향 분포</button>
+      ${A.length > 1 ? A.map(x => `<button data-k="${x.k}" class="pickAuto ${x.k === a.k ? 'on' : ''}">${esc(SIDE_KO[x.crystal_side_asked] || x.crystal_side_asked)} · 판독 ${x.whole.read}</button>`).join('') : ''}</div><div id="imgBox" class="muted">그림을 불러오는 중…</div></div>` + logHtml(m);
+  loadImg('overlay');
+}
 async function loadImg(kind){
-  const m = CUR.meta, a = currentAuto(m), box = $('#imgBox'); if (!box) return; document.querySelectorAll('.imgTab').forEach(b => b.classList.toggle('primary', b.dataset.img === kind));
-  const lg = $('#imgLegend'); if (lg) lg.textContent = kind === 'overlay' ? '프로그램이 처음 읽은 결과입니다 (사람 검토 전). 초록 = 방향을 낸 결정, 노랑 점선 = 보류, 회색 점선 = 바탕으로 돌림, 노란 사각형 = 검토 영역.' : '';
-  if (kind === 'reviewed') return loadReviewed(box);
+  const m = CUR.meta, a = currentAutoView(m), box = $('#imgBox'); if (!box) return; document.querySelectorAll('.imgTab').forEach(b => b.classList.toggle('on', b.dataset.img === kind));
   const path = kind === 'overlay' ? `auto/${a.k}/overlay_web.jpg` : kind === 'dist' ? `auto/${a.k}/direction_distribution.png` : `original/${m.file}`; const key = m.photo_id + '|' + path;
   box.textContent = '그림을 불러오는 중…';
   try { if (!IMG_CACHE[key]) IMG_CACHE[key] = await fileUrl(m.photo_id, path); if (CUR.meta.photo_id !== m.photo_id) return;
     if (kind === 'original' && /\.tiff?$/i.test(m.file)) box.innerHTML = '<p class="muted">TIF 원본은 브라우저에서 바로 보이지 않습니다. 판독 그림을 보세요.</p>';
-    else box.innerHTML = `<img class="fit" alt="${kind === 'overlay' ? '판독 그림' : kind === 'dist' ? '방향 분포' : '원본 사진'}" src="${IMG_CACHE[key]}">`; }
+    else box.innerHTML = `<img class="fit" alt="${kind}" src="${IMG_CACHE[key]}">`; }
   catch (e){ box.innerHTML = `<span class="err">${esc(e.message)}</span>`; }
 }
-/* the picture after a person's review: drawn here from the saved review (outlines + directions) on the review-area picture, so it shows right after saving */
-const RV_PIC = {}, RV_SRC = {};
-const PROV_COL = {kept: '#4ade80', changed: '#38bdf8', added: '#f472b6'};
-async function loadReviewed(box){
-  const m = CUR.meta, a = currentAuto(m), v = m.latest_review; box.textContent = '검토 후 그림을 만드는 중…';
-  try {
-    const f = reviewFiles().find(x => Number(x.slice(0, 4)) === v.n); if (!f) throw new Error(`검토본 ${v.n}판 파일을 찾지 못했습니다. 목록으로 나갔다가 다시 열어 보세요.`);
-    const key = m.photo_id + '|' + a.k + '|' + v.n;
-    if (!RV_PIC[key]){
-      const sk = m.photo_id + '|' + a.k;
-      if (!RV_SRC[sk]){ const [html, pre] = await Promise.all([fileText(m.photo_id, `auto/${a.k}/review.html`), fileText(m.photo_id, `auto/${a.k}/preload.json`)]);
-        const i = html.indexOf('const BOXES = '), j = html.indexOf(';\nconst PRELOAD = ', i); if (i < 0 || j < 0) throw new Error('검토 화면 파일에서 사진을 찾지 못했습니다.');
-        RV_SRC[sk] = {B: JSON.parse(html.slice(i + 14, j))[0], preDoc: JSON.parse(pre).docs[0]}; }
-      const R = JSON.parse(await fileText(m.photo_id, 'reviews/' + f)); RV_PIC[key] = await drawReviewed(RV_SRC[sk].B, RV_SRC[sk].preDoc, R.payload);
-    }
-    if (CUR.meta.photo_id !== m.photo_id || !$('#imgBox')) return; const P = RV_PIC[key];
-    $('#imgBox').innerHTML = `<img class="fit" alt="검토 후 그림" src="${P.url}">`;
-    $('#imgLegend').innerHTML = `검토 영역만 보여 줍니다 (${v.n}판 · ${esc(v.who)} · ${esc(when(v.at))}). <b style="color:#16a34a">초록</b> 프로그램 그대로 ${P.kept} · <b style="color:#0284c7">파랑</b> 사람이 고침 ${P.changed} · <b style="color:#db2777">분홍</b> 사람이 추가 ${P.added} · 지움 ${P.deleted}. 점선 = 덩어리·방향 없음, 흰 화살표 = 집계에 든 방향 ${P.single}개, 노란 화살표 = 덩어리 안 방향 ${P.marks}개, 노란 사각형 = 검토 영역.`;
-  } catch (e){ if (e.code === 'password') return showLogin(e.message); box.innerHTML = `<span class="err">${esc(e.message)}</span>`; }
-}
-function drawReviewed(B, preDoc, payload){ return new Promise((res, rej) => {
-  const d = (payload.docs || []).find(x => x.box === preDoc.box); if (!d) return rej(new Error('검토 내용에 이 사진의 상자가 없습니다.'));
-  const im = new Image(); im.onerror = () => rej(new Error('검토 영역 사진을 열지 못했습니다.'));
-  im.onload = () => { const s = 2, cr = B.crop, cv = document.createElement('canvas'); cv.width = cr[2] * s; cv.height = cr[3] * s; const g = cv.getContext('2d');
-    g.imageSmoothingEnabled = true; g.drawImage(im, 0, 0, cv.width, cv.height); const X = x => (x - cr[0]) * s, Y = y => (y - cr[1]) * s; const box = preDoc.box_xywh;
-    g.lineWidth = 2.4; g.setLineDash([10, 7]); g.strokeStyle = '#facc15'; g.strokeRect(X(box[0]), Y(box[1]), box[2] * s, box[3] * s);
-    const pre = {}; preDoc.polys.forEach(p => { pre[p.id] = p; }); const out = {kept: 0, changed: 0, added: 0, single: 0, marks: 0};
-    const arrow = (x0, y0, x1, y1, col) => { const ang = Math.atan2(y1 - y0, x1 - x0), h = 14; g.setLineDash([]); g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 3.4; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
-      g.beginPath(); g.moveTo(x1, y1); g.lineTo(x1 - h * Math.cos(ang - 0.45), y1 - h * Math.sin(ang - 0.45)); g.lineTo(x1 - h * Math.cos(ang + 0.45), y1 - h * Math.sin(ang + 0.45)); g.closePath(); g.fill(); };
-    d.polys.forEach(p => { const q = pre[p.id]; const kind = !q ? 'added' : changedFields(p, q).length ? 'changed' : 'kept'; out[kind]++;
-      g.setLineDash(p.tag === 'clump' || p.nodir ? [5, 7] : []); g.strokeStyle = PROV_COL[kind]; g.lineWidth = 3.4; g.beginPath(); p.pts.forEach((t, i) => i ? g.lineTo(X(t[0]), Y(t[1])) : g.moveTo(X(t[0]), Y(t[1]))); g.closePath(); g.stroke(); });
-    d.polys.forEach(p => { const c = centre(p.pts);
-      if (SINGLE.has(p.tag) && p.v && !p.nodir && inBox(c[0], c[1], box)){ const L = Math.hypot(p.v[0] - c[0], p.v[1] - c[1]) || 1, k = Math.min(1, 16 / L); arrow(X(c[0]), Y(c[1]), X(c[0] + (p.v[0] - c[0]) * k), Y(c[1] + (p.v[1] - c[1]) * k), '#ffffff'); out.single++; }
-      (p.dirs || []).forEach(mk => { if (!inBox(mk.v[0], mk.v[1], box)) return; const ua = [mk.a[0] - mk.v[0], mk.a[1] - mk.v[1]], ub = [mk.b[0] - mk.v[0], mk.b[1] - mk.v[1]], na = Math.hypot(ua[0], ua[1]) || 1, nb = Math.hypot(ub[0], ub[1]) || 1; let w = [ua[0] / na + ub[0] / nb, ua[1] / na + ub[1] / nb]; const nw = Math.hypot(w[0], w[1]) || 1, L = 16; arrow(X(mk.v[0] + w[0] / nw * L), Y(mk.v[1] + w[1] / nw * L), X(mk.v[0]), Y(mk.v[1]), '#fde047'); out.marks++; }); });
-    const now = new Set(d.polys.map(p => String(p.id))); out.deleted = Object.keys(pre).filter(i => !now.has(String(i))).length; out.url = cv.toDataURL('image/jpeg', 0.9); res(out); };
-  im.src = B.img; }); }
-function parseCsv(t){ const rows = []; let row = [], cur = '', q = false; for (let i = 0; i < t.length; i++){ const c = t[i];
-    if (q){ if (c === '"'){ if (t[i + 1] === '"'){ cur += '"'; i++; } else q = false; } else cur += c; }
-    else if (c === '"') q = true; else if (c === ','){ row.push(cur); cur = ''; } else if (c === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; } else if (c !== '\r') cur += c; }
-  if (cur || row.length){ row.push(cur); rows.push(row); } return rows; }
-async function showCsv(){ const m = CUR.meta, a = currentAuto(m), box = $('#csvBox'); box.innerHTML = '<div class="card" style="margin-top:16px">표를 불러오는 중…</div>';
-  try { const t = (await fileText(m.photo_id, `auto/${a.k}/crystals.csv`)).replace(/^\ufeff/, ''); const R = parseCsv(t); const H = R[0], B = R.slice(1).filter(r => r.length > 1);
-    box.innerHTML = `<div class="card" style="margin-top:16px"><div class="row"><h2 style="margin:0">결정별 표</h2><span class="muted small">${B.length}개 윤곽 (사진 전체 · 자동 결과)</span><span style="flex:1"></span><button id="btnCsvSave">CSV 저장</button></div>
-      <div class="scrollbox" style="margin-top:10px"><table class="small"><thead><tr>${H.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${B.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
-    $('#btnCsvSave').onclick = () => { const b = new Blob(['\ufeff' + t], {type: 'text/csv'}); const u = URL.createObjectURL(b); const l = document.createElement('a'); l.href = u; l.download = `${m.run || 'photo'}_${m.photo_id}_crystals.csv`; document.body.appendChild(l); l.click(); setTimeout(() => { URL.revokeObjectURL(u); l.remove(); }, 1500); };
-  } catch (e){ box.innerHTML = `<div class="card err" style="margin-top:16px">${esc(e.message)}</div>`; } }
-$('#detail').addEventListener('click', async e => {
-  const t = e.target.closest('button'); if (!t) return;
-  try {
-    if (t.classList.contains('imgTab')) return loadImg(t.dataset.img);
-    if (t.id === 'btnCsv') return showCsv();
-    if (t.id === 'btnReview') return chooseStart();
-    if (t.classList.contains('openRev')) return startReview('saved', Number(t.dataset.n));
-    if (t.classList.contains('pickAuto')){ t.disabled = true; CUR.meta = (await api('chooseAuto', {photo_id: CUR.meta.photo_id, k: Number(t.dataset.k), who: WHO})).meta; renderDetail(); toast('이 자동 판독본을 쓰도록 저장했습니다'); return; }
-    if (t.id === 'btnRetry'){ t.disabled = true; CUR.meta = (await api('retry', {photo_id: CUR.meta.photo_id, who: WHO})).meta; renderDetail(); toast('다시 시도하도록 표시했습니다'); return; }
-  } catch (err){ if (err.code === 'password') return showLogin(err.message); toast(err.message, 6000); t.disabled = false; }
-});
-
-/* ----- review (the existing ws2read review page, shown inside this page) ----- */
 let RV = null;
 const reviewFiles = () => CUR.reviews || [];
 function chooseStart(){
-  const m = CUR.meta, a = currentAuto(m), v = m.latest_review; const opts = [];
-  if (v && v.auto_k === a.k) opts.push(['saved', `최신 검토본에서 이어서 (${v.n}판 · ${v.who} · ${when(v.at)})`, v.n]);
-  opts.push(['auto', '자동 판독본에서 새로 시작', null]);
-  opts.push(['draft', '이 PC에 남아 있는 내 임시 작업에서 이어서 (저장하지 않고 닫았을 때)', null]);
+  const m = CUR.meta, a = currentAutoView(m), v = m.latest_review; const opts = [];
+  if (v && v.auto_k === a.k && v.schema !== 2) opts.push(['saved', `최신 상자 검토본에서 이어서 (${v.n}판 · ${v.who} · ${when(v.at)})`, v.n]);
+  opts.push(['auto', '자동 판독본에서 새로 시작', null]); opts.push(['draft', '이 PC에 남아 있는 내 임시 작업에서 이어서', null]);
   $('#startOpts').innerHTML = opts.map(o => `<p><button class="startOpt" data-mode="${o[0]}" data-n="${o[2] == null ? '' : o[2]}" style="width:100%; text-align:left">${esc(o[1])}</button></p>`).join('');
   $('#dlgStart').showModal();
 }
 $('#startOpts').addEventListener('click', e => { const b = e.target.closest('.startOpt'); if (!b) return; $('#dlgStart').close(); startReview(b.dataset.mode, b.dataset.n ? Number(b.dataset.n) : null); });
 $('#startCancel').onclick = () => $('#dlgStart').close();
 async function startReview(mode, n){
-  const m = CUR.meta; let a = currentAuto(m); toast('검토 화면을 불러오는 중…', 8000);
+  const m = CUR.meta; let a = currentAutoView(m); toast('검토 화면을 불러오는 중…', 8000);
   try {
     let start = null, startN = null;
-    if (mode === 'saved'){ const f = reviewFiles().find(x => Number(x.slice(0, 4)) === n); if (!f) throw new Error(`검토본 ${n}판 파일을 찾지 못했습니다. 새로 고침 후 다시 해 보세요.`);
+    if (mode === 'saved'){ const f = reviewFiles().find(x => Number(x.slice(0, 4)) === n); if (!f) throw new Error(`검토본 ${n}판 파일을 찾지 못했습니다.`);
       const R = JSON.parse(await fileText(m.photo_id, 'reviews/' + f)); start = R.payload; startN = R.n; a = (m.auto || []).find(x => x.k === R.auto_k) || a; }
     const [html, pre] = await Promise.all([fileText(m.photo_id, `auto/${a.k}/review.html`), fileText(m.photo_id, `auto/${a.k}/preload.json`)]);
-    RV = {photo_id: m.photo_id, auto_k: a.k, page_key: a.page_key, preDoc: JSON.parse(pre).docs[0], startedFrom: startN, latestAtOpen: m.latest_review ? m.latest_review.n : 0, dirty: false};
+    RV = {photo_id: m.photo_id, auto_k: a.k, page_key: a.page_key, preDoc: JSON.parse(pre).docs[0], startedFrom: startN, latestAtOpen: m.latest_review ? m.latest_review.n : 0};
     const bridge = `<script>window.__WS2_BRIDGE__ = ${JSON.stringify({who: WHO, mode, start}).replace(/</g, '\\u003c')};<\/script><script>(${bridgeCode.toString()})();<\/script>`;
     const i = html.lastIndexOf('</body>'); $('#rvFrame').srcdoc = i >= 0 ? html.slice(0, i) + bridge + html.slice(i) : html + bridge;
-    $('#rvTitle').textContent = `${m.run || ''} ${m.position || ''} · 결과 보기·수정`; $('#rvFrom').textContent = mode === 'saved' ? `${startN}판에서 시작` : mode === 'auto' ? '자동 판독본에서 시작' : '이 PC의 임시 작업에서 시작';
+    $('#rvTitle').textContent = `${m.run || ''} ${m.position || ''} · 상자 검토 (이전 형식)`; $('#rvFrom').textContent = mode === 'saved' ? `${startN}판에서 시작` : mode === 'auto' ? '자동 판독본에서 시작' : '이 PC의 임시 작업에서 시작';
     $('#rvMsg').textContent = ''; $('#rv').hidden = false;
   } catch (e){ if (e.code === 'password') return showLogin(e.message); toast(e.message, 6000); }
 }
-/* runs INSIDE the review page (same document as its own script): sets the name, chooses the starting content, hands the result to this page */
 function bridgeCode(){
   const B = window.__WS2_BRIDGE__ || {}; const who = document.getElementById('who');
   try {
@@ -389,44 +906,168 @@ function bridgeCode(){
 window.addEventListener('message', async ev => { const d = ev.data || {}; if (!RV || ev.source !== $('#rvFrame').contentWindow) return;
   if (d.type === 'ws2-ready') $('#toast').hidden = true;
   if (d.type === 'ws2-error') toast('검토 화면 오류: ' + d.message, 7000);
-  if (d.type === 'ws2-payload') saveReview(d.payload); });
+  if (d.type === 'ws2-payload') saveReview1(d.payload); });
 $('#rvSave').onclick = () => { $('#rvSave').disabled = true; $('#rvMsg').textContent = '저장 중…'; $('#rvFrame').contentWindow.postMessage({type: 'ws2-get'}, '*'); };
-async function saveReview(payload){
+async function saveReview1(payload){
   try { const result = computeResult(payload, RV.preDoc);
     const r = await api('saveReview', {photo_id: RV.photo_id, who: WHO, who_key: lkey(WHO), auto_k: RV.auto_k, page_key: RV.page_key, started_from: RV.startedFrom == null ? RV.latestAtOpen : RV.startedFrom, payload, result});
     CUR.meta = r.meta; CUR.reviews = (CUR.reviews || []).concat([r.file]); RV.startedFrom = r.n; RV.latestAtOpen = r.n;
-    $('#rvMsg').textContent = `${r.n}판으로 저장됨 · 방향 ${result.n}개 · S3 ${fmt(result.S3)} · S6 ${fmt(result.S6)}` + (r.others_saved_meanwhile ? ' · 그 사이 다른 사람이 저장한 판이 있습니다(기록에서 확인)' : '');
-    $('#rvFrame').contentWindow.postMessage({type: 'ws2-toast', text: `${r.n}판으로 저장했습니다`}, '*');
+    $('#rvMsg').textContent = `${r.n}판으로 저장됨 · 방향 ${result.n}개 · S3 ${fmt(result.S3)} · S6 ${fmt(result.S6)}` + (r.others_saved_meanwhile ? ' · 그 사이 다른 사람이 저장한 판이 있습니다' : '');
   } catch (e){ if (e.code === 'password'){ $('#rv').hidden = true; return showLogin(e.message); } $('#rvMsg').textContent = '저장 실패: ' + e.message; }
   $('#rvSave').disabled = false;
 }
 $('#rvClose').onclick = () => { $('#rv').hidden = true; $('#rvFrame').srcdoc = ''; RV = null; renderDetail(); };
 
-/* ----- registering photos ----- */
-function parseName(b){ const r = /(R\d{3})/.exec(b), stem = b.replace(/\.[^.]+$/, ''), p = /_(P[A-Za-z0-9.(),-]+?)(?:_|$)/.exec(stem); return {run: r ? r[1] : '', position: p ? p[1] : ''}; }
+/* ============================== registering a folder ============================== */
+const IMG_EXT = /\.(jpe?g|tiff?|png|bmp)$/i;
+function parseName2(name){
+  const stem = name.replace(/\.[^.]+$/, ''), toks = stem.split('_'); const r = /(R\d{3})/.exec(stem), p = /_(P[A-Za-z0-9.(),\-]+?)(?:_|$)/.exec(stem);
+  let mag = null; const i0 = p ? Math.max(1, toks.indexOf(p[1]) + 1) : 1;
+  for (let i = i0; i < toks.length && mag == null; i++){ const m = /^(\d{2,7})\s*[xX×]$/.exec(toks[i]) || /^[xX×](\d{2,7})$/.exec(toks[i]); if (m) mag = Number(m[1]); }
+  for (let i = i0; i < toks.length && mag == null; i++){ if (/^\d{3,7}$/.test(toks[i])) mag = Number(toks[i]); }
+  if (mag == null){ const m = /(\d{3,7})\s*[xX]/.exec(stem); if (m) mag = Number(m[1]); }
+  return {run: r ? r[1] : '', position: p ? p[1] : '', magnification: mag};
+}
+function parseTxt(text){
+  const D = {}; String(text || '').split(/\r?\n/).forEach(l => { const m = /^\$+([A-Z0-9_%]+)\s?(.*)$/.exec(l.trim()); if (m && !(m[1] in D)) D[m[1]] = m[2].trim(); });
+  const mag = parseInt(D.CM_MAG, 10); if (!(mag > 0)) return null; const nm = Math.round(94000 / mag * 1e4) / 1e4;
+  const bar = parseInt(D.SM_MICRON_BAR, 10), mm = /([\d.]+)\s*(nm|um|µm|mm)/.exec(D.SM_MICRON_MARKER || ''); const markerNm = mm ? Number(mm[1]) * ({nm: 1, um: 1e3, 'µm': 1e3, mm: 1e6}[mm[2]]) : null;
+  return {magnification: mag, nm_per_px: nm, metadata_bar_px: bar || null, metadata_marker: D.SM_MICRON_MARKER || null, metadata_bar_agrees: bar && markerNm ? Math.abs(markerNm / nm - bar) <= 1 : null,
+          date: D.CM_DATE || null, time: D.CM_TIME || null, instrument: D.CM_INSTRUMENT || null, accel_kv: D.CM_ACCEL_VOLT || null, wd_mm: D.SM_WD || null, full_size: D.CM_FULL_SIZE || null, title_in_txt_not_used: D.CM_TITLE || null};
+}
+const txtTime = P => { if (!P || !P.date || !P.time) return null; const d = new Date(P.date.replace(/\//g, '-') + 'T' + P.time); return isNaN(d) ? null : d.getTime(); };
+function excludeWhy(rel, stem){
+  if (/(^|_)line(_|$)/i.test(stem)) return '측정선이 그려진 사진 (_line)';
+  if (/(^|\/)SEM image(\/|$)/i.test(rel) || /_v\d+(\.\d+)+$/i.test(stem) || /_(overlay|review|labels?|result)$/i.test(stem)) return '과거 분석 결과 그림';
+  return '';
+}
+function precursorOf(path){ if (/(^|[^A-Za-z0-9])H2S([^A-Za-z0-9]|$)/i.test(path)) return 'H2S'; if (/(^|[^A-Za-z0-9])DMS([^A-Za-z0-9]|$)/i.test(path)) return 'DMS'; return ''; }
 async function sha16(buf){ const h = new Uint8Array(await crypto.subtle.digest('SHA-256', buf)); return Array.from(h.slice(0, 8)).map(x => x.toString(16).padStart(2, '0')).join(''); }
 function toB64(buf){ const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
-$('#btnUpload').onclick = () => { $('#upErr').textContent = ''; $('#upProg').textContent = ''; $('#upFile').value = ''; $('#dlgUpload').showModal(); };
-$('#upCancel').onclick = () => { $('#dlgUpload').close(); };
-$('#upGo').onclick = async () => {
-  const files = Array.from($('#upFile').files || []); if (!files.length){ $('#upErr').textContent = '사진 파일을 고르세요.'; return; }
-  if (files.some(f => f.size > 30 * 1024 * 1024)){ $('#upErr').textContent = '30 MB가 넘는 파일은 올릴 수 없습니다.'; return; }
-  $('#upGo').disabled = true; $('#upErr').textContent = ''; let done = 0, dup = 0; const errs = [];
-  for (const f of files){ $('#upProg').textContent = `${done + dup + errs.length + 1} / ${files.length} 올리는 중: ${f.name}`;
-    try { const buf = await f.arrayBuffer(); const id = 'P-' + await sha16(buf); const g = parseName(f.name);
-      const r = await api('register', {photo_id: id, filename: f.name, mime: f.type || 'image/jpeg', b64: toB64(buf),
-        meta: {run: $('#upRun').value.trim() || g.run, position: $('#upPos').value.trim() || g.position, precursor: $('#upPre').value, note: $('#upNote').value.trim(), uploader: WHO, crystal_side: 'auto'}});
-      if (r.exists) dup++; else done++; }
-    catch (e){ if (e.code === 'password'){ $('#dlgUpload').close(); return showLogin(e.message); } errs.push(`${f.name}: ${e.message}`); } }
-  $('#upGo').disabled = false; $('#upProg').textContent = `등록 ${done}장` + (dup ? ` · 이미 있던 사진 ${dup}장(다시 올리지 않음)` : '') + (errs.length ? ` · 실패 ${errs.length}장` : ''); $('#upErr').textContent = errs.join(' / ');
-  if (done || dup){ try { INDEX = (await api('list')).index; renderList(); } catch (e){} if (!errs.length){ $('#dlgUpload').close(); show('#list'); toast(done ? `사진 ${done}장을 등록했습니다. 분석 대기 상태입니다.` + (dup ? ` 이미 있던 ${dup}장은 다시 올리지 않았습니다.` : '') : '이미 등록된 사진입니다. 다시 올리지 않았습니다.', 5000); } }
-};
+let REG = null;
+async function entriesFromDrop(dt){
+  const out = [], items = Array.from(dt.items || []).map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+  async function walk(en){ if (en.isFile){ const f = await new Promise((res, rej) => en.file(res, rej)); out.push({file: f, rel: en.fullPath.replace(/^\//, '')}); }
+    else if (en.isDirectory){ const rd = en.createReader(); let batch; do { batch = await new Promise((res, rej) => rd.readEntries(res, rej)); for (const e of batch) await walk(e); } while (batch.length); } }
+  for (const en of items) await walk(en);
+  if (!items.length) Array.from(dt.files || []).forEach(f => out.push({file: f, rel: f.name}));
+  return out;
+}
+async function analyseEntries(entries){
+  $('#regBox').hidden = false; $('#regSum').textContent = '파일을 살펴보는 중…'; $('#regTbl tbody').innerHTML = ''; $('#upErr').textContent = ''; $('#upProg').textContent = ''; $('#upRetry').hidden = true;
+  const dirOf = rel => rel.includes('/') ? rel.slice(0, rel.lastIndexOf('/')) : '';
+  const imgs = entries.filter(e => IMG_EXT.test(e.file.name)), txts = entries.filter(e => /\.txt$/i.test(e.file.name)), others = entries.length - imgs.length - txts.length;
+  const txtBy = {}; for (const t of txts){ t.dir = dirOf(t.rel); t.stem = t.file.name.replace(/\.[^.]+$/, ''); t.text = await t.file.text(); t.parsed = parseTxt(t.text); t.used = false; txtBy[(t.dir + '|' + t.stem).toLowerCase()] = t; }
+  if (!INDEX){ try { INDEX = (await api('list')).index; } catch (e){} }
+  const known = new Set(Object.keys((INDEX && INDEX.photos) || {})), seen = {}; const items = [];
+  for (let i = 0; i < imgs.length; i++){ const e = imgs[i]; $('#regSum').textContent = `사진 지문 계산 중 ${i + 1} / ${imgs.length}`;
+    const dir = dirOf(e.rel), stem = e.file.name.replace(/\.[^.]+$/, ''), g = parseName2(e.file.name), pre = precursorOf(e.rel); const t = txtBy[(dir + '|' + stem).toLowerCase()];
+    if (t) t.used = true; const id = 'P-' + await sha16(await e.file.arrayBuffer());
+    const it = {file: e.file, rel: e.rel, dir, stem, run: g.run, position: g.position, magnification: g.magnification, precursor: pre, preSrc: pre ? 'folder name' : '', photo_id: id,
+                txt: t ? {name: t.file.name, rel: t.rel, text: t.text, parsed: t.parsed, paired_by: 'same name'} : null, cand: null, candOk: false, why: excludeWhy(e.rel, stem), state: '', err: ''};
+    if (known.has(id)) it.state = 'exists'; else if (seen[id]) it.state = 'dup:' + seen[id]; else seen[id] = e.rel;
+    it.include = !it.why && !it.state; items.push(it); }
+  // TXT without a photo of the same name: offer the photo in the same folder whose file-name magnification matches and that has no TXT (a person confirms)
+  const loose = txts.filter(t => !t.used);
+  loose.forEach(t => { if (!t.parsed) return; const c = items.filter(it => it.dir === t.dir && !it.txt && !it.cand && it.magnification === t.parsed.magnification);
+    if (!c.length) return; const tt = txtTime(t.parsed); c.sort((a, b) => Math.abs((a.file.lastModified || 0) - (tt || 0)) - Math.abs((b.file.lastModified || 0) - (tt || 0)));
+    const it = c[0]; it.cand = {name: t.file.name, rel: t.rel, text: t.text, parsed: t.parsed, paired_by: 'person', dt: tt && it.file.lastModified ? Math.round(Math.abs(it.file.lastModified - tt) / 60000) : null, others: c.length - 1}; t.used = 'cand'; });
+  REG = {items, loose: loose.filter(t => t.used !== 'cand'), others, batch: new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + '_' + lkey(WHO)};
+  renderReg();
+}
+function renderReg(){
+  const R = REG, it = R.items, n = {all: it.length, inc: it.filter(i => i.include).length, txt: it.filter(i => i.txt).length, cand: it.filter(i => i.cand).length, ex: it.filter(i => i.why).length, have: it.filter(i => i.state === 'exists').length, dup: it.filter(i => /^dup/.test(i.state)).length};
+  $('#regSum').innerHTML = `사진 ${n.all}장 (등록할 것 ${n.inc}) · 같은 이름 TXT ${n.txt} · TXT 짝 후보 ${n.cand} · 기본 제외 ${n.ex} · 이미 등록됨 ${n.have} · 같은 파일 중복 ${n.dup}${R.loose.length ? ` · 짝 없는 TXT ${R.loose.length}개 (연결 안 함)` : ''}${R.others ? ` · 사진·TXT 아닌 파일 ${R.others}개 (무시)` : ''}`;
+  $('#regMagNote').textContent = `배율은 파일 이름에서 읽어 그대로 등록합니다 (못 읽으면 미입력, 나중에 고칠 수 있음). 이번 확인 자료에 포함된 촬영 배율: ${CONFIRM_MAGS.map(fmtN).join(', ')}배.`;
+  $('#regTbl tbody').innerHTML = it.map((i, k) => { const P = i.txt && i.txt.parsed; const off = !i.include;
+    const magWarn = i.magnification && (i.magnification < CONFIRM_MAGS[0] || i.magnification > CONFIRM_MAGS[CONFIRM_MAGS.length - 1]) ? ' <span class="tag warn">확인 자료 범위 밖</span>' : '';
+    const txtCell = i.txt ? `${esc(i.txt.name)}${P && P.magnification !== i.magnification && i.magnification ? ` <span class="tag warn">TXT 배율 ${fmtN(P.magnification)}</span>` : ''}${P && P.metadata_bar_agrees === false ? ' <span class="tag warn">눈금 불일치</span>' : ''}${!P ? ' <span class="tag warn">배율 없음</span>' : ''}`
+      : i.cand ? `<label style="display:flex; gap:4px; align-items:center; margin:0; color:var(--ink)"><input type="checkbox" class="regCand" data-k="${k}" ${i.candOk ? 'checked' : ''}> 후보 ${esc(i.cand.name)} (배율 ${fmtN(i.cand.parsed.magnification)} 같음${i.cand.dt != null ? `, 시각 차 ${i.cand.dt}분` : ''}${i.cand.others ? `, 다른 후보 ${i.cand.others}` : ''}) 연결</label>` : '<span class="muted">없음 (눈금 막대 사용)</span>';
+    const st = (i.why && i.state ? `<span class="tag wait">${esc(i.why)}</span> ` : '') + (i.state === 'exists' ? '<span class="tag wait">이미 등록됨 · 건너뜀</span>' : /^dup:/.test(i.state) ? `<span class="tag wait">같은 파일 중복 (${esc(i.state.slice(4))})</span>` : i.state === 'ok' ? '<span class="tag ok">등록됨</span>' : i.state === 'fail' ? `<span class="tag bad" title="${esc(i.err)}">실패</span>` : i.why ? `<span class="tag wait">${esc(i.why)}</span>` : '');
+    const pt = i.txt ? P : (i.candOk ? i.cand.parsed : null);
+    return `<tr class="${off ? 'off' : ''} ${i.state === 'fail' ? 'fail' : ''}"><td><input type="checkbox" class="regInc" data-k="${k}" ${i.include ? 'checked' : ''} ${i.state === 'exists' || i.state === 'ok' ? 'disabled' : ''}></td><td title="${esc(i.rel)}">${esc(i.rel)}</td><td>${esc(i.run || '–')}</td><td>${esc(i.position || '–')}</td>
+      <td class="num">${i.magnification ? fmtN(i.magnification) : '<span class="muted">미입력</span>'}${magWarn}</td><td>${i.precursor ? esc(PRE_KO[i.precursor]) + ' <span class="muted tiny">(폴더)</span>' : '<span class="muted">' + esc(PRE_KO[$('#regPre').value]) + '</span>'}</td><td>${txtCell}</td><td class="num">${pt ? fmt(pt.nm_per_px, 3) : '–'}</td><td>${st}</td></tr>`; }).join('');
+  const todo = it.filter(i => i.include && !['exists', 'ok'].includes(i.state)).length; $('#upGo').disabled = !todo; $('#upGo').textContent = todo ? `선택한 사진 ${todo}장 등록` : '등록할 사진 없음';
+}
+async function uploadReg(onlyFailed){
+  const L = REG.items.filter(i => i.include && !['exists', 'ok'].includes(i.state) && (!onlyFailed || i.state === 'fail')); if (!L.length) return;
+  $('#upGo').disabled = true; $('#upRetry').hidden = true; let ok = 0, fail = 0, dup = 0;
+  for (let k = 0; k < L.length; k++){ const i = L[k]; $('#upProg').textContent = `${k + 1} / ${L.length} 올리는 중: ${i.rel}`;
+    try { const buf = await i.file.arrayBuffer(); const T = i.txt || (i.candOk ? i.cand : null);
+      const r = await api('register', {photo_id: i.photo_id, filename: i.file.name, mime: i.file.type || (/\.tiff?$/i.test(i.file.name) ? 'image/tiff' : 'image/jpeg'), b64: toB64(buf),
+        meta: {run: i.run, position: i.position, magnification: i.magnification, magnification_source: i.magnification ? 'file name' : null, precursor: i.precursor || $('#regPre').value, precursor_source: i.precursor ? 'folder name' : 'chosen at registration',
+               note: $('#regNote').value.trim(), uploader: WHO, crystal_side: 'auto', rel_path: i.rel, batch: REG.batch, file_modified: i.file.lastModified ? new Date(i.file.lastModified).toISOString() : null},
+        txt: T ? {name: T.name, text: T.text, paired_by: T.paired_by, rel_path: T.rel, parsed: T.parsed} : null});
+      if (r.exists){ i.state = 'exists'; dup++; } else { i.state = 'ok'; ok++; } i.err = ''; }
+    catch (e){ if (e.code === 'password'){ $('#dlgUpload').close(); return showLogin(e.message); } i.state = 'fail'; i.err = e.message; fail++; }
+    renderReg(); }
+  $('#upProg').innerHTML = `등록 ${ok}장` + (dup ? ` · 이미 있던 사진 ${dup}장` : '') + (fail ? ` · <b class="err">실패 ${fail}장</b> (사유는 "실패" 표시에 마우스를 올리면 보임)` : '') + (ok ? ' — Colab을 실행하면 결과가 붙습니다.' : '');
+  $('#upRetry').hidden = !REG.items.some(i => i.state === 'fail'); try { INDEX = (await api('list')).index; renderList(); } catch (e){}
+}
+$('#btnUpload').onclick = () => { REG = null; $('#regBox').hidden = true; $('#upDir').value = ''; $('#upFile').value = ''; $('#dlgUpload').showModal(); };
+$('#upCancel').onclick = () => { $('#dlgUpload').close(); if (!$('#list').hidden) renderList(); };
+$('#upDir').onchange = e => analyseEntries(Array.from(e.target.files || []).map(f => ({file: f, rel: f.webkitRelativePath || f.name})));
+$('#upFile').onchange = e => analyseEntries(Array.from(e.target.files || []).map(f => ({file: f, rel: f.name})));
+const drop = $('#drop'); ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', async e => { const en = await entriesFromDrop(e.dataTransfer); analyseEntries(en); });
+$('#regTbl').addEventListener('change', e => { const t = e.target; if (!REG) return; const i = REG.items[Number(t.dataset.k)];
+  if (t.classList.contains('regInc')) i.include = t.checked; if (t.classList.contains('regCand')) i.candOk = t.checked; renderReg(); });
+$('#regPre').onchange = () => REG && renderReg();
+$('#upGo').onclick = () => uploadReg(false); $('#upRetry').onclick = () => uploadReg(true);
 
-/* ----- wiring ----- */
-['#q', '#fStatus', '#fPre'].forEach(s => $(s).addEventListener('input', renderList));
+/* ============================== photo details dialog ============================== */
+function openMeta(){ const m = CUR.meta; $('#mRun').value = m.run || ''; $('#mPos').value = m.position || ''; $('#mMag').value = m.magnification || ''; $('#mPre').value = m.precursor || 'unknown'; $('#mNote').value = m.note || ''; $('#mErr').textContent = ''; $('#dlgMeta').showModal(); }
+$('#mCancel').onclick = () => $('#dlgMeta').close();
+$('#mSave').onclick = async () => { try { const r = await api('updateMeta', {photo_id: CUR.meta.photo_id, who: WHO, fields: {run: $('#mRun').value.trim(), position: $('#mPos').value.trim(), magnification: $('#mMag').value ? Number($('#mMag').value) : null, precursor: $('#mPre').value, note: $('#mNote').value.trim()}});
+  CUR.meta = r.meta; $('#dlgMeta').close(); const h = $('#dHead'); if (h) h.outerHTML = headHtml(CUR.meta); toast(Object.keys(r.changed || {}).length ? '고쳤습니다. 기록에 남았습니다.' : '바뀐 내용이 없습니다.'); }
+  catch (e){ $('#mErr').textContent = e.message; } };
+
+/* ============================== detail: one click handler for everything inside ============================== */
+function currentAutoView(m){ const A = m.auto || []; return (CUR.viewK && A.find(x => x.k === CUR.viewK)) || currentAuto(m); }
+$('#detail').addEventListener('click', async e => {
+  const t = e.target.closest('button, tr.pick'); if (!t) return;
+  try {
+    if (t.matches('tr.pick') && t.closest('#otbl')){ EDIT.sel = t.dataset.id; centerOn(viewS()[EDIT.sel]); renderSel(); markRow(); $('#pv').scrollIntoView({block: 'nearest'}); return; }
+    const id = t.id, op = t.dataset.op;
+    if (op){ applyOp(op, t.dataset.v); return; }
+    if (t.classList.contains('imgTab')) return loadImg(t.dataset.img);
+    if (t.classList.contains('pickAuto')){ if (EDIT && EDIT.dirty && !confirm('저장하지 않은 수정이 있습니다. 다른 판독본으로 바꿀까요? (수정은 이 PC에 임시로 남습니다)')) return;
+      t.disabled = true; CUR.meta = (await api('chooseAuto', {photo_id: CUR.meta.photo_id, k: Number(t.dataset.k), who: WHO})).meta; CUR.viewK = null; EDIT = null; renderDetail(); toast('이 자동 판독본을 쓰도록 저장했습니다'); return; }
+    if (t.classList.contains('openV2')){ if (EDIT && EDIT.dirty && !confirm('저장하지 않은 수정이 있습니다. 다른 판을 열까요? (수정은 이 PC에 임시로 남습니다)')) return;
+      const n = Number(t.dataset.n), f = (CUR.reviews || []).find(x => Number(x.slice(0, 4)) === n); if (!f) throw new Error('그 판의 파일을 찾지 못했습니다. 목록으로 나갔다 다시 열어 보세요.');
+      const R = JSON.parse(await fileText(CUR.meta.photo_id, 'reviews/' + f)); CUR.viewK = R.auto_k; EDIT = null; renderDetailAt(n); return; }
+    if (t.classList.contains('openRev')) return startReview('saved', Number(t.dataset.n));
+    if (t.classList.contains('cellBtn')){ EDIT.curCell = t.dataset.k; const R = cellRect(EDIT.curCell, EDIT.J.cells); showRect(R[0], R[1], R[2], R[3], 14); renderCells(); return; }
+    if (id === 'btnRetry'){ t.disabled = true; CUR.meta = (await api('retry', {photo_id: CUR.meta.photo_id, who: WHO})).meta; renderDetail(); toast('다시 시도하도록 표시했습니다'); return; }
+    if (id === 'btnReread'){ t.disabled = true; const side = (currentAutoView(CUR.meta) || {}).crystal_side_asked || CUR.meta.crystal_side || 'auto'; CUR.meta = (await api('setSide', {photo_id: CUR.meta.photo_id, crystal_side: side, who: WHO})).meta; renderDetail(); toast('다시 판독하도록 표시했습니다. Colab을 실행하면 새 판독본이 붙습니다.', 5000); return; }
+    if (id === 'btnReview') return chooseStart();
+    if (id === 'btnMeta') return openMeta();
+    if (!EDIT) return;
+    if (id === 'vAuto' || id === 'vCur'){ EDIT.mode = id === 'vAuto' ? 'auto' : 'cur'; $('#vAuto').classList.toggle('on', EDIT.mode === 'auto'); $('#vCur').classList.toggle('on', EDIT.mode === 'cur'); setTool(null); refreshAll(); return; }
+    if (id === 'zFit') return fitView(); if (id === 'zIn' || id === 'zOut'){ const r = $('#pvCv').getBoundingClientRect(); return zoomAt(id === 'zIn' ? 1.4 : 1 / 1.4, r.width / 2, r.height / 2); }
+    if (id === 'tAdd'){ if (EDIT.mode === 'auto') return toast('최초 자동 보기에서는 고칠 수 없습니다. "수정 반영"으로 바꾸세요.'); return setTool('add'); }
+    if (id === 'tUndo') return undo(); if (id === 'btnSave') return saveV2(); if (id === 'tCsv') return tableCsv();
+    if (id === 'cPrev' || id === 'cNext'){ const C = EDIT.J.cells, keys = []; for (let r = 0; r < C.ny; r++) for (let c = 0; c < C.nx; c++) keys.push(`r${r}c${c}`);
+      const i = EDIT.curCell ? keys.indexOf(EDIT.curCell) : -1; EDIT.curCell = keys[(i + (id === 'cNext' ? 1 : -1) + keys.length) % keys.length]; const R = cellRect(EDIT.curCell, C); showRect(R[0], R[1], R[2], R[3], 14); renderCells(); return; }
+    if (id === 'cDone'){ if (EDIT.mode === 'auto') return; cellEvent(EDIT.cellsDone[EDIT.curCell] ? 'cell-undone' : 'cell-done', EDIT.curCell); return; }
+    if (id === 'histBtn') return showHistory();
+    if (id === 'selGo'){ const q = ($('#selQ').value || '').replace(/^#/, '').trim(); const s = Object.values(viewS()).find(x => String(x.num) === q); if (!s) return toast(`#${q} 결정이 없습니다.`);
+      if (s.excluded && !$('#tExc').checked){ $('#tExc').checked = true; } EDIT.sel = s.id; centerOn(s); renderSel(); renderTable(); markRow(); return; }
+  } catch (err){ if (err.code === 'password') return showLogin(err.message); toast(err.message, 6000); t.disabled = false; }
+});
+$('#detail').addEventListener('change', e => { if (!EDIT) return; const id = e.target.id;
+  if (['tOut', 'tNum', 'tArr', 'tGrid'].includes(id)) draw(); if (id === 'tExc'){ draw(); renderTable(); } if (id === 'tf') renderTable(); if (id === 'zOut'){ EDIT.zOut = e.target.checked; renderSel(); } });
+$('#detail').addEventListener('input', e => { if (EDIT && e.target.id === 'tq') renderTable(); });
+$('#detail').addEventListener('keydown', e => { if (e.target.id === 'selQ' && e.key === 'Enter') $('#selGo').click(); });
+function renderDetailAt(n){ CUR.openN = n; renderDetail(); }
+
+/* ============================== wiring ============================== */
+['#q', '#fStatus', '#fPre', '#fTxt'].forEach(s => $(s).addEventListener('input', renderList));
 $('#btnRefresh').onclick = loadList; $('#btnList').onclick = loadList; $('#btnLogin').onclick = doLogin;
 $('#inPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); }); $('#inWho').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 $('#btnLogout').onclick = () => { SS.del('ws2sem.pw'); LS.del('ws2sem.pw'); PW = ''; showLogin(''); };
+window.addEventListener('beforeunload', e => { if (EDIT && EDIT.dirty){ e.preventDefault(); e.returnValue = ''; } });
 (async () => { if (API && PW && WHO){ try { const r = await api('ping'); $('#ver').textContent = `${APP_VERSION} · 저장소 ${r.version}`; await loadList(); return; } catch (e){} } showLogin(''); })();
 </script>
 </body>
