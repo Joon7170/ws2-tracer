@@ -167,6 +167,25 @@ details.fold #logCard { border:0; box-shadow:none; padding:0; margin-top:12px; }
 #tbl tbody tr.grp:first-child td { border-top:0; }
 button.lnk { border:0; background:none; color:var(--accent); padding:2px 6px; font-size:13px; }
 button.backb { width:36px; height:34px; padding:0; font-size:18px; line-height:1; flex:0 0 auto; }
+/* ---- 0.6.1: same family as the lab's data system (navy bar, one row per run, series chips) */
+:root { --navy:#14245a; --accent:#1b2d6b; }
+header { background:var(--navy); border-bottom:0; color:#fff; }
+header .who { color:#c9d2ea; } #ver { background:rgba(255,255,255,.14); color:#dfe5f5; }
+header button { background:transparent; color:#fff; border-color:rgba(255,255,255,.4); }
+header button.primary { background:#fff; color:var(--navy); border-color:#fff; }
+button.on, .seg button.on { background:var(--navy); border-color:var(--navy); }
+.lhead { display:flex; gap:12px; align-items:baseline; flex-wrap:wrap; margin:2px 2px 10px; } .lhead h2 { font-size:20px; margin:0; color:var(--navy); }
+.pchips { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; } .pchips:empty { display:none; }
+.pchip { border-radius:10px; padding:6px 14px; font-weight:600; } .pchip span { font-weight:400; color:var(--sub); }
+.pchip.on { background:var(--navy); border-color:var(--navy); color:#fff; } .pchip.on span { color:#c9d2ea; }
+#tbl tr.grp td { background:#fff; padding:12px; border-top:0; border-bottom:1px solid var(--line); vertical-align:middle; }
+#tbl tr.grp.open td { background:#f3f6fc; }
+#tbl tr.grp:hover td { background:#eef2fa; }
+.grun { color:var(--navy); font-size:15px; }
+.grow { flex-wrap:nowrap; white-space:nowrap; }
+#tbl tr.pick td { background:#fbfcfe; } #tbl tr.pick:hover td { background:var(--soft); }
+button.backb { width:auto; height:34px; padding:0 12px; font-size:14px; font-weight:600; white-space:nowrap; }
+#dHead h2 { font-size:20px; color:var(--navy); }
 </style>
 </head>
 <body>
@@ -193,16 +212,18 @@ button.backb { width:36px; height:34px; padding:0; font-size:18px; line-height:1
   </section>
 
   <section id="list" hidden>
+    <div class="lhead"><h2>SEM 판독 결과</h2><span class="muted small" id="listInfo"></span></div>
     <div class="card">
+      <div class="pchips" id="preChips" role="group" aria-label="전구체"></div>
       <div class="row">
-        <input id="q" type="search" placeholder="검색: 런 번호, 위치, 파일 이름·경로, 등록한 사람" style="flex:1 1 260px">
+        <input id="q" type="search" placeholder="런 번호 검색 (예: R237) · 위치, 파일 이름, 등록한 사람" style="flex:1 1 260px">
         <select id="fStatus" aria-label="상태"><option value="">상태 전체</option><option value="registered">분석 대기</option><option value="needs_side">결정 쪽 선택 필요</option><option value="analyzed">분석 완료 · 검토 전</option><option value="reviewed">검토됨</option><option value="failed">분석 실패</option></select>
-        <select id="fPre" aria-label="전구체"><option value="">전구체 전체</option><option value="H2S">H₂S</option><option value="DMS">DMS</option><option value="unknown">미확인</option></select>
+        <select id="fPre" aria-label="전구체" hidden><option value="">전구체 전체</option><option value="H2S">H₂S</option><option value="DMS">DMS</option><option value="unknown">미확인</option></select>
         <select id="fTxt" aria-label="장비 TXT"><option value="">TXT 전체</option><option value="yes">TXT 있음</option><option value="no">TXT 없음</option></select>
         <button id="btnRefresh">새로 고침</button>
         <details class="optmenu"><summary>열 선택</summary><div class="optbox" id="colPick"></div></details>
       </div>
-      <div class="row" style="margin:8px 0 6px"><span class="muted small" id="listInfo"></span><span style="flex:1"></span><button id="runsOpen" class="lnk" hidden>모두 펼치기</button><button id="runsClose" class="lnk" hidden>모두 접기</button></div>
+      <div class="row" style="margin:8px 0 6px"><span style="flex:1"></span><button id="runsOpen" class="lnk" hidden>모두 펼치기</button><button id="runsClose" class="lnk" hidden>모두 접기</button></div>
       <div class="tablewrap" style="max-height:72vh"><table id="tbl"><thead></thead><tbody></tbody></table></div>
     </div>
   </section>
@@ -268,7 +289,7 @@ button.backb { width:36px; height:34px; padding:0; font-size:18px; line-height:1
 <script>
 /* ============================== settings ============================== */
 const API_URL_FIXED = 'https://script.google.com/macros/s/AKfycbwmhgggtNJAvEmEgAFj3a-7XnMAHLRpmxjmt5a3oA8XJ4-5dCfpb2W3Mrxa5izgNBIqrA/exec';
-const APP_VERSION = 'sem web 0.6.0';
+const APP_VERSION = 'sem web 0.6.1';
 const CONFIRM_MAGS = [1000, 2500, 10000, 15000, 20000, 40000, 50000];   // magnifications of the photos in the 11-23 confirmation set
 
 /* ============================== small helpers ============================== */
@@ -520,7 +541,7 @@ function renderList(){
     (!q || [r.run, r.position, r.file, r.rel_path, r.uploader, r.photo_id, r.note].some(v => String(v || '').toLowerCase().includes(q))));
   rows.sort((a, b) => String(a.run).localeCompare(String(b.run)) || String(a.position).localeCompare(String(b.position)) || (a.magnification || 0) - (b.magnification || 0) || String(a.file).localeCompare(String(b.file)));
   const total = Object.keys((INDEX && INDEX.photos) || {}).length;
-  $('#tbl thead').innerHTML = `<tr><th>사진</th><th>위치 · 배율</th><th>전구체</th><th>상태</th><th class="num">S3</th><th>마지막 검토</th>${X.map(k => `<th>${LIST_EXTRA[k]}</th>`).join('')}</tr>`;
+  $('#tbl thead').innerHTML = `<tr><th>런 · 사진</th><th>위치 · 배율</th><th>전구체</th><th>상태</th><th class="num">S3</th><th>마지막 검토</th>${X.map(k => `<th>${LIST_EXTRA[k]}</th>`).join('')}</tr>`;
   const nameN = {}; rows.forEach(r => { nameN[r.file] = (nameN[r.file] || 0) + 1; });
   const folder = r => { const p = String(r.rel_path || '').split('/'); return p.length > 1 ? p[p.length - 2] : ''; };
   const s3of = r => { const a = r.auto, v = r.review; return v && v.schema === 2 ? v.S3 : a ? a.whole.S3 : null; };
@@ -538,16 +559,19 @@ function renderList(){
   LISTF.runs = G.map(g => g.run); LISTF.forced = forced;
   $('#listInfo').textContent = total ? `런 ${G.length}개 · 사진 ${rows.length} / ${total}장` : '아직 등록된 사진이 없습니다. 오른쪽 위 "폴더·사진 등록"으로 시작하세요.';
   $('#runsOpen').hidden = $('#runsClose').hidden = G.length < 2;
+  const all = Object.values((INDEX && INDEX.photos) || {}), runsOf = k => new Set(all.filter(r => !k || r.precursor === k).map(r => r.run || '')).size;
+  $('#preChips').innerHTML = [['', '전체'], ['H2S', 'H₂S'], ['DMS', 'DMS'], ['unknown', '미확인']].filter(([k]) => !k || runsOf(k)).map(([k, n]) => `<button class="pchip ${fp === k ? 'on' : ''}" data-pre="${k}">${n} <span>(${runsOf(k)})</span></button>`).join('');
   const kind = r => { const v = r.review || r.latest_review; return r.status === 'reviewed' ? (v && v.schema === 2 && v.cells_total && v.cells_done < v.cells_total ? 'part' : 'done') : r.status === 'analyzed' ? 'todo' : r.status === 'needs_side' ? 'side' : r.status === 'failed' ? 'fail' : 'wait'; };
   const KIND = [['done', '검토됨', 'ok'], ['part', '검토 중', 'blue'], ['todo', '검토 전', ''], ['side', '결정 쪽 선택 필요', 'warn'], ['wait', '분석 대기', 'wait'], ['fail', '분석 실패', 'bad']];
   $('#tbl tbody').innerHTML = G.map(g => { const R = g.rows, open = isOpen(g), n = {}; R.forEach(r => { const k = kind(r); n[k] = (n[k] || 0) + 1; });
     const pre = [...new Set(R.map(r => PRE_KO[r.precursor] || r.precursor))].join('·'), pos = new Set(R.map(r => r.position || '')).size, mags = [...new Set(R.map(r => r.magnification).filter(Boolean))].sort((a, b) => a - b);
     const S = R.map(s3of).filter(x => x != null), lo = Math.min(...S), hi = Math.max(...S);
     const last = R.map(r => r.review).filter(Boolean).sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
-    return `<tr class="grp ${open ? 'open' : ''}" data-run="${esc(g.run)}" tabindex="0" role="button" aria-expanded="${open}"><td colspan="${6 + X.length}"><div class="grow"><span class="gcar">›</span><b class="grun">${esc(g.run || '런 미입력')}</b>
-        <span class="muted small">${esc(pre)} · 사진 ${R.length}장 · 위치 ${pos}곳${mags.length ? ' · ' + (mags.length > 3 ? `${fmtN(mags[0])}–${fmtN(mags[mags.length - 1])}배` : mags.map(m => fmtN(m) + '배').join(', ')) : ''}</span>
-        <span class="gstat">${KIND.filter(k => n[k[0]]).map(k => `<span class="tag ${k[2]} tiny">${k[1]} ${n[k[0]]}</span>`).join('')}</span><span style="flex:1"></span>
-        ${S.length ? `<span class="small muted" title="이 런의 사진별 S3 (검토본이 있으면 검토본 값). 런 전체를 합친 값이 아닙니다.">S3 ${lo === hi ? fmt(lo) : fmt(lo) + ' – ' + fmt(hi)}</span>` : ''}${last ? `<span class="small muted">${esc(when(last.at))}</span>` : ''}</div></td></tr>` + (open ? R.map(rowHtml).join('') : ''); }).join('');
+    return `<tr class="grp ${open ? 'open' : ''}" data-run="${esc(g.run)}" tabindex="0" role="button" aria-expanded="${open}"><td><div class="grow"><span class="gcar">›</span><b class="grun">${esc(g.run || '런 미입력')}</b><span class="muted small">사진 ${R.length}장</span></div></td>
+        <td class="small">위치 ${pos}곳${mags.length ? ' · ' + (mags.length > 2 ? `${fmtN(mags[0])}–${fmtN(mags[mags.length - 1])}배` : mags.map(m => fmtN(m) + '배').join(', ')) : ''}</td><td>${esc(pre)}</td>
+        <td><span class="gstat">${KIND.filter(k => n[k[0]]).map(k => `<span class="tag ${k[2]} tiny">${k[1]} ${n[k[0]]}</span>`).join('')}</span></td>
+        <td class="num small" title="이 런의 사진별 S3 범위 (검토본이 있으면 검토본 값). 런 전체를 합친 값이 아닙니다.">${S.length ? (lo === hi ? fmt(lo) : fmt(lo) + ' – ' + fmt(hi)) : '–'}</td>
+        <td class="small">${last ? `${esc(last.who)} · ${esc(when(last.at))}` : '<span class="muted">–</span>'}</td>${X.map(() => '<td></td>').join('')}</tr>` + (open ? R.map(rowHtml).join('') : ''); }).join('');
   $('#colPick').innerHTML = Object.entries(LIST_EXTRA).map(([k, v]) => `<label class="small" style="display:flex; gap:4px; align-items:center"><input type="checkbox" data-col="${k}" ${X.includes(k) ? 'checked' : ''}>${v}</label>`).join('');
 }
 $('#tbl tbody').addEventListener('click', e => { const g = e.target.closest('tr.grp'); if (g) return setRunOpen([g.dataset.run], !g.classList.contains('open')); const tr = e.target.closest('tr.pick'); if (tr) openDetail(tr.dataset.id); });
@@ -567,7 +591,7 @@ function statusHtml(m){ const v = m.review || m.latest_review;
   return v && v.schema === 2 && m.status === 'reviewed' && v.cells_total && v.cells_done < v.cells_total ? `<span class="tag blue">검토 중 ${v.cells_done}/${v.cells_total}칸</span>` : statusTag(m.status); }
 function headHtml(m){
   const out = m.magnification && (m.magnification < CONFIRM_MAGS[0] || m.magnification > CONFIRM_MAGS[CONFIRM_MAGS.length - 1]);
-  return `<div class="row" id="dHead" style="margin-bottom:8px"><button id="btnBack" class="backb" aria-label="뒤로" title="뒤로 (검토 중이면 결과 화면으로, 결과 화면이면 목록으로)">←</button><h2 style="margin:0">${esc(m.run || '런 미입력')} · ${esc(m.position || '위치 미입력')} · ${m.magnification ? fmtN(m.magnification) + '배' : '배율 미입력'}</h2>${statusHtml(m)}
+  return `<div class="row" id="dHead" style="margin-bottom:8px"><button id="btnBack" class="backb" title="뒤로 (검토 중이면 결과 화면으로, 결과 화면이면 목록으로)">‹ 목록</button><h2 style="margin:0">${esc(m.run || '런 미입력')} · ${esc(m.position || '위치 미입력')} · ${m.magnification ? fmtN(m.magnification) + '배' : '배율 미입력'}</h2>${statusHtml(m)}
     ${out ? `<span class="tag warn" title="이번 확인 자료에 포함된 촬영 배율: ${CONFIRM_MAGS.map(fmtN).join(', ')}배">확인 자료 배율 범위 밖</span>` : ''}<span class="muted small">${esc(m.file.replace(/\.[^.]+$/, ''))}</span></div>`;
 }
 function shotInfoHtml(m){
@@ -619,6 +643,7 @@ function srcLabel(){
 }
 function renderMain(){
   const review = EDIT.ui === 'review'; EDIT.tab = review ? 'edit' : 'res'; if (review) EDIT.mode = 'cur'; const T = toolState(); T.draft = null; T.cdraft = []; T.dirSel = null; T.cSel = null; T.lastPt = null;
+  if ($('#btnBack')) $('#btnBack').textContent = review ? '‹ 결과 화면' : '‹ 목록';
   const opts = `<details class="optmenu"><summary>표시 설정</summary><div class="optbox">${chk('out', '윤곽')}${chk('arr', '방향 화살표')}${chk('exc', '바탕·지운 윤곽')}${review ? chk('grid', '칸 경계') +
     `<label class="rng">밝기<input type="range" id="rBr" min="-80" max="80" value="${T.br}"></label><label class="rng">대비<input type="range" id="rCt" min="50" max="250" value="${T.ct}"></label>` : ''}</div></details>`;
   const find = `<input id="selQ" type="search" placeholder="번호 찾기" style="width:92px">`;
@@ -1373,6 +1398,7 @@ function renderDetailAt(n){ CUR.openN = n; renderDetail(); }
 ['#q', '#fStatus', '#fPre', '#fTxt'].forEach(s => $(s).addEventListener('input', renderList));
 $('#colPick').addEventListener('change', e => { const k = e.target.dataset.col; if (!k) return; const X = listExtra().filter(x => x !== k); if (e.target.checked) X.push(k); LS.set('ws2sem.cols', JSON.stringify(Object.keys(LIST_EXTRA).filter(x => X.includes(x)))); renderList(); });
 $('#btnRefresh').onclick = loadList; $('#btnList').onclick = navToList; $('#btnLogin').onclick = doLogin;
+$('#preChips').addEventListener('click', e => { const b = e.target.closest('.pchip'); if (!b) return; $('#fPre').value = b.dataset.pre; renderList(); });
 $('#runsOpen').onclick = () => setRunOpen(LISTF.runs, true); $('#runsClose').onclick = () => setRunOpen(LISTF.runs, false);
 $('#inPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); }); $('#inWho').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 $('#btnLogout').onclick = async () => { if (!(await leaveOk())) return; EDIT = null; navSyncList(); SS.del('ws2sem.pw'); LS.del('ws2sem.pw'); PW = ''; showLogin(''); };
