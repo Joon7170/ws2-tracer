@@ -60,6 +60,20 @@ a { color:var(--accent); }
 #pv { position:relative; height:min(72vh, 820px); background:var(--stage); border-radius:10px; overflow:hidden; touch-action:none; user-select:none; }
 #pv canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
 #pvHud { position:absolute; left:8px; top:8px; background:#000b; color:#e8eaec; font-size:12.5px; border-radius:8px; padding:5px 9px; pointer-events:none; max-width:70%; }
+#pv.split-h canvas#pvCv { width:50%; } #pv.split-v canvas#pvCv { height:50%; }
+#pv canvas#pvCv2 { display:none; pointer-events:none; } #pv.split-h canvas#pvCv2 { display:block; left:50%; width:50%; border-left:2px solid #f2d03f55; } #pv.split-v canvas#pvCv2 { display:block; top:50%; height:50%; border-top:2px solid #f2d03f55; }
+#pv canvas#pvLoupe { position:absolute; inset:auto; right:10px; top:44px; width:150px; height:150px; border-radius:12px; border:2px solid #ffffff66; background:#000; pointer-events:none; display:none; }
+#pvMode { position:absolute; right:8px; top:8px; background:#000b; color:#e8eaec; font-size:13px; border-radius:8px; padding:5px 9px; pointer-events:none; }
+#pvRawTag { position:absolute; left:calc(50% + 8px); bottom:8px; background:#000b; color:#e8eaec; font-size:12px; border-radius:8px; padding:4px 8px; pointer-events:none; } #pv.split-v #pvRawTag { left:8px; }
+.trow { display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px; } .trow .sep { width:1px; height:26px; background:var(--line); margin:0 2px; }
+.trow .tool { min-height:38px; padding:0 12px; border-radius:10px; font-size:14px; }
+.trow .tool[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
+.trow .tool.warn { border-color:#e06060; color:#b42318; } .trow .tool.go { background:#1a8a5a; border-color:#1a8a5a; color:#fff; font-weight:700; }
+.trow .chip { min-height:34px; padding:0 12px; border-radius:999px; border:2px solid var(--line); font-size:13.5px; }
+.trow .chip[aria-pressed="true"] { border-color:#1c2330; background:#1c2330; color:#fff; font-weight:700; }
+.trow .chip.flag { border-radius:8px; border-style:dashed; } .trow .chip.flag[aria-pressed="true"] { border-style:solid; border-color:#b88a00; background:#fff4cc; color:#5c4500; }
+.rng { display:flex; gap:6px; align-items:center; font-size:13px; } .rng input { flex:1; min-width:90px; }
+.kbd { border-bottom:1px dotted currentColor; cursor:help; }
 #pvTool { position:absolute; left:50%; bottom:8px; transform:translateX(-50%); background:#1f5fbfee; color:#fff; font-size:13px; border-radius:8px; padding:6px 10px; max-width:92%; } #pvTool[hidden] { display:none; }
 #pvTool button { background:#fff; color:#1c2330; border:0; padding:2px 9px; margin-left:6px; }
 .tb { display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin:8px 0; } .tb .sep { width:1px; height:22px; background:var(--line); }
@@ -94,6 +108,54 @@ details.fold { margin-top:12px; } details.fold > summary { padding:2px 0; } deta
 #drop { border:2px dashed #9fbbe8; border-radius:12px; padding:18px; text-align:center; background:#f6f9ff; }
 #drop.over { background:#e3ecfb; }
 #regTbl td { font-size:12.5px; } #regTbl tr.off td { color:#8a93a3; } #regTbl tr.fail td { background:#fdf0ef; }
+/* ---- 0.5.1: looks only (spacing, grouping, states). No behaviour here. */
+:root { --hover:#f3f5f9; --shadow:0 1px 2px rgba(28,35,48,.06); }
+[hidden] { display:none !important; }
+button { transition:background .12s, border-color .12s, filter .12s; line-height:1.3; }
+button:hover:not(:disabled) { filter:brightness(.96); }
+button.primary:disabled { background:#eef0f4; border-color:var(--line); color:#8a93a3; opacity:1; }
+:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offset:0; }
+header { padding:9px 20px; gap:10px; }
+header h1 { font-size:16px; letter-spacing:-.01em; }
+#ver { font-size:12px; background:var(--soft); border-radius:999px; padding:1px 9px; } #ver:empty { display:none; }
+.card { box-shadow:var(--shadow); padding:16px; }
+#login { padding:22px; } #btnLogin { width:100%; min-height:38px; }
+.tag { padding:1px 9px; line-height:1.5; } .tag.tiny { padding:0 7px; font-size:11.5px; }
+#tbl th { padding:8px 12px; } #tbl td { padding:10px 12px; } #tbl tbody tr:last-child td { border-bottom:0; }
+#dHead h2 { font-size:18px; letter-spacing:-.01em; }
+.tb { gap:8px; margin:0 0 8px; }
+.tb > button, #cellBar > button, .tb .optmenu > summary { height:34px; display:inline-flex; align-items:center; padding:0 12px; white-space:nowrap; }
+.tb input[type=search] { height:34px; }
+.tb .sep { height:24px; }
+#cellBar { gap:8px; } .cmap .cm { width:14px; height:11px; }
+#pv { border-radius:12px; }
+@media (min-width:1101px){ #srcChip { display:none; } }
+.toolpanel { margin-top:8px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 12px; box-shadow:var(--shadow); }
+.tline { display:flex; gap:10px; align-items:flex-start; } .tline + .tline { border-top:1px solid var(--line); margin-top:8px; padding-top:8px; }
+.tlabel { flex:0 0 28px; font-size:12px; font-weight:600; color:var(--sub); line-height:34px; } .tline + .tline .tlabel { line-height:40px; }
+.tline .trow { margin-top:0; flex:1; min-width:0; }
+.tline { flex-wrap:wrap; } .tline > .tview .tool { min-height:34px; }
+.tgroup, .tctx, .tview { display:inline-flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.tgroup { background:var(--soft); border-radius:12px; padding:3px; gap:2px; }
+.tgroup .tool { border-color:transparent; background:transparent; min-height:34px; }
+.tgroup .tool[aria-pressed="true"] { box-shadow:0 1px 2px rgba(28,35,48,.25); }
+.tview { margin-left:auto; } @media (max-width:1100px){ .tlabel { display:none; } }
+.trow .tool.sq { width:38px; padding:0; }
+.trow .tool:not(.go):not(.warn)[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+.trow .chip { border-width:1.5px; }
+.hintline { display:flex; gap:6px 16px; align-items:baseline; justify-content:space-between; flex-wrap:wrap; margin-top:6px; } #hint:empty { display:none; }
+.legend { white-space:nowrap; } .legend i:first-child { margin-left:0; }
+.kgrid > div { padding:10px 12px; } #selCard .kv { gap:5px 12px; }
+details.fold { padding:0; }
+details.fold > summary { list-style:none; display:flex; gap:8px; align-items:baseline; padding:12px 16px; border-radius:12px; }
+details.fold > summary::-webkit-details-marker { display:none; }
+details.fold > summary::before { content:'›'; flex:0 0 10px; font-weight:700; color:var(--sub); transition:transform .12s; text-align:center; }
+details.fold[open] > summary::before { transform:rotate(90deg); }
+details.fold > summary:hover { background:var(--hover); }
+details.fold[open] > summary { margin-bottom:0; border-bottom:1px solid var(--line); border-radius:12px 12px 0 0; }
+details.fold > div { padding:14px 16px; }
+details.fold #logCard { border:0; box-shadow:none; padding:0; margin-top:12px; }
 </style>
 </head>
 <body>
@@ -195,7 +257,7 @@ details.fold { margin-top:12px; } details.fold > summary { padding:2px 0; } deta
 <script>
 /* ============================== settings ============================== */
 const API_URL_FIXED = 'https://script.google.com/macros/s/AKfycbwmhgggtNJAvEmEgAFj3a-7XnMAHLRpmxjmt5a3oA8XJ4-5dCfpb2W3Mrxa5izgNBIqrA/exec';
-const APP_VERSION = 'sem web 0.4.0';
+const APP_VERSION = 'sem web 0.5.1';
 const CONFIRM_MAGS = [1000, 2500, 10000, 15000, 20000, 40000, 50000];   // magnifications of the photos in the 11-23 confirmation set
 
 /* ============================== small helpers ============================== */
@@ -217,7 +279,7 @@ const STATE_KO = {confirmed: '확인 완료', partial: '부분 검토', not_revi
 const HOLD_KO = {used: '판독', border: '보류: 사진 끝에 닿음', small: '보류: 작음 (지름 8 px 미만)', round: '보류: 둥긂 (삼각형 모양 약함)', 'merged-shape': '보류: 붙은 모양 (여러 결정이 한 윤곽)', background: '보류: 바탕 (결정 사이 빈 공간으로 판단)'};
 const TAG_KO = {iso: '떨어진', touch: '붙은', round: '꼭짓점 둥근', clump: '덩어리'};
 const CONF_KO = {unreviewed: '미검토', kept: '확인 후 유지', edited: '사람 수정', hard: '판독 어려움', excluded: '제외'};
-const EXCL_KO = {background: '바탕', duplicate: '중복', other: '기타', split: '분리됨 (자식 윤곽으로 대체)', merged: '병합됨 (합친 윤곽으로 대체)'};
+const EXCL_KO = {background: '바탕', duplicate: '중복', other: '지움', split: '분리됨 (자식 윤곽으로 대체)', merged: '병합됨 (합친 윤곽으로 대체)'};
 const ORIGIN_KO = {auto: '자동 (SAM)', person: '사람이 추가', split: '분리로 생김', merge: '병합으로 생김'};
 const statusTag = s => { const v = STATUS[s] || [s, '']; return `<span class="tag ${v[1]}">${esc(v[0])}</span>`; };
 
@@ -502,9 +564,18 @@ function variantsHtml(){
   const btns = A.map(x => `<button data-k="${x.k}" class="pickAuto ${x.k === a.k ? 'on' : ''}">${esc(SIDE_KO[x.crystal_side_asked] || x.crystal_side_asked)}${x.crystal_side_asked === 'auto' && !x.background_applied ? ' (건너뜀)' : ''}</button>`).join('');
   return m.status === 'needs_side' ? `<div class="note small banner"><b>결정 쪽을 골라 주세요.</b> 원본을 보고 결정인 쪽을 누르세요: ${btns}</div>` : `<div class="row small" style="margin-bottom:6px"><span class="muted">판독본</span>${btns}</div>`;
 }
-const LEGEND = `<div class="legend tiny muted"><i style="background:#22c55e"></i>방향 있음<i style="background:#facc15"></i>방향 없음<i style="background:#38bdf8"></i>고침<i style="background:#f472b6"></i>추가·분리·병합<i style="background:#94a3b8"></i>제외</div>`;
+const LEGEND = `<div class="legend tiny muted"><i style="background:#22c55e"></i>방향 있음<i style="background:#facc15"></i>방향 없음<i style="background:#38bdf8"></i>고침<i style="background:#f472b6"></i>사람이 그림<i style="background:#94a3b8"></i>지움·바탕</div>`;
 const chk = (key, label) => `<label><input type="checkbox" data-opt="${key}" ${EDIT.opt[key] ? 'checked' : ''}>${label}</label>`;
-const VIEWER = `<div id="pv"><canvas id="pvCv"></canvas><div id="pvHud"></div><div id="pvTool" hidden></div></div>`;
+const VIEWER = `<div id="pv"><canvas id="pvCv"></canvas><canvas id="pvCv2"></canvas><canvas id="pvLoupe" width="300" height="300"></canvas><div id="pvHud"></div><div id="pvMode" hidden></div><div id="pvRawTag" hidden>원본 (보정·윤곽 없음) · 십자선 = 펜 위치</div></div>`;
+const TOOLS_HTML = `<div class="toolpanel">
+  <div class="tline"><span class="tlabel">유형</span><div class="trow" id="tagRow" role="group" aria-label="유형"></div><span class="tview"><button class="tool" id="penonly" aria-pressed="false">펜으로만</button><button class="tool" id="splitBtn" aria-pressed="false">원본 나란히</button></span></div>
+  <div class="tline"><span class="tlabel">도구</span><div class="trow" id="toolRow" role="toolbar" aria-label="도구">
+    <span class="tgroup"><button class="tool" data-mode="free" title="F">✎ 따라 그리기</button><button class="tool" data-mode="click" title="P">• 점 찍기</button><button class="tool" data-mode="sel" title="S">선택</button><button class="tool" data-mode="dir" title="V">꼭짓점(방향)</button><button class="tool" data-mode="cdir" title="C">덩어리 방향</button></span>
+    <span class="sep"></span><button class="tool" id="tUndo" title="Z">↶ 되돌리기</button>
+    <span class="tctx"><button class="tool go" id="closepoly" hidden title="Enter">닫기 ✓</button><button class="tool warn" id="delsel" hidden title="Delete">지우기</button><button class="tool warn" id="nodirBtn" hidden>방향 판독 어려움</button><button class="tool" id="cdirnext" hidden>덩어리 바꾸기</button></span>
+    <span class="tview"><button class="tool" id="zFit2" title="0">맞춤</button><button class="tool sq" id="zIn" aria-label="확대">＋</button><button class="tool sq" id="zOutB" aria-label="축소">－</button></span>
+  </div></div></div>`;
+const KEYS_TXT = '1–4 유형 · U 경계 불확실 · X 잘림 · F 그리기 · P 점 · S 선택 · V 꼭짓점 · C 덩어리 방향 · Z 되돌리기 · 0 맞춤 · Space 누른 채 끌기 이동 · Delete 지우기 · N 다음 미검토 결정 · Esc 취소 / 두 손가락: 확대·이동 · 펜으로만: 펜만 그리고 손가락은 이동·확대';
 const cellName = key => { const C = EDIT.J.cells, r = Number(key.slice(1, key.indexOf('c'))), c = Number(key.slice(key.indexOf('c') + 1)); return `${r * C.nx + c + 1}번 칸`; };
 function cellKeys(){ const C = EDIT.J.cells, K = []; for (let r = 0; r < C.ny; r++) for (let c = 0; c < C.nx; c++) K.push(`r${r}c${c}`); return K; }
 function srcLabel(){
@@ -514,19 +585,21 @@ function srcLabel(){
   return `사진 전체 · 수정 반영 | ${nd}/${tot}칸 검토 완료${EDIT.dirty ? ' · 저장 안 됨' : ''}`;
 }
 function renderMain(){
-  const review = EDIT.ui === 'review'; EDIT.tab = review ? 'edit' : 'res'; EDIT.tool = null; EDIT.tpts = []; if (review) EDIT.mode = 'cur';
-  const opts = `<details class="optmenu"><summary>표시 설정</summary><div class="optbox">${chk('out', '윤곽')}${chk('arr', '방향 화살표')}${chk('exc', '바탕·제외 윤곽')}${review ? chk('grid', '칸 경계') : ''}${LEGEND}</div></details>`;
+  const review = EDIT.ui === 'review'; EDIT.tab = review ? 'edit' : 'res'; if (review) EDIT.mode = 'cur'; const T = toolState(); T.draft = null; T.cdraft = []; T.dirSel = null; T.cSel = null; T.lastPt = null;
+  const opts = `<details class="optmenu"><summary>표시 설정</summary><div class="optbox">${chk('out', '윤곽')}${chk('arr', '방향 화살표')}${chk('exc', '바탕·지운 윤곽')}${review ? chk('grid', '칸 경계') +
+    `<label class="rng">밝기<input type="range" id="rBr" min="-80" max="80" value="${T.br}"></label><label class="rng">대비<input type="range" id="rCt" min="50" max="250" value="${T.ct}"></label>` : ''}</div></details>`;
   const find = `<input id="selQ" type="search" placeholder="번호 찾기" style="width:92px">`;
   const bar = review
-    ? `<div class="tb"><button class="primary" id="btnSave" disabled>수정 저장</button><button id="tUndo" disabled title="Ctrl+Z">↶</button><button id="tAdd" title="A">+ 누락 추가</button><span class="sep"></span>
+    ? `<div class="tb rbar"><button class="primary" id="btnSave" disabled>수정 저장</button><span class="sep"></span>
         <span id="cellBar"></span><span style="flex:1"></span>${find}${chk('num', '번호')}${opts}<button id="zFit">전체</button><button id="endReview">검토 마치기</button></div>`
     : `<div class="tb"><span class="srcchip" id="srcChip"></span><span style="flex:1"></span>${find}${chk('num', '번호')}${opts}<button id="zFit">전체</button></div>`;
-  $('#mainArea').innerHTML = (review ? '<div id="draftBanner"></div>' : variantsHtml()) + `<div class="wgrid"><div>${bar}${VIEWER}<div class="small muted" id="hint" style="margin-top:4px"></div></div>
+  $('#mainArea').innerHTML = (review ? '<div id="draftBanner"></div>' : variantsHtml()) + `<div class="wgrid"><div>${bar}${VIEWER}${review ? TOOLS_HTML : ''}<div class="hintline"><span class="small muted" id="hint"></span>${LEGEND}</div></div>
     <div id="side">${review ? '' : '<div class="card" id="keyCard"></div>'}<div class="card" id="selCard"></div></div></div>`;
   wireViewer(); fitView();
   if (review){ const K = cellKeys(); if (!EDIT.curCell) EDIT.curCell = K.find(k => !EDIT.cellsDone[k]) || K[0]; if (!EDIT.sel){ const R = cellRect(EDIT.curCell, EDIT.J.cells); showRect(R[0], R[1], R[2], R[3], 14); } else centerOn(EDIT.S[EDIT.sel]); }
   else if (EDIT.sel && viewS()[EDIT.sel]) centerOn(viewS()[EDIT.sel]);
-  $('#hint').innerHTML = review ? '결정을 누르면 오른쪽에서 고칠 수 있어요. 빠진 결정은 "+ 누락 추가"로 사진 위에 그리세요. <span title="1–4 유형 · K 확인 · V 꼭짓점 · D 방향 어려움 · T 덩어리 방향 · R 다시 그리기 · S 분리 · M 병합 · X/Delete 제외 · A 누락 추가 · N 다음 미검토 · Ctrl+Z 되돌리기 · Esc 취소" style="cursor:help; text-decoration:underline dotted">단축키</span> · 휠 확대 · 끌어서 이동' : '결정을 클릭하면 확대해서 볼 수 있어요.';
+  $('#hint').innerHTML = review ? `빠진 결정은 따라 그리기·점 찍기로 그리고 꼭짓점(방향)을 찍습니다. 틀린 윤곽은 선택 → 지우기, 모양이 틀리면 지우고 다시 그립니다. <span class="kbd" title="${KEYS_TXT}">단축키</span>` : '';
+  if (review){ renderTools(); renderTags(); applySplit(); }
   if (review && EDIT.draft){ const dr = EDIT.draft;
     $('#draftBanner').innerHTML = `<div class="note small banner">저장하지 않은 수정 ${dr.events.length}건이 이 PC에 있습니다 (${esc(when(dr.at))}). <button id="drUse">이어서 하기</button> <button id="drDrop">버리기</button></div>`;
     $('#drUse').onclick = () => { EDIT.S = clone(EDIT.S0); Object.entries(dr.objs || {}).forEach(([k, v]) => { EDIT.S[k] = v; });
@@ -578,7 +651,7 @@ let RES = null;
 function refreshAll(){ if (!EDIT) return; RES = allResults(EDIT.J, EDIT.A, EDIT.S0, EDIT.S, EDIT.cellsDone);
   if ($('#keyCard')) renderKey(); if ($('#srcChip')) $('#srcChip').textContent = srcLabel(); if ($('#cellBar')) renderCells(); if ($('#selCard')) renderSel(); if ($('#pvCv')) draw();
   if ($('#dAnal') && $('#dAnal').open) renderAnal(); if ($('#dList')){ $('#listSum').textContent = `${Object.keys(EDIT.S).length}개 윤곽`; if ($('#dList').open) renderListBox(); }
-  if ($('#btnSave')){ $('#btnSave').disabled = !EDIT.dirty; $('#btnSave').textContent = EDIT.dirty ? `수정 저장 (${EDIT.events.length})` : '수정 저장'; } if ($('#tUndo')) $('#tUndo').disabled = !EDIT.undo.length; }
+  if ($('#btnSave')){ $('#btnSave').disabled = !EDIT.dirty; $('#btnSave').textContent = EDIT.dirty ? `수정 저장 (${EDIT.events.length})` : '수정 저장'; } if (EDIT.T && $('#toolRow')){ renderTools(); renderTags(); } }
 const mainShort = M => M.state === 'one' ? `${fmt(M.main, 1)}°` : M.state === 'two' ? `${fmt(M.main, 1)}° (두 방향 비슷)` : M.state === 'few' ? '보류 (수 부족)' : '보류 (불분명)';
 function mainPhrase(M){ return M.state === 'one' ? `주방향 ${fmt(M.main, 1)}° · 일치 ${M.n_main} · 약 60° ${M.n_second} · 기타 ${M.n_other}` : M.state === 'two' ? `두 방향이 비슷하게 나타남 · ${fmt(M.main, 1)}° ${M.n_main}개 · ${fmt(M.second, 1)}° ${M.n_second}개` : MAIN_KO[M.state]; }
 function renderKey(){
@@ -633,10 +706,7 @@ function dirHistSvg(th, M){
 
 /* ============================== whole-photo review: viewer ============================== */
 const OP_KO = {keep: '확인 (그대로 유지)', vertex: '꼭짓점(방향) 지정', nodir: '방향 판독 어려움 표시', dir_ok: '방향 판독 어려움 해제', tag: '유형 변경', u_edge: '경계 확실성 변경', u_dir: '방향 확실성 변경',
-  redraw: '윤곽 다시 그림', exclude: '제외', restore: '복구', split: '분리', merge: '병합', add: '누락 추가', mark: '덩어리 안 방향 표시', unmark: '덩어리 안 방향 표시 지움', 'cell-done': '칸 완료', 'cell-undone': '칸 완료 취소'};
-const TOOL_KO = {vertex: '꼭짓점(방향): 선택한 결정의 꼭짓점 하나를 누르세요.', redraw: '윤곽 다시 그리기: 실제 경계를 따라 점을 찍고, 첫 점을 다시 누르거나 Enter·"닫기"로 마칩니다.',
-  add: '누락 추가: 빠진 결정의 경계를 따라 점을 찍고, 첫 점을 다시 누르거나 Enter·"닫기"로 마칩니다.', split: '분리: 선택한 윤곽을 가로지르는 선의 두 점을 누르세요 (선 양쪽이 두 결정이 됩니다).',
-  merge: '병합: 선택한 윤곽과 합칠 다른 윤곽을 누르세요.', mark: '덩어리 안 방향: ① 꼭짓점 → ② 한쪽 변 위의 점 → ③ 다른 쪽 변 위의 점을 누르세요.'};
+  redraw: '윤곽 다시 그림', exclude: '제외', restore: '복구', split: '분리', merge: '병합', add: '누락 추가', mark: '덩어리 안 방향 표시', unmark: '덩어리 안 방향 표시 지움', 'cell-done': '칸 완료', cut: '잘림 표시 변경', delete: '그린 윤곽 지움', 'cell-undone': '칸 완료 취소'};
 const viewS = () => EDIT.mode === 'auto' ? EDIT.S0 : EDIT.S;
 function isChanged(s){ const s0 = EDIT.S0[s.id]; if (!s0) return true; const a = Object.assign({}, s, {confirm: 0, who: 0, at: 0}), b = Object.assign({}, s0, {confirm: 0, who: 0, at: 0}); return JSON.stringify(a) !== JSON.stringify(b); }
 function colorOf(s){ if (s.excluded) return '#94a3b8'; if (s.origin !== 'auto') return '#f472b6'; if (EDIT.mode === 'cur' && isChanged(s)) return '#38bdf8'; return thetaOf(s, EDIT.A) != null ? '#22c55e' : '#facc15'; }
@@ -672,7 +742,7 @@ function drawObjects(ctx, S, k, opts){        // k = screen px per image px (for
 function draw(){
   const cv = $('#pvCv'); if (!cv || !EDIT) return; const ctx = cv.getContext('2d'), d = window.devicePixelRatio || 1, V = EDIT.view;
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#0e1013'; ctx.fillRect(0, 0, cv.width, cv.height);
-  ctx.setTransform(d * V.s, 0, 0, d * V.s, d * V.ox, d * V.oy); ctx.imageSmoothingEnabled = V.s < 2; ctx.drawImage(EDIT.img, 0, 0, EDIT.J.picture_size[0], EDIT.J.picture_size[1]);
+  ctx.setTransform(d * V.s, 0, 0, d * V.s, d * V.ox, d * V.oy); ctx.imageSmoothingEnabled = V.s < 2; ctx.drawImage(isReview() && EDIT.T ? filteredImg() : EDIT.img, 0, 0, EDIT.J.picture_size[0], EDIT.J.picture_size[1]);
   const C = EDIT.J.cells, k = V.s;
   if (EDIT.tab === 'edit' && EDIT.opt.grid){
     for (let r = 0; r < C.ny; r++) for (let c = 0; c < C.nx; c++){ const key = `r${r}c${c}`; if (EDIT.cellsDone[key]){ ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 3 / k; ctx.setLineDash([]); ctx.strokeRect(c * C.w + 2 / k, r * C.h + 2 / k, C.w - 4 / k, C.h - 4 / k); } }
@@ -686,10 +756,15 @@ function draw(){
   drawObjects(ctx, viewS(), k, {out: EDIT.tab === 'res' ? true : EDIT.opt.out, arr: EDIT.opt.arr, num: EDIT.opt.num, exc: EDIT.opt.exc});
   const sel = EDIT.sel && viewS()[EDIT.sel];
   if (sel){ ctx.setLineDash([]); ctx.lineWidth = 4.5 / k; ctx.strokeStyle = '#000a'; polyPath(ctx, sel.pts); ctx.stroke(); ctx.lineWidth = 2.4 / k; ctx.strokeStyle = '#fff'; polyPath(ctx, sel.pts); ctx.stroke(); }
-  if (EDIT.tool && EDIT.tpts.length){ ctx.strokeStyle = '#f472b6'; ctx.fillStyle = '#f472b6'; ctx.lineWidth = 2 / k; ctx.setLineDash([]); ctx.beginPath(); EDIT.tpts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
-    EDIT.tpts.forEach(p => { ctx.beginPath(); ctx.arc(p[0], p[1], 3 / k, 0, 7); ctx.fill(); }); }
+  const T = EDIT.T;
+  if (T && isReview()){
+    [T.dirSel, T.cSel].forEach(id => { const s = id && EDIT.S[id]; if (s){ ctx.setLineDash([3 / k, 3 / k]); ctx.lineWidth = 2 / k; ctx.strokeStyle = '#facc15'; polyPath(ctx, s.pts); ctx.stroke(); ctx.setLineDash([]); } });
+    if (T.draft && T.draft.length){ ctx.strokeStyle = '#f472b6'; ctx.lineWidth = 2.2 / k; ctx.setLineDash([]); ctx.beginPath(); T.draft.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
+      if (T.mode === 'click'){ ctx.fillStyle = '#fff'; T.draft.forEach(p => ctx.fillRect(p[0] - 3 / k, p[1] - 3 / k, 6 / k, 6 / k)); } }
+    if (T.mode === 'cdir' && T.cdraft.length){ ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2 / k; ctx.beginPath(); T.cdraft.forEach((q, j) => j ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.stroke();
+      T.cdraft.forEach((q, j) => { ctx.fillStyle = j ? '#fff' : '#facc15'; ctx.beginPath(); ctx.arc(q[0], q[1], 4 / k, 0, 6.3); ctx.fill(); }); } }
   const R = EDIT.mode === 'auto' ? RES && RES.auto : RES && RES.current;
-  $('#pvHud').textContent = `${fmt(V.s / V.fit, 1)}×`;
+  $('#pvHud').textContent = `${fmt(V.s / V.fit, 1)}×`; drawLoupe(); drawRaw();
 }
 function pick(x, y){
   const S = viewS(), exc = EDIT.opt.exc; let best = null, ba = 1e18;
@@ -698,78 +773,203 @@ function pick(x, y){
   Object.values(S).forEach(s => { if (s.excluded && !exc) return; const [cx, cy] = centreOf(s, EDIT.A); const d = Math.hypot(cx - x, cy - y); if (d < bd){ bd = d; best = s.id; } });
   return best;
 }
-function setTool(t){ EDIT.tool = t; EDIT.tpts = []; const el = $('#pvTool');
-  if (!t){ el.hidden = true; draw(); return; }
-  el.hidden = false; el.innerHTML = `${esc(TOOL_KO[t])}${['redraw', 'add'].includes(t) ? '<button id="toolClose">닫기 ✓</button>' : ''}<button id="toolCancel">취소 (Esc)</button>`;
-  $('#toolCancel').onclick = () => setTool(null); if ($('#toolClose')) $('#toolClose').onclick = finishPoly; draw(); }
-function wireViewer(){
-  const cv = $('#pvCv'); let down = null, moved = false;
-  new ResizeObserver(() => { if (!EDIT) return; const V = EDIT.view, old = V.fit; sizeCanvas(); const r = cv.getBoundingClientRect(), [W, H] = EDIT.J.picture_size; V.fit = Math.min(r.width / W, r.height / H); if (!old) fitView(); else draw(); }).observe(cv);
-  cv.addEventListener('wheel', e => { e.preventDefault(); const r = cv.getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.18 : 1 / 1.18, e.clientX - r.left, e.clientY - r.top); }, {passive: false});
-  cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); down = {x: e.clientX, y: e.clientY, ox: EDIT.view.ox, oy: EDIT.view.oy}; moved = false; });
-  cv.addEventListener('pointermove', e => { if (!down) return; const dx = e.clientX - down.x, dy = e.clientY - down.y; if (!moved && Math.hypot(dx, dy) > 5) moved = true;
-    if (moved){ EDIT.view.ox = down.ox + dx; EDIT.view.oy = down.oy + dy; draw(); } });
-  cv.addEventListener('pointerup', e => { if (!down) return; const was = moved; down = null; if (was) return; const r = cv.getBoundingClientRect(); const [x, y] = scr2img(e.clientX - r.left, e.clientY - r.top); onClick(x, y, e); });
-  cv.addEventListener('dblclick', e => { if (EDIT && ['redraw', 'add'].includes(EDIT.tool)) finishPoly(); });
+/* ---- editing tools: the same tools, names and keys as the earlier review page (WS₂ 윤곽 정답지, labeler v11) ----
+   modes: free = 따라 그리기 (drag along the edge), click = 점 찍기 (tap corners, then 닫기 ✓), sel = 선택 (tap an outline: tag chips, flags, 지우기),
+   dir = 꼭짓점(방향) (tap inside a crystal, then tap its vertex), cdir = 덩어리 방향 (tap inside a clump, then vertex / one side / other side).
+   One pointer draws; two fingers pinch-zoom and pan; with 펜으로만 fingers never draw. Space / middle / right button drags the picture.
+   In 선택·꼭짓점·덩어리 방향 a mouse drag also moves the picture (a tap is a tap). */
+const TOOL_TAGS = [{k: 'iso', n: '떨어진'}, {k: 'touch', n: '붙은 (경계 보임)'}, {k: 'round', n: '꼭짓점 둥근'}, {k: 'clump', n: '덩어리'}];
+const TOOL_FLAGS = [{k: 'u', n: '경계 불확실'}, {k: 'cut', n: '잘림'}];
+const MODE_KO = {free: '따라 그리기', click: '점 찍기', sel: '선택', dir: '꼭짓점(방향)', cdir: '덩어리 방향'};
+function toolState(){ if (!EDIT.T){ let pen = false, sp = false; try { pen = LS.get('ws2sem.penonly') === '1'; sp = LS.get('ws2sem.split') === '1'; } catch (e){}
+  EDIT.T = {mode: 'sel', tag: 'iso', pend: {u: false, cut: false}, draft: null, drawId: null, lastPt: null, hover: null, dirSel: null, cSel: null, cdraft: [], penOnly: pen, split: sp, space: false, br: 0, ct: 100}; }
+  return EDIT.T; }
+const isReview = () => EDIT && EDIT.ui === 'review';
+function filteredImg(){            // review only: 1 % contrast stretch + brightness / contrast sliders, as on the earlier page
+  const T = EDIT.T, key = T.br + ':' + T.ct; if (EDIT.fimg && EDIT.fimg.key === key) return EDIT.fimg.c;
+  const im = EDIT.img, c = document.createElement('canvas'); c.width = im.naturalWidth || im.width; c.height = im.naturalHeight || im.height;
+  const x = c.getContext('2d'); x.drawImage(im, 0, 0); const d = x.getImageData(0, 0, c.width, c.height), a = d.data, hist = new Uint32Array(256);
+  for (let i = 0; i < a.length; i += 4) hist[a[i]]++; const n = a.length / 4; let lo = 0, hi = 255, acc = 0;
+  for (let v = 0; v < 256; v++){ acc += hist[v]; if (acc >= n * 0.01){ lo = v; break; } } acc = 0; for (let v = 255; v >= 0; v--){ acc += hist[v]; if (acc >= n * 0.01){ hi = v; break; } }
+  const g = 255 / Math.max(1, hi - lo), ct = T.ct / 100, br = T.br;
+  for (let i = 0; i < a.length; i += 4){ let v = ((a[i] - lo) * g - 128) * ct + 128 + br; v = v < 0 ? 0 : v > 255 ? 255 : v; a[i] = a[i + 1] = a[i + 2] = v; }
+  x.putImageData(d, 0, 0); EDIT.fimg = {key, c}; return c; }
+function simplifyLoop(pts, eps){ if (pts.length < 4) return pts; let k = 0, dm = -1;
+  pts.forEach(([x, y], i) => { const d = Math.hypot(x - pts[0][0], y - pts[0][1]); if (d > dm){ dm = d; k = i; } });
+  const a = rdp(pts.slice(0, k + 1), eps), b = rdp(pts.slice(k).concat([pts[0]]), eps); return a.slice(0, -1).concat(b.slice(0, -1)); }
+function cdirGeom(d){ const ua = [d.a[0] - d.v[0], d.a[1] - d.v[1]], ub = [d.b[0] - d.v[0], d.b[1] - d.v[1]], la = Math.hypot(...ua) || 1, lb = Math.hypot(...ub) || 1;
+  const side = Math.acos(Math.max(-1, Math.min(1, (ua[0] * ub[0] + ua[1] * ub[1]) / (la * lb)))) * 180 / Math.PI; return {side, la, lb}; }
+
+function setMode(m){ const T = toolState(); T.mode = m; T.draft = null; T.lastPt = null; T.dirSel = null; T.cSel = null; T.cdraft = []; renderTools(); renderTags(); draw(); }
+function renderTools(){
+  const T = EDIT && EDIT.T; if (!T || !$('#toolRow')) return; const s = EDIT.sel && EDIT.S[EDIT.sel];
+  document.querySelectorAll('#toolRow [data-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === T.mode));
+  $('#closepoly').hidden = !(T.mode === 'click' && T.draft && T.draft.length >= 3);
+  $('#delsel').hidden = !(T.mode === 'sel' && s && !s.excluded);
+  $('#cdirnext').hidden = !(T.mode === 'cdir' && T.cSel);
+  $('#nodirBtn').hidden = !((T.mode === 'dir' && T.dirSel) || (T.mode === 'sel' && s && !s.excluded && SINGLE.has(s.tag)));
+  if (s && T.mode === 'sel') $('#nodirBtn').textContent = s.nodir ? '방향 판독 어려움 해제' : '방향 판독 어려움'; else $('#nodirBtn').textContent = '방향 판독 어려움';
+  $('#penonly').setAttribute('aria-pressed', T.penOnly); $('#splitBtn').setAttribute('aria-pressed', T.split);
+  if ($('#tUndo')) $('#tUndo').disabled = !(EDIT.undo.length || T.draft || T.cdraft.length);
+  modeHud(); }
+function renderTags(){
+  const T = EDIT && EDIT.T, box = $('#tagRow'); if (!T || !box) return; const s = T.mode === 'sel' && EDIT.sel && EDIT.S[EDIT.sel] && !EDIT.S[EDIT.sel].excluded ? EDIT.S[EDIT.sel] : null;
+  box.innerHTML = TOOL_TAGS.map((t, i) => `<button class="chip" data-tag="${t.k}" aria-pressed="${s ? s.tag === t.k : T.tag === t.k}" title="${i + 1}">${t.n}</button>`).join('') + '<span class="sep"></span>' +
+    TOOL_FLAGS.map(f => `<button class="chip flag" data-flag="${f.k}" aria-pressed="${s ? !!(f.k === 'u' ? s.u_edge : s.cut) : T.pend[f.k]}" title="${f.k === 'u' ? 'U' : 'X'}">${f.n}</button>`).join(''); }
+function modeHud(){ const T = EDIT.T, el = $('#pvMode'); if (!el) return; if (!isReview()){ el.hidden = true; return; } el.hidden = false;
+  const fl = TOOL_FLAGS.filter(f => T.pend[f.k]).map(f => f.n).join('·'); const tg = (TOOL_TAGS.find(t => t.k === T.tag) || TOOL_TAGS[0]).n;
+  const m = T.mode === 'cdir' ? '덩어리 방향' + (!T.cSel ? ' · 덩어리 안을 탭' : ' · 다음: ' + ['① 꼭짓점', '② 한쪽 변 위', '③ 다른 쪽 변 위'][T.cdraft.length]) :
+    T.mode === 'dir' ? '꼭짓점(방향)' + (T.dirSel ? ' · 꼭짓점을 탭' : ' · 결정 안을 탭') : MODE_KO[T.mode];
+  el.textContent = (T.space ? '이동' : m) + (['free', 'click'].includes(T.mode) ? ' · ' + tg + (fl ? ' + ' + fl : '') : '') + (T.penOnly ? ' · 펜으로만' : ''); }
+function setTag(k){ const T = toolState(); T.tag = k; const s = T.mode === 'sel' && EDIT.sel && EDIT.S[EDIT.sel];
+  if (s && !s.excluded && s.tag !== k) mutate('tag', [s.id], () => { s.tag = k; s.confirm = 'edited'; }); renderTags(); modeHud(); }
+function setFlag(k){ const T = toolState(), s = T.mode === 'sel' && EDIT.sel && EDIT.S[EDIT.sel];
+  if (s && !s.excluded){ if (k === 'u') mutate('u_edge', [s.id], () => { s.u_edge = !s.u_edge; s.confirm = 'edited'; }); else mutate('cut', [s.id], () => { s.cut = !s.cut; s.confirm = 'edited'; }); renderTags(); return; }
+  if (T.mode === 'dir' || T.mode === 'cdir') return toast('그리기 또는 선택에서 쓰는 표시입니다');
+  T.pend[k] = !T.pend[k]; renderTags(); modeHud(); if (T.pend[k]) toast(TOOL_FLAGS.find(f => f.k === k).n + ' — 다음에 그리는 윤곽 하나에 붙습니다'); }
+function delSel(){ const T = toolState(), s = EDIT.sel && EDIT.S[EDIT.sel]; if (T.mode !== 'sel' || !s || s.excluded) return;
+  if (!EDIT.S0[s.id]){ const n = s.num; mutate('delete', [s.id], () => { delete EDIT.S[s.id]; }); EDIT.sel = null; toast(`#${n}을 지웠습니다`); }
+  else { const sh = overlapShare(s), dup = sh >= 0.5; mutate('exclude', [s.id], () => { s.excluded = {reason: dup ? 'duplicate' : 'other', by: 'person'}; s.confirm = 'edited'; });
+    EDIT.sel = null; toast(dup ? `#${s.num}을 지웠습니다 (다른 윤곽과 ${Math.round(sh * 100)} % 겹쳐 "중복"으로 기록)` : `#${s.num}을 지웠습니다. 기록에는 남고 결과에서는 빠집니다.`); }
+  renderTools(); renderTags(); renderSel(); draw(); }
+function nodirToggle(){ const T = toolState(), id = T.mode === 'dir' ? T.dirSel : EDIT.sel, s = id && EDIT.S[id]; if (!s || s.excluded) return;
+  if (!SINGLE.has(s.tag)) return toast('단일 결정(떨어진·붙은·둥근)에만 씁니다');
+  const on = T.mode === 'sel' ? !s.nodir : true; mutate(on ? 'nodir' : 'dir_ok', [s.id], () => { s.nodir = on; if (on){ s.v = null; s.v_src = null; } s.confirm = on ? 'hard' : 'edited'; });
+  if (T.mode === 'dir') T.dirSel = null; toast(on ? '방향 판독 어려움으로 표시' : '방향 판독 어려움 해제'); renderTools(); }
+function undoAny(){ const T = EDIT && EDIT.T; if (!T) return undo();
+  if (T.draft){ if (T.mode === 'click' && T.draft.length > 1) T.draft.pop(); else { T.draft = null; T.lastPt = null; } renderTools(); draw(); return; }
+  if (T.mode === 'cdir' && T.cdraft.length){ T.cdraft.pop(); renderTools(); draw(); return; }
+  if (!EDIT.undo.length) return toast('되돌릴 것이 없습니다'); undo(); renderTools(); renderTags(); }
+function escTool(){ const T = EDIT.T; if (T){ T.draft = null; T.lastPt = null; T.cdraft = []; T.dirSel = null; T.cSel = null; } EDIT.sel = null; renderTools(); renderTags(); renderSel(); draw(); }
+function closePoly(){ const T = EDIT.T; if (!T || !T.draft) return; const pts = T.draft; T.draft = null; T.lastPt = null; commitPoly(pts); renderTools(); }
+function commitPoly(pts){
+  const T = EDIT.T; pts = pts.map(([x, y]) => [r2(x), r2(y)]);
+  if (pts.length < 3 || polyAC(pts)[0] < 12){ toast('너무 작아서 저장하지 않았습니다'); draw(); return; }
+  const [W, H] = EDIT.J.picture_size, e = 1.5, auto = !T.pend.cut && pts.some(([x, y]) => x <= e || y <= e || x >= W - e || y >= H - e);
+  let id; mutate('add', [], () => { const s = newState(pts, 'person', [], T.tag); s.u_edge = !!T.pend.u; s.cut = !!(T.pend.cut || auto); EDIT.S[s.id] = s; id = s.id; return [s.id]; });
+  T.pend = {u: false, cut: false}; EDIT.sel = id; renderTags(); renderSel(); markRow(); draw();
+  toast(auto ? `#${id} 추가 — 사진 끝에 닿아 "잘림"으로 표시했습니다 (아니면 선택 후 잘림을 끄세요)` : SINGLE.has(T.tag) ? `#${id} 추가 — 꼭짓점(방향)으로 방향을 찍으세요` : `#${id} 추가`, 4000); }
+function onTap(x, y){
+  const T = toolState();
+  if (!isReview() || T.mode === 'sel' || T.mode === 'free'){ EDIT.sel = pick(x, y); renderTools(); renderTags(); renderSel(); markRow(); draw(); return; }
+  if (T.mode === 'click'){ if (!T.draft) T.draft = [];
+    if (T.draft.length >= 3){ const f = T.draft[0]; if (Math.hypot((f[0] - x) * EDIT.view.s, (f[1] - y) * EDIT.view.s) < 9) return closePoly(); }
+    T.draft.push([x, y]); T.lastPt = [x, y]; renderTools(); draw(); return; }
+  if (T.mode === 'dir'){
+    if (!T.dirSel){ const id = pick(x, y), s = id && EDIT.S[id];
+      if (!s) return toast('결정 안을 먼저 탭하세요'); if (s.excluded) return toast('지운 윤곽입니다');
+      EDIT.sel = id; renderSel();
+      if (s.tag === 'clump'){ T.mode = 'cdir'; T.cSel = id; T.cdraft = []; toast('덩어리는 "덩어리 방향"으로 표시합니다 — ① 꼭짓점을 탭하세요'); renderTools(); draw(); return; }
+      T.dirSel = id; toast('꼭짓점 하나를 탭하거나, 애매하면 "방향 판독 어려움"'); renderTools(); draw(); return; }
+    const s = EDIT.S[T.dirSel]; T.dirSel = null; mutate('vertex', [s.id], () => { s.v = [r2(x), r2(y)]; s.v_src = 'person'; s.nodir = false; s.confirm = 'edited'; }); renderTools(); return; }
+  if (T.mode === 'cdir'){
+    if (!T.cSel){ const id = pick(x, y), s = id && EDIT.S[id];
+      if (!s || s.excluded || s.tag !== 'clump') return toast(!s ? '덩어리 윤곽 안을 먼저 탭하세요' : '덩어리로 표시한 윤곽만 됩니다 (선택에서 유형을 덩어리로 바꿀 수 있음)');
+      T.cSel = id; T.cdraft = []; EDIT.sel = id; renderSel(); toast('① 꼭짓점을 탭하세요'); renderTools(); draw(); return; }
+    T.cdraft.push([r2(x), r2(y)]);
+    if (T.cdraft.length < 3){ toast(T.cdraft.length === 1 ? '② 그 꼭짓점에서 이어지는 한쪽 변 위의 한 점' : '③ 다른 쪽 변 위의 한 점'); renderTools(); draw(); return; }
+    const [v, a, b] = T.cdraft, d = {v, a, b}, g = cdirGeom(d); T.cdraft = [];
+    if (Math.min(g.la, g.lb) * EDIT.view.s < 6){ toast('세 점이 너무 가깝습니다 — 변 위의 점을 꼭짓점에서 조금 떨어뜨려 다시'); draw(); return; }
+    const s = EDIT.S[T.cSel]; mutate('mark', [s.id], () => { s.marks = (s.marks || []).concat([d]); s.confirm = 'edited'; });
+    toast(g.side < 30 || g.side > 100 ? `저장 — 두 변 사이 ${Math.round(g.side)}°: 삼각형(60°)과 많이 다릅니다. 틀렸으면 되돌리기` : `방향 저장 (두 변 사이 ${Math.round(g.side)}°) — 다음 꼭짓점 또는 "덩어리 바꾸기"`, 4000);
+    renderTools(); return; }
 }
-document.addEventListener('keydown', e => { if (!EDIT || $('#detail').hidden) return; if (e.target && ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
-  if (e.key === 'Escape') return setTool(null);
-  if (EDIT.tab !== 'edit') return;
-  if (e.key === 'Enter' && ['redraw', 'add'].includes(EDIT.tool)) return finishPoly();
-  if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')){ e.preventDefault(); return undo(); }
-  if (e.ctrlKey || e.metaKey || e.altKey || EDIT.tool) return;
-  const k = e.key.toLowerCase(), s = EDIT.sel && EDIT.S[EDIT.sel];
-  if (k === 'n'){ e.preventDefault(); return nextUnreviewed(); }
-  if (k === 'a'){ e.preventDefault(); return setTool('add'); }
-  if (!s) return;
-  if (e.key === 'Delete' || e.key === 'Backspace'){ e.preventDefault(); if (!s.excluded) applyOp('exclude'); return; }
-  const map = {'1': ['tag', 'iso'], '2': ['tag', 'touch'], '3': ['tag', 'round'], '4': ['tag', 'clump'], k: ['keep'], v: ['vertex'], d: ['nodir'], t: ['mark'], r: ['redraw'], s: ['split'], m: ['merge'], x: ['exclude']};
-  const op = map[k]; if (!op) return; e.preventDefault();
-  if (s.excluded) return;
-  if (['vertex', 'nodir'].includes(op[0]) && !SINGLE.has(s.tag)) return toast('개별 결정 유형에서만 됩니다.');
-  if (op[0] === 'mark' && s.tag !== 'clump') return toast('덩어리에서만 됩니다 (4로 덩어리로 바꾼 뒤).');
-  applyOp(op[0], op[1]);
-});
+function drawLoupe(){
+  const lp = $('#pvLoupe'), T = EDIT && EDIT.T; if (!lp) return; if (!T || !T.lastPt || !(T.draft && T.draft.length)){ lp.style.display = 'none'; return; }
+  const [ix, iy] = T.lastPt, half = Math.max(8, 36 / Math.sqrt(EDIT.view.s)), src = filteredImg(), lc = lp.getContext('2d'), z = lp.width / (2 * half);
+  lp.style.display = 'block'; lc.imageSmoothingEnabled = false; lc.fillStyle = '#000'; lc.fillRect(0, 0, lp.width, lp.height);
+  lc.drawImage(src, ix - half, iy - half, 2 * half, 2 * half, 0, 0, lp.width, lp.height);
+  lc.strokeStyle = '#f472b6'; lc.lineWidth = 3; lc.beginPath(); T.draft.forEach(([x, y], j) => { const sx = (x - ix + half) * z, sy = (y - iy + half) * z; j ? lc.lineTo(sx, sy) : lc.moveTo(sx, sy); }); lc.stroke();
+  lc.strokeStyle = '#fff'; lc.lineWidth = 1.5; lc.beginPath(); lc.moveTo(lp.width / 2 - 12, lp.height / 2); lc.lineTo(lp.width / 2 + 12, lp.height / 2); lc.moveTo(lp.width / 2, lp.height / 2 - 12); lc.lineTo(lp.width / 2, lp.height / 2 + 12); lc.stroke();
+  const cv = $('#pvCv'), sx = ix * EDIT.view.s + EDIT.view.ox, left = sx > cv.clientWidth / 2;          // loupe on the side away from the hand
+  lp.style.left = left ? '10px' : 'auto'; lp.style.right = left ? 'auto' : (T.split && $('#pv').classList.contains('split-h') ? 'calc(50% + 10px)' : '10px'); }
+function drawRaw(){       // 원본 나란히: same view, no stretch, no outlines; red cross = pen / mouse position
+  const cv2 = $('#pvCv2'), T = EDIT && EDIT.T; if (!cv2 || !T || !T.split || !isReview()) return; const d = window.devicePixelRatio || 1, r = cv2.getBoundingClientRect(), V = EDIT.view;
+  cv2.width = Math.max(1, Math.round(r.width * d)); cv2.height = Math.max(1, Math.round(r.height * d)); const c = cv2.getContext('2d');
+  c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#000'; c.fillRect(0, 0, cv2.width, cv2.height);
+  c.setTransform(d * V.s, 0, 0, d * V.s, d * V.ox, d * V.oy); c.imageSmoothingEnabled = V.s < 2; c.drawImage(EDIT.img, 0, 0, EDIT.J.picture_size[0], EDIT.J.picture_size[1]);
+  const q = T.lastPt || T.hover || (T.cdraft.length ? T.cdraft[T.cdraft.length - 1] : null);
+  if (q){ c.setTransform(d, 0, 0, d, 0, 0); const sx = q[0] * V.s + V.ox, sy = q[1] * V.s + V.oy; c.strokeStyle = '#ff4d4d'; c.lineWidth = 1.5; c.beginPath();
+    c.moveTo(sx - 14, sy); c.lineTo(sx - 4, sy); c.moveTo(sx + 4, sy); c.lineTo(sx + 14, sy); c.moveTo(sx, sy - 14); c.lineTo(sx, sy - 4); c.moveTo(sx, sy + 4); c.lineTo(sx, sy + 14); c.stroke(); } }
+function setSplit(on){ const T = toolState(); T.split = on; try { LS.set('ws2sem.split', on ? '1' : ''); } catch (e){} applySplit(); renderTools(); }
+function applySplit(){ const pv = $('#pv'); if (!pv) return; pv.classList.remove('split-h', 'split-v'); const on = isReview() && EDIT.T && EDIT.T.split;
+  if (on) pv.classList.add(pv.clientWidth >= pv.clientHeight ? 'split-h' : 'split-v'); $('#pvRawTag').hidden = !on; requestAnimationFrame(() => { sizeCanvas(); const V = EDIT.view, cv = $('#pvCv'), r = cv.getBoundingClientRect(), [W, H] = EDIT.J.picture_size; V.fit = Math.min(r.width / W, r.height / H); draw(); }); }
+
+function wireViewer(){
+  const cv = $('#pvCv'), ptrs = new Map(); let gesture = null, pan = null, tap = null;
+  const local = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  const ro = new ResizeObserver(() => { if (!cv.isConnected){ ro.disconnect(); return; } if (!EDIT) return; const V = EDIT.view, old = V.fit; sizeCanvas(); const r = cv.getBoundingClientRect(), [W, H] = EDIT.J.picture_size; V.fit = Math.min(r.width / W, r.height / H); if (!old) fitView(); else draw(); }); ro.observe(cv);
+  cv.addEventListener('wheel', e => { e.preventDefault(); const [x, y] = local(e); zoomAt(Math.exp(-e.deltaY * 0.0015), x, y); }, {passive: false});
+  cv.addEventListener('pointerdown', e => {
+    if (!EDIT) return; e.preventDefault(); const T = toolState(), rev = isReview();
+    if (rev && e.pointerType === 'pen' && !T.penOnly){ T.penOnly = true; try { LS.set('ws2sem.penonly', '1'); } catch (_){} renderTools(); toast('펜이 감지되어 "펜으로만"을 켰습니다'); }
+    try { cv.setPointerCapture(e.pointerId); } catch (_){}
+    const p = local(e); ptrs.set(e.pointerId, {xy: p, type: e.pointerType});
+    const touches = [...ptrs.values()].filter(q => q.type === 'touch');
+    if (touches.length >= 2){
+      if (T.drawId != null && ptrs.get(T.drawId) && ptrs.get(T.drawId).type === 'touch'){ if (T.mode === 'free') T.draft = null; T.drawId = null; }
+      pan = null; tap = null; const [a, c] = touches.slice(0, 2).map(q => q.xy);
+      gesture = {d: Math.hypot(a[0] - c[0], a[1] - c[1]) || 1, m: [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2], v: Object.assign({}, EDIT.view)}; T.lastPt = null; draw(); return; }
+    if (T.space || e.button === 1 || e.button === 2 || (rev && T.penOnly && e.pointerType === 'touch')){ pan = {id: e.pointerId, x: p[0], y: p[1], ox: EDIT.view.ox, oy: EDIT.view.oy}; return; }
+    if (T.drawId != null) return;
+    if (rev && T.mode === 'free'){ const [ix, iy] = scr2img(...p); T.draft = [[ix, iy]]; T.drawId = e.pointerId; T.lastPt = [ix, iy]; draw(); return; }
+    tap = {id: e.pointerId, x: p[0], y: p[1], ox: EDIT.view.ox, oy: EDIT.view.oy, moved: false};
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!EDIT) return; const T = toolState(), q = ptrs.get(e.pointerId);
+    if (!q){ if (T.split && e.pointerType !== 'touch'){ T.hover = scr2img(...local(e)); drawRaw(); } return; }
+    const p = local(e); q.xy = p; const V = EDIT.view;
+    if (gesture){ const touches = [...ptrs.values()].filter(t => t.type === 'touch'); if (touches.length < 2) return;
+      const [a, c] = touches.slice(0, 2).map(t => t.xy), d = Math.hypot(a[0] - c[0], a[1] - c[1]), m = [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2], g = gesture.v;
+      const s = Math.max(V.fit * 0.8, Math.min(V.fit * 40, g.s * d / gesture.d)), ix = (gesture.m[0] - g.ox) / g.s, iy = (gesture.m[1] - g.oy) / g.s;
+      V.s = s; V.ox = m[0] - ix * s; V.oy = m[1] - iy * s; draw(); return; }
+    if (pan && pan.id === e.pointerId){ V.ox = pan.ox + p[0] - pan.x; V.oy = pan.oy + p[1] - pan.y; draw(); return; }
+    if (T.mode === 'free' && T.draft && e.pointerId === T.drawId){
+      const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e], r = cv.getBoundingClientRect();
+      for (const ev of (evs.length ? evs : [e])){ const [ix, iy] = scr2img(ev.clientX - r.left, ev.clientY - r.top), l = T.draft[T.draft.length - 1];
+        if (Math.hypot(ix - l[0], iy - l[1]) * V.s > 1.5) T.draft.push([ix, iy]); T.lastPt = [ix, iy]; }
+      draw(); return; }
+    if (tap && tap.id === e.pointerId){ if (!tap.moved && Math.hypot(p[0] - tap.x, p[1] - tap.y) > 5) tap.moved = true; if (tap.moved){ V.ox = tap.ox + p[0] - tap.x; V.oy = tap.oy + p[1] - tap.y; draw(); } }
+  });
+  const endPtr = (e, cancel) => {
+    if (!EDIT || !ptrs.has(e.pointerId)) return; const T = toolState(); ptrs.delete(e.pointerId);
+    if (gesture && [...ptrs.values()].filter(t => t.type === 'touch').length < 2) gesture = null;
+    if (pan && pan.id === e.pointerId) pan = null;
+    if (e.pointerId === T.drawId){ T.drawId = null;
+      if (T.mode === 'free' && T.draft){ const raw = T.draft; T.draft = null; T.lastPt = null; if (cancel){ draw(); return; }
+        const pts = simplifyLoop(raw, 0.35); let len = 0; for (let i = 1; i < raw.length; i++) len += Math.hypot(raw[i][0] - raw[i - 1][0], raw[i][1] - raw[i - 1][1]);
+        if (len * EDIT.view.s < 6) return onTap(raw[0][0], raw[0][1]);         // a tap, not a stroke: select what is under it
+        commitPoly(pts); } return; }
+    if (tap && tap.id === e.pointerId){ const t = tap; tap = null; if (!t.moved && !cancel){ const [x, y] = scr2img(t.x, t.y); onTap(x, y); } }
+  };
+  cv.addEventListener('pointerup', e => endPtr(e, false)); cv.addEventListener('pointercancel', e => endPtr(e, true)); cv.addEventListener('lostpointercapture', e => endPtr(e, false));
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  cv.addEventListener('dblclick', () => { const T = EDIT && EDIT.T; if (isReview() && T && T.mode === 'click' && T.draft && T.draft.length > 3){ T.draft.pop(); closePoly(); } });
+  cv.addEventListener('pointerleave', () => { const T = EDIT && EDIT.T; if (T && T.hover){ T.hover = null; drawRaw(); } });
+}
+document.addEventListener('keydown', e => { if (!EDIT || $('#detail').hidden) return; if (e.target && (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName))) return;
+  if (e.key === 'Escape') return escTool();
+  if (!isReview()) return; const T = toolState();
+  if (e.code === 'Space'){ e.preventDefault(); if (!T.space){ T.space = true; modeHud(); } return; }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')){ e.preventDefault(); return undoAny(); }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if ('1234'.includes(k) && k.length === 1){ e.preventDefault(); return setTag(TOOL_TAGS[+k - 1].k); }
+  const act = {u: () => setFlag('u'), x: () => setFlag('cut'), f: () => setMode('free'), p: () => setMode('click'), s: () => setMode('sel'), v: () => setMode('dir'), c: () => setMode('cdir'),
+    z: undoAny, '0': fitView, '+': () => zoomAt(1.35, $('#pvCv').clientWidth / 2, $('#pvCv').clientHeight / 2), '=': () => zoomAt(1.35, $('#pvCv').clientWidth / 2, $('#pvCv').clientHeight / 2),
+    '-': () => zoomAt(1 / 1.35, $('#pvCv').clientWidth / 2, $('#pvCv').clientHeight / 2), n: nextUnreviewed, enter: () => { if (T.mode === 'click' && T.draft) closePoly(); },
+    delete: delSel, backspace: delSel}[k];
+  if (act){ e.preventDefault(); act(); } });
+document.addEventListener('keyup', e => { if (e.code === 'Space' && EDIT && EDIT.T && EDIT.T.space){ EDIT.T.space = false; modeHud(); } });
 function nextUnreviewed(){        // next automatic outline nobody has looked at: in the current cell if one is chosen, by number
   const A = EDIT.A, C = EDIT.J.cells, done = new Set(Object.keys(EDIT.cellsDone)), cur = EDIT.sel ? Number(EDIT.S[EDIT.sel] && EDIT.S[EDIT.sel].num) : -1;
   const L = Object.values(EDIT.S).filter(s => !s.excluded && effConfirm(s, A, C, done) === 'unreviewed' && (!EDIT.curCell || cellOf(...centreOf(s, A), C) === EDIT.curCell)).sort((a, b) => a.num - b.num);
   if (!L.length) return toast(EDIT.curCell ? `칸 ${EDIT.curCell}에 미검토 결정이 없습니다.` : '미검토 결정이 없습니다.');
   const s = L.find(x => x.num > cur) || L[0]; EDIT.sel = s.id; centerOn(s); renderSel(); draw();
 }
-function onClick(x, y, e){
-  const t = EDIT.tab === 'edit' ? EDIT.tool : null;
-  if (!t){ EDIT.sel = pick(x, y); renderSel(); draw(); return; }
-  const s = EDIT.sel && EDIT.S[EDIT.sel];
-  if (t === 'vertex'){ setTool(null); if (!s) return; mutate('vertex', [s.id], () => { Object.assign(s, {v: [r2(x), r2(y)], v_src: 'person', nodir: false, confirm: 'edited'}); }); return; }
-  if (t === 'redraw' || t === 'add'){ const P = EDIT.tpts; if (P.length >= 3){ const f = P[0]; if (Math.hypot((f[0] - x) * EDIT.view.s, (f[1] - y) * EDIT.view.s) < 9) return finishPoly(); } P.push([r2(x), r2(y)]); draw(); return; }
-  if (t === 'split'){ EDIT.tpts.push([x, y]); if (EDIT.tpts.length < 2){ draw(); return; } const [p, q] = EDIT.tpts; setTool(null); doSplit(s, p, q); return; }
-  if (t === 'merge'){ const o = pick(x, y); setTool(null); if (!o || o === s.id){ toast('다른 윤곽을 눌러야 합니다.'); return; } doMerge(s, EDIT.S[o]); return; }
-  if (t === 'mark'){ EDIT.tpts.push([r2(x), r2(y)]); if (EDIT.tpts.length < 3){ draw(); return; } const [v, a, b] = EDIT.tpts; setTool(null);
-    mutate('mark', [s.id], () => { s.marks = (s.marks || []).concat([{v, a, b}]); s.confirm = 'edited'; }); return; }
-}
-function finishPoly(){
-  const t = EDIT.tool, P = EDIT.tpts.slice(); setTool(null);
-  if (P.length < 3){ toast('점을 세 개 이상 찍어야 윤곽이 됩니다.'); return; }
-  if (polyAC(P)[0] < 20){ toast('윤곽이 너무 작습니다 (20 px² 미만).'); return; }
-  if (t === 'redraw'){ const s = EDIT.S[EDIT.sel]; mutate('redraw', [s.id], () => { s.pts = P; s.redrawn = true; s.confirm = 'edited'; }); }
-  else { let id; mutate('add', [], () => { const s = newState(P, 'person', [], 'iso'); EDIT.S[s.id] = s; id = s.id; return [s.id]; }); EDIT.sel = id; renderSel(); markRow(); draw(); toast(`#${id}을 추가했습니다. 유형을 확인하고 꼭짓점(방향)을 찍으세요.`, 5000); }
-}
 function newState(pts, origin, parents, tag){
   const num = EDIT.nextNum++; return {id: String(num), num, uid: Math.random().toString(16).slice(2, 10), origin, parents, pts, redrawn: false, tag, v: null, v_src: null, nodir: false, marks: [], cut: false,
     u_edge: false, u_dir: false, excluded: null, confirm: 'edited', who: WHO, at: new Date().toISOString()}; }
-function doSplit(s, p, q){
-  const L = clipHalf(s.pts, p, q, 1), R = clipHalf(s.pts, p, q, -1);
-  if (L.length < 3 || R.length < 3 || polyAC(L)[0] < 20 || polyAC(R)[0] < 20){ toast('선이 윤곽을 둘로 나누지 못했습니다. 윤곽을 완전히 가로지르게 두 점을 찍으세요.', 5000); return; }
-  let kids = [];
-  mutate('split', [s.id], () => { s.excluded = {reason: 'split', by: 'person'}; s.confirm = 'edited';
-    kids = [L, R].map(P => { const c = newState(P, 'split', [s.id], 'touch'); c.cut = !!s.cut; EDIT.S[c.id] = c; return c.id; }); return kids; });
-  EDIT.sel = kids[0]; renderSel(); markRow(); draw(); toast(`#${s.num}을 #${kids.join(', #')}로 나눴습니다. 각 결정의 꼭짓점(방향)을 찍으세요.`, 6000);
-}
-function doMerge(a, b){
-  const P = unionOutline([a.pts, b.pts]); if (P === 'apart'){ toast('두 윤곽이 서로 닿아 있지 않아 합칠 수 없습니다. 맞닿은 윤곽끼리만 합칩니다.', 5000); return; } if (!P || P.length < 3){ toast('두 윤곽을 합치지 못했습니다.'); return; }
-  let id; mutate('merge', [a.id, b.id], () => { [a, b].forEach(s => { s.excluded = {reason: 'merged', by: 'person'}; s.confirm = 'edited'; }); const c = newState(P, 'merge', [a.id, b.id], 'clump'); EDIT.S[c.id] = c; id = c.id; return [c.id]; });
-  EDIT.sel = id; renderSel(); markRow(); draw(); toast(`#${a.num}과 #${b.num}을 #${id} (덩어리)로 합쳤습니다.`, 5000);
-}
 function brief(s){ if (!s) return null; return {tag: s.tag, v: s.v ? [r2(s.v[0]), r2(s.v[1])] : null, v_src: s.v_src, nodir: !!s.nodir, excluded: s.excluded ? s.excluded.reason : null, confirm: s.confirm,
   u_edge: !!s.u_edge, u_dir: !!s.u_dir, cut: !!s.cut, marks: (s.marks || []).length, pts_n: s.pts.length, area: Math.round(polyAC(s.pts)[0]), parents: s.parents || [], theta: thetaOf(s, EDIT.A)}; }
 function mutate(op, ids, fn){
@@ -810,7 +1010,7 @@ function dirLine(s){
 }
 function renderSel(){
   const box = $('#selCard'); if (!box || !EDIT) return; const S = viewS(), s = EDIT.sel && S[EDIT.sel]; const edit = EDIT.tab === 'edit';
-  if (!s){ box.innerHTML = `<p class="muted small" style="margin:0">${edit ? '결정을 누르면 여기에서 고칠 수 있어요. N을 누르면 이 칸의 다음 미검토 결정으로 갑니다.' : '결정을 클릭하면 확대해서 볼 수 있어요. 위의 "번호 찾기"로도 찾을 수 있어요.'}</p>`; return; }
+  if (!s){ box.innerHTML = `<p class="muted small" style="margin:0">${edit ? '선택(S)으로 결정을 누르면 여기에 정보가 나와요. 고치기는 사진 아래 도구로 합니다.' : '결정을 클릭하면 확대해서 볼 수 있어요. 위의 "번호 찾기"로도 찾을 수 있어요.'}</p>`; return; }
   const A = EDIT.A, o = A[s.id], s0 = EDIT.S0[s.id], R = RES.current; const [cx, cy] = centreOf(s, A);
   const a = areaOf(s, A), nm = EDIT.J.nm_per_px, side = Math.sqrt(4 * a / Math.sqrt(3)); const conf = effConfirm(s, A, EDIT.J.cells, new Set(Object.keys(EDIT.cellsDone)));
   const t = thetaOf(s, A), t0 = s0 ? thetaOf(s0, A) : null, M = R.main, c = classify(t, M);
@@ -829,37 +1029,16 @@ function renderSel(){
     <div class="row small" style="margin-top:8px"><a href="#" id="histBtn">이 결정의 수정 이력</a><span class="muted">·</span><a href="#" id="openList">결정 목록 보기</a></div><div id="histBox"></div>`;
   zoomCanvas(s, EDIT.zOut !== false);
 }
-function editButtons(s){
-  if (s.excluded) return `<div class="edits"><button data-op="restore" class="primary">복구</button></div>`;
-  const single = SINGLE.has(s.tag);
-  return `<div class="chips" style="margin-top:8px">${['iso', 'touch', 'round', 'clump'].map((t, i) => `<button data-op="tag" data-v="${t}" class="${s.tag === t ? 'on' : ''}" title="${i + 1}">${TAG_KO[t]}</button>`).join('')}</div>
-    <div class="edits">
-      <button data-op="keep" ${s.confirm !== 'unreviewed' ? 'disabled' : ''} title="K">✓ 확인</button>
-      ${single ? `<button data-op="vertex" title="V">꼭짓점</button><button data-op="nodir" class="${s.nodir ? 'on' : ''}" title="D">방향 어려움</button>` : ''}
-      ${s.tag === 'clump' ? `<button data-op="mark" title="T">덩어리 방향</button>${(s.marks || []).length ? '<button data-op="unmark">방향 1개 지움</button>' : ''}` : ''}
-      <button data-op="redraw" title="R">다시 그리기</button><button data-op="split" title="S">분리</button><button data-op="merge" title="M">병합</button><button data-op="exclude" class="warnb" title="X">제외</button>
-    </div>
-    <details class="small" style="margin-top:6px"><summary class="muted">확실성 표시</summary><div class="edits"><button data-op="u_edge" class="${s.u_edge ? 'on' : ''}">경계 불확실</button>${single ? `<button data-op="u_dir" class="${s.u_dir ? 'on' : ''}">방향 불확실</button>` : ''}</div></details>
-    <div id="exclReason"></div>`;
+function editButtons(s){           // editing itself is done with the tools under the picture; the card keeps only what the tools do not cover
+  if (s.excluded) return `<div class="edits"><button data-op="restore" class="primary">되살리기</button><span class="small muted" style="align-self:center">지운 윤곽 (${esc(EXCL_KO[s.excluded.reason] || s.excluded.reason)})</span></div>`;
+  return (s.tag === 'clump' && (s.marks || []).length) ? `<div class="edits"><button data-op="unmark">덩어리 방향 1개 지움</button></div>` : '';
 }
 function applyOp(op, v){
   const s = EDIT.S[EDIT.sel]; if (!s) return;
-  if (op === 'tag') return mutate('tag', [s.id], () => { s.tag = v; s.confirm = 'edited'; });
-  if (op === 'keep'){ if (s.confirm !== 'unreviewed') return toast('이미 손댄 결정입니다.'); return mutate('keep', [s.id], () => { s.confirm = 'kept'; }); }
-  if (op === 'nodir') return mutate(s.nodir ? 'dir_ok' : 'nodir', [s.id], () => { s.nodir = !s.nodir; s.confirm = s.nodir ? 'hard' : 'edited'; });
-  if (op === 'u_edge') return mutate('u_edge', [s.id], () => { s.u_edge = !s.u_edge; s.confirm = 'edited'; });
-  if (op === 'u_dir') return mutate('u_dir', [s.id], () => { s.u_dir = !s.u_dir; s.confirm = 'edited'; });
   if (op === 'unmark') return mutate('unmark', [s.id], () => { s.marks = (s.marks || []).slice(0, -1); s.confirm = 'edited'; });
   if (op === 'restore') return mutate('restore', [s.id], () => { const o = EDIT.A[s.id];
     if (s.excluded && s.excluded.by === 'auto' && o && o.status === 'background' && o.status_before_background === 'used'){ s.v = o.v; s.v_src = 'auto'; s.nodir = false; }
     s.excluded = null; s.confirm = 'edited'; });
-  if (['vertex', 'redraw', 'split', 'merge', 'mark'].includes(op)){ setTool(op); return; }
-  if (op === 'exclude'){
-    const sh = overlapShare(s);
-    if (sh >= 0.5) return mutate('exclude', [s.id], () => { s.excluded = {reason: 'duplicate', by: 'person'}; s.confirm = 'edited'; toast(`다른 윤곽과 ${Math.round(sh * 100)} % 겹쳐 "중복"으로 제외했습니다.`); });
-    $('#exclReason').innerHTML = `<p class="small" style="margin:6px 0 3px">제외 이유를 고르세요:</p><div class="chips"><button data-op="excl" data-v="background">바탕 (결정 사이 빈 곳)</button><button data-op="excl" data-v="duplicate">중복</button><button data-op="excl" data-v="other">기타</button></div>`;
-    return; }
-  if (op === 'excl') return mutate('exclude', [s.id], () => { s.excluded = {reason: v, by: 'person'}; s.confirm = 'edited'; });
 }
 
 /* ============================== table ============================== */
@@ -1130,8 +1309,13 @@ $('#detail').addEventListener('click', async e => {
     if (id === 'endReview'){ EDIT.ui = 'view'; renderMain(); if (EDIT.dirty) toast('저장하지 않은 수정이 있습니다. 화면에는 반영되어 있고, "검토 이어서 하기"에서 저장할 수 있어요.', 6000); return; }
     if (id === 'cmpAuto'){ EDIT.cmp = !EDIT.cmp; renderKey(); return; }
     if (id === 'zFit') return fitView();
-    if (id === 'tAdd') return setTool('add');
-    if (id === 'tUndo') return undo(); if (id === 'btnSave') return saveV2(); if (id === 'tCsv') return tableCsv();
+    if (t.dataset.mode) return setMode(t.dataset.mode); if (t.dataset.tag) return setTag(t.dataset.tag); if (t.dataset.flag) return setFlag(t.dataset.flag);
+    if (id === 'closepoly') return closePoly(); if (id === 'delsel') return delSel(); if (id === 'nodirBtn') return nodirToggle();
+    if (id === 'cdirnext'){ EDIT.T.cSel = null; EDIT.T.cdraft = []; renderTools(); draw(); return toast('다른 덩어리 안을 탭하세요'); }
+    if (id === 'zFit2') return fitView(); if (id === 'zIn' || id === 'zOutB'){ const c = $('#pvCv'); return zoomAt(id === 'zIn' ? 1.35 : 1 / 1.35, c.clientWidth / 2, c.clientHeight / 2); }
+    if (id === 'penonly'){ EDIT.T.penOnly = !EDIT.T.penOnly; try { LS.set('ws2sem.penonly', EDIT.T.penOnly ? '1' : ''); } catch (_){} renderTools(); return; }
+    if (id === 'splitBtn') return setSplit(!EDIT.T.split);
+    if (id === 'tUndo') return undoAny(); if (id === 'btnSave') return saveV2(); if (id === 'tCsv') return tableCsv();
     if (id === 'cPrev' || id === 'cNext'){ const K = cellKeys(), i = EDIT.curCell ? K.indexOf(EDIT.curCell) : -1; return goCell(K[(i + (id === 'cNext' ? 1 : -1) + K.length) % K.length]); }
     if (id === 'cDone' || id === 'cUndone'){ const key = EDIT.curCell; cellEvent(id === 'cDone' ? 'cell-done' : 'cell-undone', key); const ok = await saveV2();
       if (ok && id === 'cDone'){ const K = cellKeys(), nxt = K.slice(K.indexOf(key) + 1).concat(K).find(k => !EDIT.cellsDone[k]); if (nxt) goCell(nxt); else toast('모든 칸을 검토 완료했습니다.', 5000); }
@@ -1143,7 +1327,8 @@ $('#detail').addEventListener('click', async e => {
 $('#detail').addEventListener('change', e => { if (!EDIT) return; const id = e.target.id;
   if (e.target.dataset.opt){ EDIT.opt[e.target.dataset.opt] = e.target.checked; document.querySelectorAll(`input[data-opt="${e.target.dataset.opt}"]`).forEach(c => { c.checked = e.target.checked; }); draw(); }
   if (id === 'tf') renderTable(); if (id === 'zOut'){ EDIT.zOut = e.target.checked; renderSel(); } });
-$('#detail').addEventListener('input', e => { if (EDIT && e.target.id === 'tq') renderTable(); });
+$('#detail').addEventListener('input', e => { if (!EDIT) return; if (e.target.id === 'tq') renderTable();
+  if (e.target.id === 'rBr' || e.target.id === 'rCt'){ EDIT.T[e.target.id === 'rBr' ? 'br' : 'ct'] = Number(e.target.value); draw(); } });
 $('#detail').addEventListener('keydown', e => { if (e.target.id === 'selQ' && e.key === 'Enter'){ e.preventDefault(); findNum(); } });
 $('#detail').addEventListener('toggle', e => { if (!EDIT) return; if (e.target.id === 'dAnal' && e.target.open) renderAnal(); if (e.target.id === 'dList' && e.target.open) renderListBox(); }, true);
 function renderDetailAt(n){ CUR.openN = n; renderDetail(); }
