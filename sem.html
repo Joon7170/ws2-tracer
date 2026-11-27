@@ -191,11 +191,17 @@ button.backb { width:auto; height:34px; padding:0 12px; font-size:14px; font-wei
 .lsw { display:inline-block; width:14px; height:14px; border-radius:3px; flex:0 0 14px; }
 .dirgrid { align-items:start; margin-top:4px; } .dirgrid figure { margin:0; min-width:0; } .dirgrid figcaption { font-size:13px; font-weight:600; color:var(--sub); margin:0 0 6px; }
 .dpwrap { width:100%; border-radius:8px; overflow:hidden; background:#111; } #dirPhoto { display:block; }
-#tbl td.ck, #tbl th.ck { width:34px; padding-left:10px; padding-right:0; } #tbl tr.pick td.ck + td { padding-left:22px; }
-#tbl input[type=checkbox] { width:16px; height:16px; cursor:pointer; vertical-align:middle; }
 .xopt { display:flex; flex-direction:column; gap:8px; margin:10px 0; } .xopt label { display:flex; gap:8px; align-items:flex-start; } .xopt label input { margin-top:3px; }
 #xProg { min-height:1.4em; margin:8px 0; }
-#tbl tr.pick td.ck { padding-left:10px; }
+.xsec { display:flex; gap:12px; align-items:flex-start; margin-top:12px; } .xl { flex:0 0 64px; font-size:13px; font-weight:600; color:var(--sub); line-height:32px; }
+.xchips { display:flex; gap:6px; flex-wrap:wrap; } .xchips .pchip { padding:5px 12px; }
+.xtree { max-height:min(340px, 42vh); overflow:auto; border:1px solid var(--line); border-radius:10px; }
+.xrun { border-bottom:1px solid var(--line); } .xrun:last-child { border-bottom:0; }
+.xrh { display:flex; align-items:center; gap:8px; padding:7px 10px; background:var(--soft); } .xrh label { display:flex; gap:8px; align-items:center; flex:1; min-width:0; cursor:pointer; }
+.xph label { display:flex; gap:8px; align-items:center; padding:5px 10px 5px 36px; cursor:pointer; } .xph label:hover, .xrh:hover { background:#eef2fa; }
+.xtree input[type=checkbox] { width:16px; height:16px; flex:0 0 16px; } .xfile { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+.xexp { white-space:nowrap; }
+#dlgExport { width:min(780px, 96vw); }
 </style>
 </head>
 <body>
@@ -233,7 +239,7 @@ button.backb { width:auto; height:34px; padding:0 12px; font-size:14px; font-wei
         <button id="btnRefresh">새로 고침</button>
         <details class="optmenu"><summary>열 선택</summary><div class="optbox" id="colPick"></div></details>
       </div>
-      <div class="row" style="margin:8px 0 6px"><button id="btnExport">결과 내려받기 (Excel)</button><span class="small muted" id="xSel"></span><button id="xSelClear" class="lnk" hidden>고른 것 지우기</button><span style="flex:1"></span><button id="runsOpen" class="lnk" hidden>모두 펼치기</button><button id="runsClose" class="lnk" hidden>모두 접기</button></div>
+      <div class="row" style="margin:8px 0 6px"><button id="btnExport">결과 내려받기 (Excel)</button><span style="flex:1"></span><button id="runsOpen" class="lnk" hidden>모두 펼치기</button><button id="runsClose" class="lnk" hidden>모두 접기</button></div>
       <div class="tablewrap" style="max-height:72vh"><table id="tbl"><thead></thead><tbody></tbody></table></div>
     </div>
   </section>
@@ -269,10 +275,13 @@ button.backb { width:auto; height:34px; padding:0 12px; font-size:14px; font-wei
   </div>
 </dialog>
 
-<dialog id="dlgExport">
+<dialog id="dlgExport" class="wide">
   <h3 style="margin:0 0 4px">결과 내려받기 (Excel)</h3>
-  <p class="small muted" style="margin:0">사진별 요약 · 런별 요약 · (선택) 결정별 표 · 설명, 네 장짜리 .xlsx 파일 하나로 받습니다.</p>
-  <div class="xopt" id="xOpt"></div>
+  <p class="small muted" style="margin:0">전구체 → 상태 → 런·사진 순으로 고르면, 고른 사진만 담은 .xlsx 파일 하나로 받습니다 (사진별 · 런별 · 결정별 · 설명).</p>
+  <div class="xsec"><span class="xl">전구체</span><div class="xchips" id="xPre"></div></div>
+  <div class="xsec"><span class="xl">상태</span><div class="xchips" id="xSt"></div></div>
+  <div class="xsec"><span class="xl">런 · 사진</span><div style="flex:1; min-width:0"><div class="row" style="margin-bottom:6px"><input id="xQ" type="search" placeholder="런 번호·파일 이름 찾기 (예: R237)" style="flex:1 1 200px"><button class="lnk" id="xAll">보이는 것 모두 고르기</button><button class="lnk" id="xNone">모두 빼기</button></div><div id="xTree" class="xtree"></div></div></div>
+  <p class="small" id="xSum" style="margin:8px 0 4px"></p>
   <label class="small" style="display:flex; gap:8px; align-items:flex-start"><input type="checkbox" id="xCrys" checked style="margin-top:3px"><span>결정별 표도 넣기 <span class="muted">— 사진마다 저장소에서 판독 파일을 불러옵니다 (장당 몇 초). 끄면 목록에 있는 값만으로 바로 만듭니다.</span></span></label>
   <p class="small" id="xProg"></p>
   <div class="row"><button class="primary" id="xGo">내려받기</button><button id="xClose">닫기</button></div>
@@ -307,7 +316,7 @@ button.backb { width:auto; height:34px; padding:0 12px; font-size:14px; font-wei
 <script>
 /* ============================== settings ============================== */
 const API_URL_FIXED = 'https://script.google.com/macros/s/AKfycbwmhgggtNJAvEmEgAFj3a-7XnMAHLRpmxjmt5a3oA8XJ4-5dCfpb2W3Mrxa5izgNBIqrA/exec';
-const APP_VERSION = 'sem web 0.7.0';
+const APP_VERSION = 'sem web 0.7.2';
 const CONFIRM_MAGS = [1000, 2500, 10000, 15000, 20000, 40000, 50000];   // magnifications of the photos in the 11-23 confirmation set
 
 /* ============================== small helpers ============================== */
@@ -559,7 +568,7 @@ function renderList(){
     (!q || [r.run, r.position, r.file, r.rel_path, r.uploader, r.photo_id, r.note].some(v => String(v || '').toLowerCase().includes(q))));
   rows.sort((a, b) => String(a.run).localeCompare(String(b.run)) || String(a.position).localeCompare(String(b.position)) || (a.magnification || 0) - (b.magnification || 0) || String(a.file).localeCompare(String(b.file)));
   const total = Object.keys((INDEX && INDEX.photos) || {}).length;
-  $('#tbl thead').innerHTML = `<tr><th class="ck"><input type="checkbox" id="ckAll" aria-label="보이는 사진 모두 고르기"></th><th>런 · 사진</th><th>위치 · 배율</th><th>전구체</th><th>상태</th><th class="num">S3</th><th>마지막 검토</th>${X.map(k => `<th>${LIST_EXTRA[k]}</th>`).join('')}</tr>`;
+  $('#tbl thead').innerHTML = `<tr><th>런 · 사진</th><th>위치 · 배율</th><th>전구체</th><th>상태</th><th class="num">S3</th><th>마지막 검토</th>${X.map(k => `<th>${LIST_EXTRA[k]}</th>`).join('')}</tr>`;
   const nameN = {}; rows.forEach(r => { nameN[r.file] = (nameN[r.file] || 0) + 1; });
   const folder = r => { const p = String(r.rel_path || '').split('/'); return p.length > 1 ? p[p.length - 2] : ''; };
   const s3of = r => { const a = r.auto, v = r.review; return v && v.schema === 2 ? v.S3 : a ? a.whole.S3 : null; };
@@ -567,7 +576,7 @@ function renderList(){
     const s3 = s3of(r); const src = v2 ? '<span class="tag blue tiny">수정</span>' : a ? '<span class="tag wait tiny">자동</span>' : '';
     const ex = {run: esc(r.run || '–'), rel: `<span class="muted small">${esc(r.rel_path || '')}</span>`, txt: r.instrument_txt ? '있음' : '<span class="muted">없음</span>', who: `<span class="muted small">${esc(r.uploader || '')} ${esc(when(r.registered_at))}</span>`,
                 ndir: v2 ? v.n_dir : a ? a.whole.read : '–', main: v2 ? esc(mainText(v.main)) : '–', cells: v2 ? `${v.cells_done}/${v.cells_total}칸` : '–'};
-    return `<tr class="pick" data-id="${esc(r.photo_id)}"><td class="ck"><input type="checkbox" class="ckp" data-id="${esc(r.photo_id)}" ${SELX.has(r.photo_id) ? 'checked' : ''} aria-label="고르기"></td><td><b>${esc(r.file.replace(/\.[^.]+$/, ''))}</b>${nameN[r.file] > 1 ? ` <span class="muted tiny" title="${esc(r.rel_path)}">${esc(folder(r) || r.photo_id.slice(0, 8))}</span>` : ''}</td><td>${esc(r.position || '–')} · ${r.magnification ? fmtN(r.magnification) + '배' : '배율 –'}</td><td>${esc(PRE_KO[r.precursor] || r.precursor)}</td>
+    return `<tr class="pick" data-id="${esc(r.photo_id)}"><td><b>${esc(r.file.replace(/\.[^.]+$/, ''))}</b>${nameN[r.file] > 1 ? ` <span class="muted tiny" title="${esc(r.rel_path)}">${esc(folder(r) || r.photo_id.slice(0, 8))}</span>` : ''}</td><td>${esc(r.position || '–')} · ${r.magnification ? fmtN(r.magnification) + '배' : '배율 –'}</td><td>${esc(PRE_KO[r.precursor] || r.precursor)}</td>
       <td>${statusHtml(r)}</td><td class="num">${fmt(s3)} ${src}</td><td class="small">${v ? `${esc(v.who)} · ${esc(when(v.at))}` : '<span class="muted">–</span>'}</td>${X.map(k => `<td>${ex[k]}</td>`).join('')}</tr>`; };
   // one block per run: a header line with the run's summary, then its photos (the header folds the block)
   const G = []; rows.forEach(r => { const k = r.run || ''; let g = G[G.length - 1]; if (!g || g.run !== k){ g = G.find(x => x.run === k); if (!g){ g = {run: k, rows: []}; G.push(g); } } g.rows.push(r); });
@@ -585,17 +594,14 @@ function renderList(){
     const pre = [...new Set(R.map(r => PRE_KO[r.precursor] || r.precursor))].join('·'), pos = new Set(R.map(r => r.position || '')).size, mags = [...new Set(R.map(r => r.magnification).filter(Boolean))].sort((a, b) => a - b);
     const S = R.map(s3of).filter(x => x != null), lo = Math.min(...S), hi = Math.max(...S);
     const last = R.map(r => r.review).filter(Boolean).sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
-    return `<tr class="grp ${open ? 'open' : ''}" data-run="${esc(g.run)}" tabindex="0" role="button" aria-expanded="${open}"><td class="ck"><input type="checkbox" class="ckr" data-run="${esc(g.run)}" ${R.every(r => SELX.has(r.photo_id)) ? 'checked' : ''} data-some="${R.some(r => SELX.has(r.photo_id)) ? 1 : ''}" aria-label="이 런 사진 모두 고르기"></td><td><div class="grow"><span class="gcar">›</span><b class="grun">${esc(g.run || '런 미입력')}</b><span class="muted small">사진 ${R.length}장</span></div></td>
+    return `<tr class="grp ${open ? 'open' : ''}" data-run="${esc(g.run)}" tabindex="0" role="button" aria-expanded="${open}"><td><div class="grow"><span class="gcar">›</span><b class="grun">${esc(g.run || '런 미입력')}</b><span class="muted small">사진 ${R.length}장</span></div></td>
         <td class="small">위치 ${pos}곳${mags.length ? ' · ' + (mags.length > 2 ? `${fmtN(mags[0])}–${fmtN(mags[mags.length - 1])}배` : mags.map(m => fmtN(m) + '배').join(', ')) : ''}</td><td>${esc(pre)}</td>
         <td><span class="gstat">${KIND.filter(k => n[k[0]]).map(k => `<span class="tag ${k[2]} tiny">${k[1]} ${n[k[0]]}</span>`).join('')}</span></td>
         <td class="num small" title="이 런의 사진별 S3 범위 (검토본이 있으면 검토본 값). 런 전체를 합친 값이 아닙니다.">${S.length ? (lo === hi ? fmt(lo) : fmt(lo) + ' – ' + fmt(hi)) : '–'}</td>
         <td class="small">${last ? `${esc(last.who)} · ${esc(when(last.at))}` : '<span class="muted">–</span>'}</td>${X.map(() => '<td></td>').join('')}</tr>` + (open ? R.map(rowHtml).join('') : ''); }).join('');
-  document.querySelectorAll('#tbl .ckr').forEach(c => { c.indeterminate = !c.checked && !!c.dataset.some; }); LISTF.shown = rows.map(r => r.photo_id); const ca = $('#ckAll'); if (ca){ const k = rows.filter(r => SELX.has(r.photo_id)).length; ca.checked = !!rows.length && k === rows.length; ca.indeterminate = k > 0 && k < rows.length; }
-  if ($('#xSel')) $('#xSel').textContent = SELX.size ? `고른 사진 ${SELX.size}장` : ''; if ($('#xSelClear')) $('#xSelClear').hidden = !SELX.size;
   $('#colPick').innerHTML = Object.entries(LIST_EXTRA).map(([k, v]) => `<label class="small" style="display:flex; gap:4px; align-items:center"><input type="checkbox" data-col="${k}" ${X.includes(k) ? 'checked' : ''}>${v}</label>`).join('');
 }
-$('#tbl tbody').addEventListener('click', e => { if (e.target.closest('td.ck')){ onPick(e); return; } const g = e.target.closest('tr.grp'); if (g) return setRunOpen([g.dataset.run], !g.classList.contains('open')); const tr = e.target.closest('tr.pick'); if (tr) openDetail(tr.dataset.id); });
-$('#tbl thead').addEventListener('change', e => { if (e.target.id !== 'ckAll') return; (LISTF.shown || []).forEach(id => e.target.checked ? SELX.add(id) : SELX.delete(id)); renderList(); });
+$('#tbl tbody').addEventListener('click', e => { const g = e.target.closest('tr.grp'); if (g) return setRunOpen([g.dataset.run], !g.classList.contains('open')); const tr = e.target.closest('tr.pick'); if (tr) openDetail(tr.dataset.id); });
 $('#tbl tbody').addEventListener('keydown', e => { const g = e.target.closest('tr.grp'); if (g && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); setRunOpen([g.dataset.run], !g.classList.contains('open')); } });
 
 /* ============================== detail ============================== */
@@ -650,10 +656,10 @@ const TOOLS_HTML = `<div class="toolpanel">
   <div class="tline"><span class="tlabel">도구</span><div class="trow" id="toolRow" role="toolbar" aria-label="도구">
     <span class="tgroup"><button class="tool" data-mode="free" title="F">✎ 따라 그리기</button><button class="tool" data-mode="click" title="P">• 점 찍기</button><button class="tool" data-mode="sel" title="S">선택</button><button class="tool" data-mode="dir" title="V">꼭짓점(방향)</button><button class="tool" data-mode="cdir" title="C">덩어리 방향</button></span>
     <span class="sep"></span><button class="tool" id="tUndo" title="Z">↶ 되돌리기</button>
-    <span class="tctx"><button class="tool go" id="closepoly" hidden title="Enter">닫기 ✓</button><button class="tool warn" id="delsel" hidden title="Delete">지우기</button><button class="tool warn" id="nodirBtn" hidden>방향 판독 어려움</button><button class="tool" id="cdirnext" hidden>덩어리 바꾸기</button></span>
+    <span class="tctx"><button class="tool go" id="closepoly" hidden title="Enter">닫기 ✓</button><button class="tool warn" id="delsel" hidden title="Delete">지우기</button><button class="tool" id="redrawBtn" hidden title="R" aria-pressed="false">다시 그리기</button><button class="tool warn" id="nodirBtn" hidden>방향 판독 어려움</button><button class="tool" id="cdirnext" hidden>덩어리 바꾸기</button></span>
     <span class="tview"><button class="tool" id="zFit2" title="0">맞춤</button><button class="tool sq" id="zIn" aria-label="확대">＋</button><button class="tool sq" id="zOutB" aria-label="축소">－</button></span>
   </div></div></div>`;
-const KEYS_TXT = '1–4 유형 · U 경계 불확실 · X 잘림 · F 그리기 · P 점 · S 선택 · V 꼭짓점 · C 덩어리 방향 · Z 되돌리기 · 0 맞춤 · Space 누른 채 끌기 이동 · Delete 지우기 · N 다음 미검토 결정 · Esc 취소 / 두 손가락: 확대·이동 · 펜으로만: 펜만 그리고 손가락은 이동·확대';
+const KEYS_TXT = '1–4 유형 · U 경계 불확실 · X 잘림 · F 그리기 · P 점 · S 선택 · V 꼭짓점 · C 덩어리 방향 · Z 되돌리기 · 0 맞춤 · Space 누른 채 끌기 이동 · Delete 지우기 · R 다시 그리기 · N 다음 미검토 결정 · Esc 취소 / 두 손가락: 확대·이동 · 펜으로만: 펜만 그리고 손가락은 이동·확대';
 const cellName = key => { const C = EDIT.J.cells, r = Number(key.slice(1, key.indexOf('c'))), c = Number(key.slice(key.indexOf('c') + 1)); return `${r * C.nx + c + 1}번 칸`; };
 function cellKeys(){ const C = EDIT.J.cells, K = []; for (let r = 0; r < C.ny; r++) for (let c = 0; c < C.nx; c++) K.push(`r${r}c${c}`); return K; }
 function srcLabel(){
@@ -677,7 +683,7 @@ function renderMain(){
   wireViewer(); fitView();
   if (review){ const K = cellKeys(); if (!EDIT.curCell) EDIT.curCell = K.find(k => !EDIT.cellsDone[k]) || K[0]; if (!EDIT.sel){ const R = cellRect(EDIT.curCell, EDIT.J.cells); showRect(R[0], R[1], R[2], R[3], 14); } else centerOn(EDIT.S[EDIT.sel]); }
   else if (EDIT.sel && viewS()[EDIT.sel]) centerOn(viewS()[EDIT.sel]);
-  $('#hint').innerHTML = review ? `빠진 결정은 따라 그리기·점 찍기로 그리고 꼭짓점(방향)을 찍습니다. 틀린 윤곽은 선택 → 지우기, 모양이 틀리면 지우고 다시 그립니다. <span class="kbd" title="${KEYS_TXT}">단축키</span>` : '';
+  $('#hint').innerHTML = review ? `빠진 결정은 따라 그리기·점 찍기로 그리고 꼭짓점(방향)을 찍습니다. 틀린 윤곽은 선택 → 지우기, 모양만 틀리면 선택 → 다시 그리기로 그 자리에서 고칩니다. <span class="kbd" title="${KEYS_TXT}">단축키</span>` : '';
   if (review){ renderTools(); renderTags(); applySplit(); }
   if (review && EDIT.draft){ const dr = EDIT.draft;
     $('#draftBanner').innerHTML = `<div class="note small banner">저장하지 않은 수정 ${dr.events.length}건이 이 PC에 있습니다 (${esc(when(dr.at))}). <button id="drUse">이어서 하기</button> <button id="drDrop">버리기</button></div>`;
@@ -869,8 +875,9 @@ function draw(){
   }
   drawObjects(ctx, viewS(), k, {out: EDIT.tab === 'res' ? true : EDIT.opt.out, arr: EDIT.opt.arr, num: EDIT.opt.num, exc: EDIT.opt.exc});
   const sel = EDIT.sel && viewS()[EDIT.sel];
-  if (sel){ ctx.setLineDash([]); ctx.lineWidth = 4.5 / k; ctx.strokeStyle = '#000a'; polyPath(ctx, sel.pts); ctx.stroke(); ctx.lineWidth = 2.4 / k; ctx.strokeStyle = '#fff'; polyPath(ctx, sel.pts); ctx.stroke(); }
   const T = EDIT.T;
+  if (sel && T && T.redraw === sel.id && isReview()){ ctx.setLineDash([5 / k, 4 / k]); ctx.lineWidth = 1.6 / k; ctx.strokeStyle = '#fff'; polyPath(ctx, sel.pts); ctx.stroke(); ctx.setLineDash([]); }
+  else if (sel){ ctx.setLineDash([]); ctx.lineWidth = 4.5 / k; ctx.strokeStyle = '#000a'; polyPath(ctx, sel.pts); ctx.stroke(); ctx.lineWidth = 2.4 / k; ctx.strokeStyle = '#fff'; polyPath(ctx, sel.pts); ctx.stroke(); }
   if (T && isReview()){
     [T.dirSel, T.cSel].forEach(id => { const s = id && EDIT.S[id]; if (s){ ctx.setLineDash([3 / k, 3 / k]); ctx.lineWidth = 2 / k; ctx.strokeStyle = '#facc15'; polyPath(ctx, s.pts); ctx.stroke(); ctx.setLineDash([]); } });
     if (T.draft && T.draft.length){ ctx.strokeStyle = '#f472b6'; ctx.lineWidth = 2.2 / k; ctx.setLineDash([]); ctx.beginPath(); T.draft.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
@@ -896,7 +903,7 @@ const TOOL_TAGS = [{k: 'iso', n: '떨어진'}, {k: 'touch', n: '붙은 (경계 �
 const TOOL_FLAGS = [{k: 'u', n: '경계 불확실'}, {k: 'cut', n: '잘림'}];
 const MODE_KO = {free: '따라 그리기', click: '점 찍기', sel: '선택', dir: '꼭짓점(방향)', cdir: '덩어리 방향'};
 function toolState(){ if (!EDIT.T){ let pen = false, sp = false; try { pen = LS.get('ws2sem.penonly') === '1'; sp = LS.get('ws2sem.split') === '1'; } catch (e){}
-  EDIT.T = {mode: 'sel', tag: 'iso', pend: {u: false, cut: false}, draft: null, drawId: null, lastPt: null, hover: null, dirSel: null, cSel: null, cdraft: [], penOnly: pen, split: sp, space: false, br: 0, ct: 100}; }
+  EDIT.T = {mode: 'sel', tag: 'iso', pend: {u: false, cut: false}, draft: null, drawId: null, lastPt: null, hover: null, dirSel: null, cSel: null, cdraft: [], redraw: null, penOnly: pen, split: sp, space: false, br: 0, ct: 100}; }
   return EDIT.T; }
 const isReview = () => EDIT && EDIT.ui === 'review';
 function filteredImg(){            // review only: 1 % contrast stretch + brightness / contrast sliders, as on the earlier page
@@ -914,12 +921,13 @@ function simplifyLoop(pts, eps){ if (pts.length < 4) return pts; let k = 0, dm =
 function cdirGeom(d){ const ua = [d.a[0] - d.v[0], d.a[1] - d.v[1]], ub = [d.b[0] - d.v[0], d.b[1] - d.v[1]], la = Math.hypot(...ua) || 1, lb = Math.hypot(...ub) || 1;
   const side = Math.acos(Math.max(-1, Math.min(1, (ua[0] * ub[0] + ua[1] * ub[1]) / (la * lb)))) * 180 / Math.PI; return {side, la, lb}; }
 
-function setMode(m){ const T = toolState(); T.mode = m; T.draft = null; T.lastPt = null; T.dirSel = null; T.cSel = null; T.cdraft = []; renderTools(); renderTags(); draw(); }
+function setMode(m){ const T = toolState(); if (!['free', 'click'].includes(m)) T.redraw = null; T.mode = m; T.draft = null; T.lastPt = null; T.dirSel = null; T.cSel = null; T.cdraft = []; renderTools(); renderTags(); draw(); }
 function renderTools(){
   const T = EDIT && EDIT.T; if (!T || !$('#toolRow')) return; const s = EDIT.sel && EDIT.S[EDIT.sel];
   document.querySelectorAll('#toolRow [data-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === T.mode));
   $('#closepoly').hidden = !(T.mode === 'click' && T.draft && T.draft.length >= 3);
   $('#delsel').hidden = !(T.mode === 'sel' && s && !s.excluded);
+  const rb = $('#redrawBtn'); if (rb){ rb.hidden = !((T.mode === 'sel' && s && !s.excluded) || T.redraw); rb.textContent = T.redraw ? '다시 그리기 취소' : '다시 그리기'; rb.setAttribute('aria-pressed', !!T.redraw); }
   $('#cdirnext').hidden = !(T.mode === 'cdir' && T.cSel);
   $('#nodirBtn').hidden = !((T.mode === 'dir' && T.dirSel) || (T.mode === 'sel' && s && !s.excluded && SINGLE.has(s.tag)));
   if (s && T.mode === 'sel') $('#nodirBtn').textContent = s.nodir ? '방향 판독 어려움 해제' : '방향 판독 어려움'; else $('#nodirBtn').textContent = '방향 판독 어려움';
@@ -927,17 +935,18 @@ function renderTools(){
   if ($('#tUndo')) $('#tUndo').disabled = !(EDIT.undo.length || T.draft || T.cdraft.length);
   modeHud(); }
 function renderTags(){
-  const T = EDIT && EDIT.T, box = $('#tagRow'); if (!T || !box) return; const s = T.mode === 'sel' && EDIT.sel && EDIT.S[EDIT.sel] && !EDIT.S[EDIT.sel].excluded ? EDIT.S[EDIT.sel] : null;
+  const T = EDIT && EDIT.T, box = $('#tagRow'); if (!T || !box) return; const s = (T.mode === 'sel' || T.redraw) && EDIT.sel && EDIT.S[EDIT.sel] && !EDIT.S[EDIT.sel].excluded ? EDIT.S[EDIT.sel] : null;
   box.innerHTML = TOOL_TAGS.map((t, i) => `<button class="chip" data-tag="${t.k}" aria-pressed="${s ? s.tag === t.k : T.tag === t.k}" title="${i + 1}">${t.n}</button>`).join('') + '<span class="sep"></span>' +
     TOOL_FLAGS.map(f => `<button class="chip flag" data-flag="${f.k}" aria-pressed="${s ? !!(f.k === 'u' ? s.u_edge : s.cut) : T.pend[f.k]}" title="${f.k === 'u' ? 'U' : 'X'}">${f.n}</button>`).join(''); }
 function modeHud(){ const T = EDIT.T, el = $('#pvMode'); if (!el) return; if (!isReview()){ el.hidden = true; return; } el.hidden = false;
   const fl = TOOL_FLAGS.filter(f => T.pend[f.k]).map(f => f.n).join('·'); const tg = (TOOL_TAGS.find(t => t.k === T.tag) || TOOL_TAGS[0]).n;
   const m = T.mode === 'cdir' ? '덩어리 방향' + (!T.cSel ? ' · 덩어리 안을 탭' : ' · 다음: ' + ['① 꼭짓점', '② 한쪽 변 위', '③ 다른 쪽 변 위'][T.cdraft.length]) :
     T.mode === 'dir' ? '꼭짓점(방향)' + (T.dirSel ? ' · 꼭짓점을 탭' : ' · 결정 안을 탭') : MODE_KO[T.mode];
-  el.textContent = (T.space ? '이동' : m) + (['free', 'click'].includes(T.mode) ? ' · ' + tg + (fl ? ' + ' + fl : '') : '') + (T.penOnly ? ' · 펜으로만' : ''); }
-function setTag(k){ const T = toolState(); T.tag = k; const s = T.mode === 'sel' && EDIT.sel && EDIT.S[EDIT.sel];
+  const rs = T.redraw && EDIT.S[T.redraw];
+  el.textContent = rs ? `다시 그리기 #${rs.num} · ${MODE_KO[T.mode]}로 새 윤곽을 그리세요 · Esc 취소` + (T.penOnly ? ' · 펜으로만' : '') : (T.space ? '이동' : m) + (['free', 'click'].includes(T.mode) ? ' · ' + tg + (fl ? ' + ' + fl : '') : '') + (T.penOnly ? ' · 펜으로만' : ''); }
+function setTag(k){ const T = toolState(); if (!T.redraw) T.tag = k; const s = (T.mode === 'sel' || T.redraw) && EDIT.sel && EDIT.S[EDIT.sel];
   if (s && !s.excluded && s.tag !== k) mutate('tag', [s.id], () => { s.tag = k; s.confirm = 'edited'; }); renderTags(); modeHud(); }
-function setFlag(k){ const T = toolState(), s = T.mode === 'sel' && EDIT.sel && EDIT.S[EDIT.sel];
+function setFlag(k){ const T = toolState(), s = (T.mode === 'sel' || T.redraw) && EDIT.sel && EDIT.S[EDIT.sel];
   if (s && !s.excluded){ if (k === 'u') mutate('u_edge', [s.id], () => { s.u_edge = !s.u_edge; s.confirm = 'edited'; }); else mutate('cut', [s.id], () => { s.cut = !s.cut; s.confirm = 'edited'; }); renderTags(); return; }
   if (T.mode === 'dir' || T.mode === 'cdir') return toast('그리기 또는 선택에서 쓰는 표시입니다');
   T.pend[k] = !T.pend[k]; renderTags(); modeHud(); if (T.pend[k]) toast(TOOL_FLAGS.find(f => f.k === k).n + ' — 다음에 그리는 윤곽 하나에 붙습니다'); }
@@ -946,6 +955,10 @@ function delSel(){ const T = toolState(), s = EDIT.sel && EDIT.S[EDIT.sel]; if (
   else { const sh = overlapShare(s), dup = sh >= 0.5; mutate('exclude', [s.id], () => { s.excluded = {reason: dup ? 'duplicate' : 'other', by: 'person'}; s.confirm = 'edited'; });
     EDIT.sel = null; toast(dup ? `#${s.num}을 지웠습니다 (다른 윤곽과 ${Math.round(sh * 100)} % 겹쳐 "중복"으로 기록)` : `#${s.num}을 지웠습니다. 기록에는 남고 결과에서는 빠집니다.`); }
   renderTools(); renderTags(); renderSel(); draw(); }
+function startRedraw(){          // 다시 그리기: the chosen outline keeps its number and history; only its shape is replaced by what is drawn next
+  const T = toolState(); if (T.redraw){ T.redraw = null; setMode('sel'); return; }
+  const s = T.mode === 'sel' && EDIT.sel && EDIT.S[EDIT.sel]; if (!s) return toast('먼저 선택에서 다시 그릴 윤곽을 누르세요'); if (s.excluded) return toast('지운 윤곽입니다. 되살린 뒤 다시 그릴 수 있습니다.');
+  T.redraw = s.id; setMode('free'); toast(`#${s.num} 다시 그리기 — 실제 경계를 따라 새로 그리세요. 점선이 이전 윤곽입니다. (점 찍기로 바꿔도 됩니다)`, 5000); }
 function nodirToggle(){ const T = toolState(), id = T.mode === 'dir' ? T.dirSel : EDIT.sel, s = id && EDIT.S[id]; if (!s || s.excluded) return;
   if (!SINGLE.has(s.tag)) return toast('단일 결정(떨어진·붙은·둥근)에만 씁니다');
   const on = T.mode === 'sel' ? !s.nodir : true; mutate(on ? 'nodir' : 'dir_ok', [s.id], () => { s.nodir = on; if (on){ s.v = null; s.v_src = null; } s.confirm = on ? 'hard' : 'edited'; });
@@ -954,17 +967,27 @@ function undoAny(){ const T = EDIT && EDIT.T; if (!T) return undo();
   if (T.draft){ if (T.mode === 'click' && T.draft.length > 1) T.draft.pop(); else { T.draft = null; T.lastPt = null; } renderTools(); draw(); return; }
   if (T.mode === 'cdir' && T.cdraft.length){ T.cdraft.pop(); renderTools(); draw(); return; }
   if (!EDIT.undo.length) return toast('되돌릴 것이 없습니다'); undo(); renderTools(); renderTags(); }
-function escTool(){ const T = EDIT.T; if (T){ T.draft = null; T.lastPt = null; T.cdraft = []; T.dirSel = null; T.cSel = null; } EDIT.sel = null; renderTools(); renderTags(); renderSel(); draw(); }
+function escTool(){ const T = EDIT.T; if (T && T.redraw && isReview()){ T.redraw = null; setMode('sel'); renderSel(); return; } if (T){ T.draft = null; T.lastPt = null; T.cdraft = []; T.dirSel = null; T.cSel = null; } EDIT.sel = null; renderTools(); renderTags(); renderSel(); draw(); }
 function closePoly(){ const T = EDIT.T; if (!T || !T.draft) return; const pts = T.draft; T.draft = null; T.lastPt = null; commitPoly(pts); renderTools(); }
 function commitPoly(pts){
   const T = EDIT.T; pts = pts.map(([x, y]) => [r2(x), r2(y)]);
   if (pts.length < 3 || polyAC(pts)[0] < 12){ toast('너무 작아서 저장하지 않았습니다'); draw(); return; }
   const [W, H] = EDIT.J.picture_size, e = 1.5, auto = !T.pend.cut && pts.some(([x, y]) => x <= e || y <= e || x >= W - e || y >= H - e);
+  const rs = T.redraw && EDIT.S[T.redraw];
+  if (rs && !rs.excluded){          // replace the shape of the chosen outline; the old direction belonged to the old shape, so it is asked again
+    const single = SINGLE.has(rs.tag);
+    mutate('redraw', [rs.id], () => { rs.pts = pts; rs.redrawn = true; if (auto) rs.cut = true; rs.v = null; rs.v_src = null; rs.nodir = false; rs.confirm = 'edited'; });
+    T.redraw = null; EDIT.sel = rs.id; T.draft = null; T.lastPt = null; T.cdraft = []; T.cSel = null;
+    if (single){ T.mode = 'dir'; T.dirSel = rs.id; } else { T.mode = 'sel'; T.dirSel = null; }
+    renderTools(); renderTags(); renderSel(); markRow(); draw();
+    toast(single ? `#${rs.num} 윤곽을 바꿨습니다 — 꼭짓점 하나를 탭해 방향을 찍으세요` : `#${rs.num} 윤곽을 바꿨습니다`, 5000); return; }
+  T.redraw = null;
   let id; mutate('add', [], () => { const s = newState(pts, 'person', [], T.tag); s.u_edge = !!T.pend.u; s.cut = !!(T.pend.cut || auto); EDIT.S[s.id] = s; id = s.id; return [s.id]; });
   T.pend = {u: false, cut: false}; EDIT.sel = id; renderTags(); renderSel(); markRow(); draw();
   toast(auto ? `#${id} 추가 — 사진 끝에 닿아 "잘림"으로 표시했습니다 (아니면 선택 후 잘림을 끄세요)` : SINGLE.has(T.tag) ? `#${id} 추가 — 꼭짓점(방향)으로 방향을 찍으세요` : `#${id} 추가`, 4000); }
 function onTap(x, y){
   const T = toolState();
+  if (isReview() && T.redraw && T.mode === 'free') return toast('끌어서 새 윤곽을 그리세요 (그만두려면 Esc)');
   if (!isReview() || T.mode === 'sel' || T.mode === 'free'){ EDIT.sel = pick(x, y); renderTools(); renderTags(); renderSel(); markRow(); draw(); return; }
   if (T.mode === 'click'){ if (!T.draft) T.draft = [];
     if (T.draft.length >= 3){ const f = T.draft[0]; if (Math.hypot((f[0] - x) * EDIT.view.s, (f[1] - y) * EDIT.view.s) < 9) return closePoly(); }
@@ -1072,7 +1095,7 @@ document.addEventListener('keydown', e => { if (!EDIT || $('#detail').hidden) re
   const act = {u: () => setFlag('u'), x: () => setFlag('cut'), f: () => setMode('free'), p: () => setMode('click'), s: () => setMode('sel'), v: () => setMode('dir'), c: () => setMode('cdir'),
     z: undoAny, '0': fitView, '+': () => zoomAt(1.35, $('#pvCv').clientWidth / 2, $('#pvCv').clientHeight / 2), '=': () => zoomAt(1.35, $('#pvCv').clientWidth / 2, $('#pvCv').clientHeight / 2),
     '-': () => zoomAt(1 / 1.35, $('#pvCv').clientWidth / 2, $('#pvCv').clientHeight / 2), n: nextUnreviewed, enter: () => { if (T.mode === 'click' && T.draft) closePoly(); },
-    delete: delSel, backspace: delSel}[k];
+    delete: delSel, backspace: delSel, r: startRedraw}[k];
   if (act){ e.preventDefault(); act(); } });
 document.addEventListener('keyup', e => { if (e.code === 'Space' && EDIT && EDIT.T && EDIT.T.space){ EDIT.T.space = false; modeHud(); } });
 function nextUnreviewed(){        // next automatic outline nobody has looked at: in the current cell if one is chosen, by number
@@ -1427,7 +1450,7 @@ $('#detail').addEventListener('click', async e => {
     if (id === 'cmpAuto'){ EDIT.cmp = !EDIT.cmp; renderKey(); return; }
     if (id === 'zFit') return fitView();
     if (t.dataset.mode) return setMode(t.dataset.mode); if (t.dataset.tag) return setTag(t.dataset.tag); if (t.dataset.flag) return setFlag(t.dataset.flag);
-    if (id === 'closepoly') return closePoly(); if (id === 'delsel') return delSel(); if (id === 'nodirBtn') return nodirToggle();
+    if (id === 'closepoly') return closePoly(); if (id === 'delsel') return delSel(); if (id === 'redrawBtn') return startRedraw(); if (id === 'nodirBtn') return nodirToggle();
     if (id === 'cdirnext'){ EDIT.T.cSel = null; EDIT.T.cdraft = []; renderTools(); draw(); return toast('다른 덩어리 안을 탭하세요'); }
     if (id === 'zFit2') return fitView(); if (id === 'zIn' || id === 'zOutB'){ const c = $('#pvCv'); return zoomAt(id === 'zIn' ? 1.35 : 1 / 1.35, c.clientWidth / 2, c.clientHeight / 2); }
     if (id === 'penonly'){ EDIT.T.penOnly = !EDIT.T.penOnly; try { LS.set('ws2sem.penonly', EDIT.T.penOnly ? '1' : ''); } catch (_){} renderTools(); return; }
@@ -1465,25 +1488,48 @@ window.addEventListener('beforeunload', e => { if (EDIT && EDIT.dirty){ e.preven
    Photos picked on the list (or all reviewed ones) → one Excel file: 사진별 · 런별 · 결정별 (optional) · 설명.
    The per-photo numbers are the ones the list already has (saved with each review and checked again in Colab); the decision table is rebuilt here
    from the same files the photo page opens (auto/<k>/objects.json + the latest review), with the same engine. */
-const SELX = new Set();
-function onPick(e){
-  const t = e.target; if (t.tagName !== 'INPUT'){ const i = t.closest('td.ck') && t.closest('td.ck').querySelector('input'); if (i){ i.click(); } return; }
-  const all = Object.values((INDEX && INDEX.photos) || {});
-  if (t.classList.contains('ckp')) t.checked ? SELX.add(t.dataset.id) : SELX.delete(t.dataset.id);
-  else if (t.classList.contains('ckr')) all.filter(r => (r.run || '') === t.dataset.run).forEach(r => t.checked ? SELX.add(r.photo_id) : SELX.delete(r.photo_id));
-  renderList();
-}
 function photoKind(r){ const v = r.review; if (r.status === 'reviewed' && v){ if (v.schema === 2) return v.cells_total && v.cells_done >= v.cells_total ? 'done' : 'part'; return v.state === 'confirmed' ? 'done' : 'part'; }
   return r.status === 'analyzed' ? 'todo' : r.status === 'needs_side' ? 'side' : r.status === 'failed' ? 'fail' : 'wait'; }
 const KIND_KO = {done: '검토 완료', part: '검토 중', todo: '검토 전', side: '결정 쪽 선택 필요', wait: '분석 대기', fail: '분석 실패'};
-function exportSets(){ const all = Object.values((INDEX && INDEX.photos) || {}), by = f => all.filter(f).map(r => r.photo_id);
-  return [['done', '검토 완료된 사진 (모든 칸 검토 완료)', by(r => photoKind(r) === 'done')], ['rev', '검토한 사진 모두 (검토 중 포함)', by(r => !!r.review)],
-          ['sel', '목록에서 고른 사진', Array.from(SELX).filter(id => INDEX.photos[id])], ['all', '자동 판독이 있는 사진 모두 (검토 전은 자동 값)', by(r => !!r.auto)]]; }
+const XST = [['done', '검토 완료 (모든 칸)'], ['part', '검토 중'], ['todo', '검토 전 (자동 값)']], xst = r => { const k = photoKind(r); return k === 'side' ? 'todo' : k; };
+const XS = {pre: null, st: null, sel: new Set(), q: '', open: new Set()};
+const xAll = () => Object.values((INDEX && INDEX.photos) || {}).filter(r => r.auto);       // photos with a reading (waiting / failed ones have nothing to export)
+const xRunKey = r => r.run || '(런 미입력)';
+function xShown(){ const q = XS.q.trim().toLowerCase();
+  return xAll().filter(r => XS.pre.has(r.precursor || 'unknown') && XS.st.has(xst(r)) && (!q || [r.run, r.file, r.position, r.rel_path].some(v => String(v || '').toLowerCase().includes(q)))); }
 function openExport(){
-  const S = exportSets(), def = SELX.size ? 'sel' : S[0][2].length ? 'done' : 'rev';
-  $('#xOpt').innerHTML = S.map(([k, t, ids]) => `<label><input type="radio" name="xs" value="${k}" ${k === def ? 'checked' : ''} ${ids.length ? '' : 'disabled'}><span>${t} <b>${ids.length}장</b></span></label>`).join('');
-  $('#xProg').textContent = ''; $('#xGo').disabled = false; $('#dlgExport').showModal();
+  const A = xAll(); if (!XS.pre){ XS.pre = new Set(['H2S', 'DMS', 'unknown']); }
+  if (!XS.st){ XS.st = new Set(A.some(r => xst(r) === 'done') ? ['done'] : ['done', 'part']); A.forEach(r => XS.sel.add(r.photo_id)); }
+  $('#xQ').value = XS.q; $('#xProg').textContent = ''; $('#xGo').disabled = false; renderExport(); $('#dlgExport').showModal();
 }
+function renderExport(){
+  const A = xAll(), cnt = f => A.filter(f).length, dup = {}; A.forEach(r => { dup[r.file] = (dup[r.file] || 0) + 1; });
+  const fold = r => { const p = String(r.rel_path || '').split('/'); return p.length > 1 ? p[p.length - 2] : r.photo_id.slice(0, 8); };
+  $('#xPre').innerHTML = [['H2S', 'H₂S'], ['DMS', 'DMS'], ['unknown', '미확인']].filter(([k]) => cnt(r => (r.precursor || 'unknown') === k)).map(([k, n]) => `<button class="pchip ${XS.pre.has(k) ? 'on' : ''}" data-xpre="${k}" aria-pressed="${XS.pre.has(k)}">${n} <span>(${cnt(r => (r.precursor || 'unknown') === k)}장)</span></button>`).join('');
+  $('#xSt').innerHTML = XST.map(([k, n]) => `<button class="pchip ${XS.st.has(k) ? 'on' : ''}" data-xst="${k}" aria-pressed="${XS.st.has(k)}">${n} <span>(${cnt(r => xst(r) === k)}장)</span></button>`).join('');
+  const shown = xShown(), G = {}; shown.forEach(r => { (G[xRunKey(r)] = G[xRunKey(r)] || []).push(r); });
+  const runs = Object.keys(G).sort((a, b) => a.localeCompare(b, 'ko', {numeric: true}));
+  $('#xTree').innerHTML = runs.length ? runs.map(k => { const R = G[k].sort((a, b) => String(a.file).localeCompare(String(b.file))), n = R.filter(r => XS.sel.has(r.photo_id)).length, open = XS.open.has(k) || !!XS.q.trim();
+    const pre = [...new Set(R.map(r => PRE_KO[r.precursor] || r.precursor || '미확인'))].join('·');
+    return `<div class="xrun"><div class="xrh"><label><input type="checkbox" class="xr" data-run="${esc(k)}" ${n === R.length ? 'checked' : ''} data-some="${n && n < R.length ? 1 : ''}"><b>${esc(k)}</b><span class="small muted">${esc(pre)} · 사진 ${R.length}장${n !== R.length ? ` 중 ${n}장 고름` : ''}</span></label><button class="lnk xexp" data-run="${esc(k)}">${open ? '사진 접기' : '사진 보기'}</button></div>
+      ${open ? `<div class="xph">${R.map(r => { const v = r.review, s3 = v && v.schema === 2 ? v.S3 : r.auto && r.auto.whole ? r.auto.whole.S3 : null;
+        return `<label><input type="checkbox" class="xp" data-id="${esc(r.photo_id)}" ${XS.sel.has(r.photo_id) ? 'checked' : ''}><span class="xfile">${esc(String(r.file).replace(/\.[^.]+$/, ''))}${dup[r.file] > 1 ? ` <span class="muted tiny" title="${esc(r.rel_path || '')}">${esc(fold(r))}</span>` : ''}</span><span class="tag tiny ${xst(r) === 'done' ? 'ok' : xst(r) === 'part' ? 'blue' : ''}">${KIND_KO[photoKind(r)]}</span><span class="small muted">S3 ${fmt(s3)}</span></label>`; }).join('')}</div>` : ''}</div>`; }).join('')
+    : '<p class="small muted" style="margin:10px">조건에 맞는 사진이 없습니다.</p>';
+  document.querySelectorAll('#xTree .xr').forEach(c => { c.indeterminate = !!c.dataset.some; });
+  const pick = shown.filter(r => XS.sel.has(r.photo_id)), pr = new Set(pick.map(xRunKey));
+  $('#xSum').innerHTML = pick.length ? `받을 것: <b>런 ${pr.size}개 · 사진 ${pick.length}장</b>` : '<span class="muted">받을 사진을 고르세요.</span>'; $('#xGo').disabled = !pick.length;
+}
+$('#dlgExport').addEventListener('click', e => {
+  const b = e.target.closest('[data-xpre],[data-xst]');
+  if (b){ const S = b.dataset.xpre ? XS.pre : XS.st, k = b.dataset.xpre || b.dataset.xst; S.has(k) ? S.delete(k) : S.add(k); renderExport(); return; }
+  const x = e.target.closest('.xexp'); if (x){ XS.open.has(x.dataset.run) ? XS.open.delete(x.dataset.run) : XS.open.add(x.dataset.run); renderExport(); return; }
+  if (e.target.id === 'xAll'){ xShown().forEach(r => XS.sel.add(r.photo_id)); renderExport(); return; }
+  if (e.target.id === 'xNone'){ xShown().forEach(r => XS.sel.delete(r.photo_id)); renderExport(); return; }
+});
+$('#dlgExport').addEventListener('change', e => { const t = e.target;
+  if (t.classList.contains('xp')){ t.checked ? XS.sel.add(t.dataset.id) : XS.sel.delete(t.dataset.id); renderExport(); }
+  else if (t.classList.contains('xr')){ xShown().filter(r => xRunKey(r) === t.dataset.run).forEach(r => t.checked ? XS.sel.add(r.photo_id) : XS.sel.delete(r.photo_id)); renderExport(); } });
+$('#xQ').addEventListener('input', () => { XS.q = $('#xQ').value; renderExport(); });
 async function loadCalc(r){   // the photo's latest whole-photo review (or the automatic start), recomputed with the page's engine
   const v = r.review, useRev = !!(v && v.schema === 2), k = useRev ? v.auto_k : r.auto && r.auto.k; if (k == null) return null;
   const paths = [`auto/${k}/objects.json`].concat(useRev ? ['reviews/' + v.file] : []);
@@ -1524,8 +1570,10 @@ function runRowsX(P){ const G = {}; P.forEach(x => { const k = x[0] || '(런 미
     return [k, [...new Set(L.map(x => x[3]))].join('·'), L.length, L.filter(x => x[8] === '검토 완료').length, L.filter(x => x[8] === '검토 중').length, L.reduce((a, x) => a + (x[14] || 0), 0),
       s3.length ? Math.min(...s3) : null, med(s3), s3.length ? Math.max(...s3) : null, med(s6)]; }); }
 async function runExport(){
-  const kind = (document.querySelector('input[name="xs"]:checked') || {}).value, set = exportSets().find(x => x[0] === kind); if (!set || !set[2].length) return;
-  const ids = set[2].slice().sort((a, b) => { const A = INDEX.photos[a], B = INDEX.photos[b]; return String(A.run).localeCompare(String(B.run), 'ko', {numeric: true}) || String(A.file).localeCompare(String(B.file)); });
+  const ids0 = xShown().filter(r => XS.sel.has(r.photo_id)).map(r => r.photo_id); if (!ids0.length) return;
+  const PRE = [['H2S', 'H₂S'], ['DMS', 'DMS'], ['unknown', '미확인']].filter(([k]) => XS.pre.has(k)).map(x => x[1]).join('·'), STT = XST.filter(([k]) => XS.st.has(k)).map(x => x[1]).join('·');
+  const set = [null, `전구체 ${PRE || '없음'} · 상태 ${STT || '없음'}${XS.q.trim() ? ` · 찾기 "${XS.q.trim()}"` : ''} · 런 ${new Set(ids0.map(id => xRunKey(INDEX.photos[id]))).size}개`];
+  const ids = ids0.slice().sort((a, b) => { const A = INDEX.photos[a], B = INDEX.photos[b]; return String(A.run).localeCompare(String(B.run), 'ko', {numeric: true}) || String(A.file).localeCompare(String(B.file)); });
   const withC = $('#xCrys').checked, P = [], CR = []; $('#xGo').disabled = true;
   try {
     for (let i = 0; i < ids.length; i++){ const r = INDEX.photos[ids[i]]; let calc = null;
@@ -1583,7 +1631,6 @@ function xlsxBlob(sheets){
   return zipStore(files.map(([name, t]) => ({name, data: enc.encode(t)})));
 }
 $('#btnExport').onclick = openExport; $('#xGo').onclick = runExport; $('#xClose').onclick = () => $('#dlgExport').close();
-$('#xSelClear').onclick = () => { SELX.clear(); renderList(); };
 
 /* ============================== back navigation ==============================
    list → photo (results) → review are browser history entries, so the browser's / tablet's Back works and a photo has its own address (#p=<id>).
