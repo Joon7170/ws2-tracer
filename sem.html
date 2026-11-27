@@ -186,6 +186,16 @@ button.on, .seg button.on { background:var(--navy); border-color:var(--navy); }
 #tbl tr.pick td { background:#fbfcfe; } #tbl tr.pick:hover td { background:var(--soft); }
 button.backb { width:auto; height:34px; padding:0 12px; font-size:14px; font-weight:600; white-space:nowrap; }
 #dHead h2 { font-size:20px; color:var(--navy); }
+/* ---- 0.7.0: direction groups on the photo, results download */
+.dlegend { display:flex; gap:6px 16px; flex-wrap:wrap; align-items:center; font-size:13px; margin:4px 0 8px; } .dlegend span { display:inline-flex; align-items:center; gap:6px; }
+.lsw { display:inline-block; width:14px; height:14px; border-radius:3px; flex:0 0 14px; }
+.dirgrid { align-items:start; margin-top:4px; } .dirgrid figure { margin:0; min-width:0; } .dirgrid figcaption { font-size:13px; font-weight:600; color:var(--sub); margin:0 0 6px; }
+.dpwrap { width:100%; border-radius:8px; overflow:hidden; background:#111; } #dirPhoto { display:block; }
+#tbl td.ck, #tbl th.ck { width:34px; padding-left:10px; padding-right:0; } #tbl tr.pick td.ck + td { padding-left:22px; }
+#tbl input[type=checkbox] { width:16px; height:16px; cursor:pointer; vertical-align:middle; }
+.xopt { display:flex; flex-direction:column; gap:8px; margin:10px 0; } .xopt label { display:flex; gap:8px; align-items:flex-start; } .xopt label input { margin-top:3px; }
+#xProg { min-height:1.4em; margin:8px 0; }
+#tbl tr.pick td.ck { padding-left:10px; }
 </style>
 </head>
 <body>
@@ -223,7 +233,7 @@ button.backb { width:auto; height:34px; padding:0 12px; font-size:14px; font-wei
         <button id="btnRefresh">새로 고침</button>
         <details class="optmenu"><summary>열 선택</summary><div class="optbox" id="colPick"></div></details>
       </div>
-      <div class="row" style="margin:8px 0 6px"><span style="flex:1"></span><button id="runsOpen" class="lnk" hidden>모두 펼치기</button><button id="runsClose" class="lnk" hidden>모두 접기</button></div>
+      <div class="row" style="margin:8px 0 6px"><button id="btnExport">결과 내려받기 (Excel)</button><span class="small muted" id="xSel"></span><button id="xSelClear" class="lnk" hidden>고른 것 지우기</button><span style="flex:1"></span><button id="runsOpen" class="lnk" hidden>모두 펼치기</button><button id="runsClose" class="lnk" hidden>모두 접기</button></div>
       <div class="tablewrap" style="max-height:72vh"><table id="tbl"><thead></thead><tbody></tbody></table></div>
     </div>
   </section>
@@ -259,6 +269,14 @@ button.backb { width:auto; height:34px; padding:0 12px; font-size:14px; font-wei
   </div>
 </dialog>
 
+<dialog id="dlgExport">
+  <h3 style="margin:0 0 4px">결과 내려받기 (Excel)</h3>
+  <p class="small muted" style="margin:0">사진별 요약 · 런별 요약 · (선택) 결정별 표 · 설명, 네 장짜리 .xlsx 파일 하나로 받습니다.</p>
+  <div class="xopt" id="xOpt"></div>
+  <label class="small" style="display:flex; gap:8px; align-items:flex-start"><input type="checkbox" id="xCrys" checked style="margin-top:3px"><span>결정별 표도 넣기 <span class="muted">— 사진마다 저장소에서 판독 파일을 불러옵니다 (장당 몇 초). 끄면 목록에 있는 값만으로 바로 만듭니다.</span></span></label>
+  <p class="small" id="xProg"></p>
+  <div class="row"><button class="primary" id="xGo">내려받기</button><button id="xClose">닫기</button></div>
+</dialog>
 <dialog id="dlgMeta">
   <h2>사진 정보 고치기</h2>
   <p class="muted small">고친 내용은 기록에 남습니다. 배율은 파일 이름에서 읽은 값이며, 화소 크기(nm/px)는 장비 TXT가 있으면 TXT를 씁니다.</p>
@@ -289,7 +307,7 @@ button.backb { width:auto; height:34px; padding:0 12px; font-size:14px; font-wei
 <script>
 /* ============================== settings ============================== */
 const API_URL_FIXED = 'https://script.google.com/macros/s/AKfycbwmhgggtNJAvEmEgAFj3a-7XnMAHLRpmxjmt5a3oA8XJ4-5dCfpb2W3Mrxa5izgNBIqrA/exec';
-const APP_VERSION = 'sem web 0.6.1';
+const APP_VERSION = 'sem web 0.7.0';
 const CONFIRM_MAGS = [1000, 2500, 10000, 15000, 20000, 40000, 50000];   // magnifications of the photos in the 11-23 confirmation set
 
 /* ============================== small helpers ============================== */
@@ -458,7 +476,7 @@ function densCov(S, A, cells, done, nm, W, H){     // reference values: individu
 function scopeResult(S, A, cells, done, nm, scope){
   const D = directionsOf(S, A, cells, scope === 'done' ? done : null), th = D.map(d => d[0]); const a3 = alignment(th, 3), a6 = alignment(th, 6), M = mainDirection(th);
   return {scope, n: a3.n, S3: a3.S, S6: a6.S, S3_raw: a3.raw, S6_raw: a6.raw, single: D.filter(d => d[1] === 'single').length, marks: D.filter(d => d[1] === 'mark').length,
-          main: {state: M.state, main: M.main, n_main: M.n_main, n_second: M.n_second, n_other: M.n_other, p_value: M.p_value, ratio: M.ratio}, size: sizeStats(S, A, nm, cells, scope === 'done' ? done : null), dens: EDIT && EDIT.J ? densCov(S, A, cells, scope === 'done' ? done : null, nm, EDIT.J.picture_size[0], EDIT.J.picture_size[1]) : null, _th: th};
+          main: {state: M.state, main: M.main, second: M.second, n_main: M.n_main, n_second: M.n_second, n_other: M.n_other, p_value: M.p_value, ratio: M.ratio}, size: sizeStats(S, A, nm, cells, scope === 'done' ? done : null), dens: EDIT && EDIT.J ? densCov(S, A, cells, scope === 'done' ? done : null, nm, EDIT.J.picture_size[0], EDIT.J.picture_size[1]) : null, _th: th};
 }
 function allResults(J, A, S0, S, cellsDone){
   const done = new Set(Object.keys(cellsDone || {})), cells = J.cells, nm = J.nm_per_px;
@@ -541,7 +559,7 @@ function renderList(){
     (!q || [r.run, r.position, r.file, r.rel_path, r.uploader, r.photo_id, r.note].some(v => String(v || '').toLowerCase().includes(q))));
   rows.sort((a, b) => String(a.run).localeCompare(String(b.run)) || String(a.position).localeCompare(String(b.position)) || (a.magnification || 0) - (b.magnification || 0) || String(a.file).localeCompare(String(b.file)));
   const total = Object.keys((INDEX && INDEX.photos) || {}).length;
-  $('#tbl thead').innerHTML = `<tr><th>런 · 사진</th><th>위치 · 배율</th><th>전구체</th><th>상태</th><th class="num">S3</th><th>마지막 검토</th>${X.map(k => `<th>${LIST_EXTRA[k]}</th>`).join('')}</tr>`;
+  $('#tbl thead').innerHTML = `<tr><th class="ck"><input type="checkbox" id="ckAll" aria-label="보이는 사진 모두 고르기"></th><th>런 · 사진</th><th>위치 · 배율</th><th>전구체</th><th>상태</th><th class="num">S3</th><th>마지막 검토</th>${X.map(k => `<th>${LIST_EXTRA[k]}</th>`).join('')}</tr>`;
   const nameN = {}; rows.forEach(r => { nameN[r.file] = (nameN[r.file] || 0) + 1; });
   const folder = r => { const p = String(r.rel_path || '').split('/'); return p.length > 1 ? p[p.length - 2] : ''; };
   const s3of = r => { const a = r.auto, v = r.review; return v && v.schema === 2 ? v.S3 : a ? a.whole.S3 : null; };
@@ -549,7 +567,7 @@ function renderList(){
     const s3 = s3of(r); const src = v2 ? '<span class="tag blue tiny">수정</span>' : a ? '<span class="tag wait tiny">자동</span>' : '';
     const ex = {run: esc(r.run || '–'), rel: `<span class="muted small">${esc(r.rel_path || '')}</span>`, txt: r.instrument_txt ? '있음' : '<span class="muted">없음</span>', who: `<span class="muted small">${esc(r.uploader || '')} ${esc(when(r.registered_at))}</span>`,
                 ndir: v2 ? v.n_dir : a ? a.whole.read : '–', main: v2 ? esc(mainText(v.main)) : '–', cells: v2 ? `${v.cells_done}/${v.cells_total}칸` : '–'};
-    return `<tr class="pick" data-id="${esc(r.photo_id)}"><td><b>${esc(r.file.replace(/\.[^.]+$/, ''))}</b>${nameN[r.file] > 1 ? ` <span class="muted tiny" title="${esc(r.rel_path)}">${esc(folder(r) || r.photo_id.slice(0, 8))}</span>` : ''}</td><td>${esc(r.position || '–')} · ${r.magnification ? fmtN(r.magnification) + '배' : '배율 –'}</td><td>${esc(PRE_KO[r.precursor] || r.precursor)}</td>
+    return `<tr class="pick" data-id="${esc(r.photo_id)}"><td class="ck"><input type="checkbox" class="ckp" data-id="${esc(r.photo_id)}" ${SELX.has(r.photo_id) ? 'checked' : ''} aria-label="고르기"></td><td><b>${esc(r.file.replace(/\.[^.]+$/, ''))}</b>${nameN[r.file] > 1 ? ` <span class="muted tiny" title="${esc(r.rel_path)}">${esc(folder(r) || r.photo_id.slice(0, 8))}</span>` : ''}</td><td>${esc(r.position || '–')} · ${r.magnification ? fmtN(r.magnification) + '배' : '배율 –'}</td><td>${esc(PRE_KO[r.precursor] || r.precursor)}</td>
       <td>${statusHtml(r)}</td><td class="num">${fmt(s3)} ${src}</td><td class="small">${v ? `${esc(v.who)} · ${esc(when(v.at))}` : '<span class="muted">–</span>'}</td>${X.map(k => `<td>${ex[k]}</td>`).join('')}</tr>`; };
   // one block per run: a header line with the run's summary, then its photos (the header folds the block)
   const G = []; rows.forEach(r => { const k = r.run || ''; let g = G[G.length - 1]; if (!g || g.run !== k){ g = G.find(x => x.run === k); if (!g){ g = {run: k, rows: []}; G.push(g); } } g.rows.push(r); });
@@ -567,14 +585,17 @@ function renderList(){
     const pre = [...new Set(R.map(r => PRE_KO[r.precursor] || r.precursor))].join('·'), pos = new Set(R.map(r => r.position || '')).size, mags = [...new Set(R.map(r => r.magnification).filter(Boolean))].sort((a, b) => a - b);
     const S = R.map(s3of).filter(x => x != null), lo = Math.min(...S), hi = Math.max(...S);
     const last = R.map(r => r.review).filter(Boolean).sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
-    return `<tr class="grp ${open ? 'open' : ''}" data-run="${esc(g.run)}" tabindex="0" role="button" aria-expanded="${open}"><td><div class="grow"><span class="gcar">›</span><b class="grun">${esc(g.run || '런 미입력')}</b><span class="muted small">사진 ${R.length}장</span></div></td>
+    return `<tr class="grp ${open ? 'open' : ''}" data-run="${esc(g.run)}" tabindex="0" role="button" aria-expanded="${open}"><td class="ck"><input type="checkbox" class="ckr" data-run="${esc(g.run)}" ${R.every(r => SELX.has(r.photo_id)) ? 'checked' : ''} data-some="${R.some(r => SELX.has(r.photo_id)) ? 1 : ''}" aria-label="이 런 사진 모두 고르기"></td><td><div class="grow"><span class="gcar">›</span><b class="grun">${esc(g.run || '런 미입력')}</b><span class="muted small">사진 ${R.length}장</span></div></td>
         <td class="small">위치 ${pos}곳${mags.length ? ' · ' + (mags.length > 2 ? `${fmtN(mags[0])}–${fmtN(mags[mags.length - 1])}배` : mags.map(m => fmtN(m) + '배').join(', ')) : ''}</td><td>${esc(pre)}</td>
         <td><span class="gstat">${KIND.filter(k => n[k[0]]).map(k => `<span class="tag ${k[2]} tiny">${k[1]} ${n[k[0]]}</span>`).join('')}</span></td>
         <td class="num small" title="이 런의 사진별 S3 범위 (검토본이 있으면 검토본 값). 런 전체를 합친 값이 아닙니다.">${S.length ? (lo === hi ? fmt(lo) : fmt(lo) + ' – ' + fmt(hi)) : '–'}</td>
         <td class="small">${last ? `${esc(last.who)} · ${esc(when(last.at))}` : '<span class="muted">–</span>'}</td>${X.map(() => '<td></td>').join('')}</tr>` + (open ? R.map(rowHtml).join('') : ''); }).join('');
+  document.querySelectorAll('#tbl .ckr').forEach(c => { c.indeterminate = !c.checked && !!c.dataset.some; }); LISTF.shown = rows.map(r => r.photo_id); const ca = $('#ckAll'); if (ca){ const k = rows.filter(r => SELX.has(r.photo_id)).length; ca.checked = !!rows.length && k === rows.length; ca.indeterminate = k > 0 && k < rows.length; }
+  if ($('#xSel')) $('#xSel').textContent = SELX.size ? `고른 사진 ${SELX.size}장` : ''; if ($('#xSelClear')) $('#xSelClear').hidden = !SELX.size;
   $('#colPick').innerHTML = Object.entries(LIST_EXTRA).map(([k, v]) => `<label class="small" style="display:flex; gap:4px; align-items:center"><input type="checkbox" data-col="${k}" ${X.includes(k) ? 'checked' : ''}>${v}</label>`).join('');
 }
-$('#tbl tbody').addEventListener('click', e => { const g = e.target.closest('tr.grp'); if (g) return setRunOpen([g.dataset.run], !g.classList.contains('open')); const tr = e.target.closest('tr.pick'); if (tr) openDetail(tr.dataset.id); });
+$('#tbl tbody').addEventListener('click', e => { if (e.target.closest('td.ck')){ onPick(e); return; } const g = e.target.closest('tr.grp'); if (g) return setRunOpen([g.dataset.run], !g.classList.contains('open')); const tr = e.target.closest('tr.pick'); if (tr) openDetail(tr.dataset.id); });
+$('#tbl thead').addEventListener('change', e => { if (e.target.id !== 'ckAll') return; (LISTF.shown || []).forEach(id => e.target.checked ? SELX.add(id) : SELX.delete(id)); renderList(); });
 $('#tbl tbody').addEventListener('keydown', e => { const g = e.target.closest('tr.grp'); if (g && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); setRunOpen([g.dataset.run], !g.classList.contains('open')); } });
 
 /* ============================== detail ============================== */
@@ -732,14 +753,18 @@ function renderAnal(){
   const R = EDIT.mode === 'auto' ? RES.auto : RES.current, M = R.main, lab = EDIT.mode === 'auto' ? '자동 판독' : '수정 반영', c = RES.cells, d = R.dens || {};
   const rows = [['방향 수', X => X.n], ['S3', X => fmt(X.S3)], ['S6', X => fmt(X.S6)], ['주방향', X => esc(mainShort(X.main))], ['한 변 중앙값', X => X.size.n ? `${fmtN(Math.round(X.size.side_median))} ${X.size.unit} (${X.size.n})` : '–'],
     ['밀도 /µm² <span class="tag wait tiny">참고값</span>', X => X.dens && X.dens.per_um2 != null ? fmt(X.dens.per_um2, 3) : '–'], ['피복률 <span class="tag wait tiny">참고값</span>', X => X.dens && X.dens.coverage != null ? fmt(X.dens.coverage * 100, 1) + ' %' : '–']];
-  $('#analBody').innerHTML = `<div class="grid2"><div><h3>방향 분포 <span class="muted">· ${lab} ${R.n}개</span></h3>${dirHistSvg(R._th, M)}<p class="small" style="margin:2px 0 0">${esc(mainPhrase(M))}</p>
-        <details class="small"><summary class="muted">주방향 판정 기준</summary>${METHOD_DIR}</details></div>
-      <div><h3>크기 <span class="muted">· 떨어진 결정 ${R.size.n}개</span></h3>${histSvg(R.size.sides, R.size.unit)}<p class="small" style="margin:2px 0 0">${R.size.n ? `한 변 평균 ${fmtN(Math.round(R.size.side_mean))} · 중앙값 ${fmtN(Math.round(R.size.side_median))} ${R.size.unit}` : '대상 없음'}</p>
-        <p class="small" style="margin:6px 0 0">밀도 ${d.per_um2 != null ? fmt(d.per_um2, 3) + ' /µm²' : '–'} · 피복률 ${d.coverage != null ? fmt(d.coverage * 100, 1) + ' %' : '–'} <span class="tag wait tiny">참고값</span></p>
+  const G = dirGroups(M);
+  $('#analBody').innerHTML = `<h3 style="margin-top:4px">방향 분포 <span class="muted">· ${lab} ${R.n}개</span></h3>${dirLegend(G, M)}
+    <div class="grid2 dirgrid"><figure><figcaption>사진 위 방향 분포</figcaption><div class="dpwrap"><canvas id="dirPhoto" role="img" aria-label="방향군별로 색을 입힌 SEM 사진"></canvas></div></figure>
+      <figure><figcaption>방향각 히스토그램</figcaption>${dirHistSvg(G.items, M)}<p class="small" style="margin:6px 0 0">${esc(mainPhrase(M))}</p>
+        <details class="small"><summary class="muted">주방향 판정 기준</summary>${METHOD_DIR}<p class="muted" style="margin:4px 0 0">색 구분은 결정 하나하나를 주방향과 비교한 것입니다: 주방향 ±${RULE.tol_deg}° = 파랑, 주방향 + 60° ±${RULE.tol_deg}° = 주황, 나머지 = 회색 (결정 카드·결정 목록의 "주방향과"와 같은 기준). 위 문장의 두 번째 방향 결정 수는 그 방향군의 중심(${M.second != null ? fmt(M.second, 1) + '°' : '–'})으로 센 것이라 주황 개수와 조금 다를 수 있습니다.</p></details></figure></div>
+    <div class="grid2"><div><h3>크기 <span class="muted">· 떨어진 결정 ${R.size.n}개</span></h3>${histSvg(R.size.sides, R.size.unit)}<p class="small" style="margin:2px 0 0">${R.size.n ? `한 변 평균 ${fmtN(Math.round(R.size.side_mean))} · 중앙값 ${fmtN(Math.round(R.size.side_median))} ${R.size.unit}` : '대상 없음'}</p></div>
+      <div><h3>밀도 · 피복률 <span class="tag wait tiny">참고값</span></h3><p class="small" style="margin:6px 0 0">밀도 ${d.per_um2 != null ? fmt(d.per_um2, 3) + ' /µm²' : '–'} · 피복률 ${d.coverage != null ? fmt(d.coverage * 100, 1) + ' %' : '–'}</p>
         <details class="small"><summary class="muted">계산법과 검증 범위</summary>${METHOD_DENS}</details></div></div>
     <h3>계산 범위별 비교</h3><div class="tablewrap"><table class="small"><thead><tr><th></th><th class="num">최초 자동</th><th class="num">수정 반영</th><th class="num">검토 완료 영역 (${c.done.length}/${c.total}칸)</th></tr></thead>
       <tbody>${rows.map(([k, f]) => `<tr><td>${k}</td><td class="num">${f(RES.auto)}</td><td class="num"><b>${f(RES.current)}</b></td><td class="num">${c.done.length ? f(RES.done) : '–'}</td></tr>`).join('')}</tbody></table></div>
     <details class="small"><summary class="muted">계산 기준</summary>${METHOD_SCOPE}</details>`;
+  drawDirPhoto(G);
 }
 function renderListBox(){
   if (!$('#otbl')) $('#listBody').innerHTML = `<div class="row" style="margin:8px 0"><input id="tq" type="search" placeholder="번호" style="width:90px"><select id="tf"><option value="">전체</option><option value="dir">방향 있음</option><option value="nodir">방향 없음</option><option value="edited">사람이 손댐</option><option value="unreviewed">미검토</option><option value="excluded">제외</option></select>
@@ -754,12 +779,43 @@ function histSvg(sides, unit){
   return `<svg viewBox="0 0 ${W} ${H + 18}" width="100%" role="img" aria-label="한 변 길이 분포">${cnt.map((c, i) => `<rect x="${i * bw + 1}" y="${H - c / cm * H}" width="${bw - 2}" height="${c / cm * H}" rx="2" fill="#1f5fbf"><title>${fmt(i * w, 0)}–${fmt((i + 1) * w, 0)} ${unit}: ${c}개</title></rect>`).join('')}
     <text x="0" y="${H + 14}" font-size="12" fill="#5b6577">0</text><text x="${W}" y="${H + 14}" font-size="12" fill="#5b6577" text-anchor="end">${fmt(mx, 0)} ${unit}</text></svg>`;
 }
-function dirHistSvg(th, M){
-  const nb = 24, cnt = new Array(nb).fill(0); th.forEach(t => { cnt[Math.min(nb - 1, Math.floor(mod(t, 120) / 5))]++; }); const cm = Math.max(1, ...cnt), H = 110, W = 640, bw = W / nb;
-  const mk = M && (M.state === 'one' || M.state === 'two') ? [[M.main, '#b3261e'], [mod(M.main + 60, 120), '#a15c00']] : [];
-  return `<svg viewBox="0 0 ${W} ${H + 18}" width="100%" role="img" aria-label="방향 분포">${cnt.map((c, i) => `<rect x="${i * bw + 1}" y="${H - c / cm * H}" width="${bw - 2}" height="${c / cm * H}" rx="2" fill="#16a34a"><title>${i * 5}–${i * 5 + 5}°: ${c}개</title></rect>`).join('')}
-    ${mk.map(([x, c]) => `<line x1="${x / 120 * W}" x2="${x / 120 * W}" y1="0" y2="${H}" stroke="${c}" stroke-dasharray="3 3"/>`).join('')}
-    ${[0, 30, 60, 90, 120].map(x => `<text x="${x / 120 * W}" y="${H + 14}" font-size="12" fill="#5b6577" text-anchor="${x === 0 ? 'start' : x === 120 ? 'end' : 'middle'}">${x}°</text>`).join('')}</svg>`;
+const GCOL = {main: '#2563eb', sixty: '#f97316', other: '#9aa3b2', all: '#16a34a'};
+function dirGroups(M){   // every direction in the scope shown, with its group (same rule as the decision card: classify)
+  const S = EDIT.mode === 'auto' ? EDIT.S0 : EDIT.S, A = EDIT.A, ok = M && ['one', 'two'].includes(M.state), items = [], nodir = [];
+  const g = t => { if (!ok) return 'all'; const c = classify(t, M).cls; return c === 'main' || c === 'sixty' ? c : 'other'; };
+  Object.values(S).forEach(s => { if (s.excluded) return; const t = thetaOf(s, A); if (t != null) items.push({s, t, g: g(t)}); else nodir.push(s);
+    (s.marks || []).forEach(m => { const tm = markDir(m); if (tm != null) items.push({s, m, t: tm, g: g(tm)}); }); });
+  const n = {main: 0, sixty: 0, other: 0, all: 0}; items.forEach(x => { n[x.g]++; }); return {items, nodir, n, ok};
+}
+function dirLegend(G, M){
+  const sw = (c, dash) => `<i class="lsw" style="${dash ? `border:1.5px dashed ${c}; background:none` : `background:${c}`}"></i>`;
+  const L = G.ok ? [[GCOL.main, `주방향 ${fmt(M.main, 1)}°`, G.n.main], [GCOL.sixty, `약 60° 방향군 (${fmt(mod(M.main + 60, 120), 1)}°)`, G.n.sixty], [GCOL.other, '기타 방향', G.n.other]]
+                 : [[GCOL.all, '방향 있음 (주방향 판단 보류라 방향군을 나누지 않음)', G.n.all]];
+  return `<div class="dlegend">${L.map(([c, t, k]) => `<span>${sw(c)}${esc(t)} <b>${k}개</b></span>`).join('')}<span class="muted">${sw('#9aa3b2', true)}방향 없음 ${G.nodir.length}개 (사진에만)</span></div>`;
+}
+function drawDirPhoto(G){
+  const cv = $('#dirPhoto'); if (!cv || !EDIT || !EDIT.img) return; G = G || dirGroups((EDIT.mode === 'auto' ? RES.auto : RES.current).main);
+  const [W, H] = EDIT.J.picture_size, box = cv.parentElement.getBoundingClientRect(), d = window.devicePixelRatio || 1; const cw = Math.max(160, box.width), ch = cw * H / W;
+  cv.style.width = cw + 'px'; cv.style.height = ch + 'px'; cv.width = Math.round(cw * d); cv.height = Math.round(ch * d);
+  const c = cv.getContext('2d'), k = cw / W * d; c.setTransform(k, 0, 0, k, 0, 0); c.imageSmoothingEnabled = true; c.drawImage(EDIT.img, 0, 0, W, H);
+  c.fillStyle = 'rgba(255,255,255,.18)'; c.fillRect(0, 0, W, H); const lw = 1.3 * d / k;
+  const path = P => { c.beginPath(); P.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.closePath(); };
+  c.setLineDash([3 * d / k, 3 * d / k]); c.strokeStyle = 'rgba(100,110,125,.9)'; c.lineWidth = lw; G.nodir.forEach(s => { path(s.pts); c.stroke(); }); c.setLineDash([]);
+  ['other', 'all', 'sixty', 'main'].forEach(gk => G.items.filter(x => !x.m && x.g === gk).forEach(x => { path(x.s.pts); c.globalAlpha = .45; c.fillStyle = GCOL[gk]; c.fill(); c.globalAlpha = 1; c.strokeStyle = GCOL[gk]; c.lineWidth = lw; c.stroke(); }));
+  G.items.filter(x => x.m).forEach(x => { const v = x.m.v, r = 5 * d / k, a = x.t * Math.PI / 180; c.fillStyle = GCOL[x.g]; c.strokeStyle = '#fff'; c.lineWidth = lw;
+    c.beginPath(); c.arc(v[0], v[1], r, 0, 2 * Math.PI); c.fill(); c.stroke(); });
+}
+window.addEventListener('resize', () => { if ($('#dAnal') && $('#dAnal').open && $('#dirPhoto')) drawDirPhoto(); });
+function dirHistSvg(items, M){
+  const nb = 24, K = ['main', 'sixty', 'other', 'all'], cnt = Array.from({length: nb}, () => ({main: 0, sixty: 0, other: 0, all: 0}));
+  items.forEach(x => { cnt[Math.min(nb - 1, Math.floor(mod(x.t, 120) / 5))][x.g]++; }); const tot = cnt.map(b => K.reduce((a, k) => a + b[k], 0)), cm = Math.max(1, ...tot), H = 300, W = 640, bw = W / nb;
+  const NAME = {main: '주방향', sixty: '약 60°', other: '기타', all: '방향 있음'};
+  const bars = cnt.map((b, i) => { let y = H; return K.filter(k => b[k]).map(k => { const h = b[k] / cm * H; y -= h; return `<rect x="${i * bw + 1}" y="${y}" width="${bw - 2}" height="${h}" fill="${GCOL[k]}"><title>${i * 5}–${i * 5 + 5}°: ${NAME[k]} ${b[k]}개</title></rect>`; }).join(''); }).join('');
+  const mk = M && (M.state === 'one' || M.state === 'two') ? [[M.main, GCOL.main], [mod(M.main + 60, 120), GCOL.sixty]] : [];
+  return `<svg viewBox="0 -4 ${W} ${H + 24}" width="100%" role="img" aria-label="방향각 히스토그램">${bars}
+    ${mk.map(([x, c]) => `<line x1="${x / 120 * W}" x2="${x / 120 * W}" y1="-4" y2="${H}" stroke="${c}" stroke-width="1.5" stroke-dasharray="4 3"/>`).join('')}
+    <line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="#c6ccd6"/><text x="${W}" y="8" font-size="12" fill="#5b6577" text-anchor="end">가장 높은 막대 ${cm}개 · 5° 간격</text>
+    ${[0, 30, 60, 90, 120].map(x => `<text x="${x / 120 * W}" y="${H + 16}" font-size="12" fill="#5b6577" text-anchor="${x === 0 ? 'start' : x === 120 ? 'end' : 'middle'}">${x}°</text>`).join('')}</svg>`;
 }
 
 /* ============================== whole-photo review: viewer ============================== */
@@ -1404,6 +1460,130 @@ $('#inPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); 
 $('#btnLogout').onclick = async () => { if (!(await leaveOk())) return; EDIT = null; navSyncList(); SS.del('ws2sem.pw'); LS.del('ws2sem.pw'); PW = ''; showLogin(''); };
 window.addEventListener('beforeunload', e => { if (EDIT && EDIT.dirty){ e.preventDefault(); e.returnValue = ''; } });
 (async () => { if (API && PW && WHO){ try { const r = await api('ping'); $('#ver').textContent = `${APP_VERSION} · 저장소 ${r.version}`; await loadList(); await navBoot(); return; } catch (e){} } showLogin(''); })();
+
+/* ============================== results download (.xlsx) ==============================
+   Photos picked on the list (or all reviewed ones) → one Excel file: 사진별 · 런별 · 결정별 (optional) · 설명.
+   The per-photo numbers are the ones the list already has (saved with each review and checked again in Colab); the decision table is rebuilt here
+   from the same files the photo page opens (auto/<k>/objects.json + the latest review), with the same engine. */
+const SELX = new Set();
+function onPick(e){
+  const t = e.target; if (t.tagName !== 'INPUT'){ const i = t.closest('td.ck') && t.closest('td.ck').querySelector('input'); if (i){ i.click(); } return; }
+  const all = Object.values((INDEX && INDEX.photos) || {});
+  if (t.classList.contains('ckp')) t.checked ? SELX.add(t.dataset.id) : SELX.delete(t.dataset.id);
+  else if (t.classList.contains('ckr')) all.filter(r => (r.run || '') === t.dataset.run).forEach(r => t.checked ? SELX.add(r.photo_id) : SELX.delete(r.photo_id));
+  renderList();
+}
+function photoKind(r){ const v = r.review; if (r.status === 'reviewed' && v){ if (v.schema === 2) return v.cells_total && v.cells_done >= v.cells_total ? 'done' : 'part'; return v.state === 'confirmed' ? 'done' : 'part'; }
+  return r.status === 'analyzed' ? 'todo' : r.status === 'needs_side' ? 'side' : r.status === 'failed' ? 'fail' : 'wait'; }
+const KIND_KO = {done: '검토 완료', part: '검토 중', todo: '검토 전', side: '결정 쪽 선택 필요', wait: '분석 대기', fail: '분석 실패'};
+function exportSets(){ const all = Object.values((INDEX && INDEX.photos) || {}), by = f => all.filter(f).map(r => r.photo_id);
+  return [['done', '검토 완료된 사진 (모든 칸 검토 완료)', by(r => photoKind(r) === 'done')], ['rev', '검토한 사진 모두 (검토 중 포함)', by(r => !!r.review)],
+          ['sel', '목록에서 고른 사진', Array.from(SELX).filter(id => INDEX.photos[id])], ['all', '자동 판독이 있는 사진 모두 (검토 전은 자동 값)', by(r => !!r.auto)]]; }
+function openExport(){
+  const S = exportSets(), def = SELX.size ? 'sel' : S[0][2].length ? 'done' : 'rev';
+  $('#xOpt').innerHTML = S.map(([k, t, ids]) => `<label><input type="radio" name="xs" value="${k}" ${k === def ? 'checked' : ''} ${ids.length ? '' : 'disabled'}><span>${t} <b>${ids.length}장</b></span></label>`).join('');
+  $('#xProg').textContent = ''; $('#xGo').disabled = false; $('#dlgExport').showModal();
+}
+async function loadCalc(r){   // the photo's latest whole-photo review (or the automatic start), recomputed with the page's engine
+  const v = r.review, useRev = !!(v && v.schema === 2), k = useRev ? v.auto_k : r.auto && r.auto.k; if (k == null) return null;
+  const paths = [`auto/${k}/objects.json`].concat(useRev ? ['reviews/' + v.file] : []);
+  const res = await api('files', {photo_id: r.photo_id, paths}), F = {}; (res.files || []).forEach(f => { F[f.path] = f; });
+  if (!F[paths[0]] || F[paths[0]].text == null) throw new Error('판독 파일을 불러오지 못함');
+  const J = JSON.parse(F[paths[0]].text), A = {}; J.objects.forEach(o => { A[String(o.id)] = o; });
+  const S0 = {}; J.objects.forEach(o => { S0[String(o.id)] = initialState(o); }); const S = clone(S0); let rec = null;
+  if (useRev){ if (!F[paths[1]] || F[paths[1]].text == null) throw new Error('검토 기록을 불러오지 못함'); rec = JSON.parse(F[paths[1]].text); Object.entries(rec.objs || {}).forEach(([i, o]) => { S[i] = o; }); }
+  const cd = rec ? rec.cells_done || {} : {}, R = allResults(J, A, S0, S, cd), M = R.current.main, done = new Set(Object.keys(cd)), nm = J.nm_per_px, rows = [];
+  const base = [r.run || '', r.position || '', r.magnification || null, PRE_KO[r.precursor] || r.precursor || '', r.file, r.photo_id, useRev ? `검토 ${v.n}판` : `자동 ${k}`];
+  Object.values(S).sort((a, b) => a.num - b.num).forEach(s => { const t = thetaOf(s, A), s0 = S0[s.id], t0 = s0 ? thetaOf(s0, A) : null, c = classify(t, M), [x, y] = centreOf(s, A), ar = areaOf(s, A), o = A[s.id];
+    rows.push(base.concat([s.num, '결정', ORIGIN_KO[s.origin] || s.origin, TAG_KO[s.tag] || s.tag, s.excluded ? (EXCL_KO[s.excluded.reason] || s.excluded.reason) : '', o ? (HOLD_KO[o.status] || o.status).replace(/ \(.*\)$/, '') : '',
+      t0 != null ? r1(t0) : null, t != null && !s.excluded ? r1(t) : null, s.excluded ? '' : CLASS_KO[c.cls], s.excluded ? null : c.diff, nm ? Math.round(Math.sqrt(4 * ar / Math.sqrt(3)) * nm) : null, Math.round(ar),
+      cellNo(cellOf(x, y, J.cells), J.cells), CONF_KO[effConfirm(s, A, J.cells, done)], r1(x), r1(y)]));
+    if (!s.excluded) (s.marks || []).forEach((m, i) => { const tm = markDir(m), cm = classify(tm, M);
+      rows.push(base.concat([s.num, `덩어리 안 방향 ${i + 1}`, '사람', TAG_KO[s.tag] || s.tag, '', '', null, tm != null ? r1(tm) : null, CLASS_KO[cm.cls], cm.diff, null, null, cellNo(cellOf(m.v[0], m.v[1], J.cells), J.cells), '사람 수정', r1(m.v[0]), r1(m.v[1])])); }); });
+  return {R, rows, useRev, k};
+}
+const cellNo = (key, C) => Number(key.slice(1, key.indexOf('c'))) * C.nx + Number(key.slice(key.indexOf('c') + 1)) + 1;   // same numbering as the page (1번 칸 …)
+const nz = v => v == null || Number.isNaN(v) ? null : v;
+function photoRowX(r, calc){
+  const v = r.review, a = r.auto, w = a && a.whole || {}, v2 = !!(v && v.schema === 2), C = calc && calc.R ? calc.R.current : null, Dn = calc && calc.R ? calc.R.done : null;
+  const M = C ? C.main : v2 ? v.main || {} : {}, Z = C ? C.size : v2 ? v.size || {} : {};
+  return [r.run || '', r.position || '', nz(r.magnification), PRE_KO[r.precursor] || r.precursor || '', r.file, r.rel_path || '', r.photo_id, nz(r.nm_per_px), KIND_KO[photoKind(r)],
+    v ? (v2 ? `검토 ${v.n}판` : `상자 검토 ${v.n}판`) : a ? `자동 ${a.k} (검토 전)` : '', v ? v.who || '' : '', v ? when(v.at) : '', v2 ? nz(v.cells_done) : null, v2 ? nz(v.cells_total) : null,
+    v ? nz(v.n_dir) : nz(w.read), v ? nz(v.S3) : nz(w.S3), v ? nz(v.S6) : nz(w.S6), M.state ? (MAIN_KO[M.state] || M.state) : '', nz(M.main), nz(M.second), nz(M.n_main), nz(M.n_second), nz(M.n_other),
+    Z.n ? nz(Z.side_median != null ? Math.round(Z.side_median) : null) : null, Z.n ? nz(Z.side_mean != null ? Math.round(Z.side_mean) : null) : null, Z.n ? nz(Z.side_sd != null ? Math.round(Z.side_sd) : null) : null, nz(Z.n) || null, Z.unit || '',
+    v2 ? nz(v.done_n) : null, v2 ? nz(v.done_S3) : null, Dn && Dn.n ? nz(Dn.S6) : null, v2 ? nz(v.edited) : null,
+    v && v.python_checked ? (v.python_same ? '같음' : '다름') : v ? '아직' : '', a ? nz(w.read) : null, a ? nz(w.S3) : null, a ? nz(w.S6) : null,
+    a ? ({dark: '어두운 쪽', bright: '밝은 쪽'}[a.background_side] || '') + (a.background_applied ? '' : ' (적용 안 함)') : '', a ? a.program || '' : '', a ? a.model || '' : '', calc && calc.error ? '결정별 표 불러오기 실패: ' + calc.error : ''];
+}
+const XH_PHOTO = ['런', '위치', '배율', '전구체', '파일', '폴더 경로', '사진 ID', 'nm/px', '상태', '쓴 값', '검토자', '검토 시각', '검토 완료 칸', '전체 칸', '방향 수', 'S3', 'S6', '주방향 판정', '주방향°', '둘째 방향°', '주방향 결정 수', '둘째 방향 결정 수', '기타 결정 수',
+  '한 변 중앙값', '한 변 평균', '한 변 표준편차', '크기 잰 결정 수', '크기 단위', '검토 완료 영역 방향 수', '검토 완료 영역 S3', '검토 완료 영역 S6', '사람이 고친 결정 수', '파이썬 검산', '자동 방향 수', '자동 S3', '자동 S6', '결정 쪽', '판독 프로그램', '판독 모델', '비고'];
+const XH_CRYS = ['런', '위치', '배율', '전구체', '파일', '사진 ID', '쓴 값', '결정 번호', '종류', '출처', '유형', '제외 이유', '자동 판독', '자동 방향°', '현재 방향°', '주방향과', '주방향과 차이°', '한 변 nm', '면적 px', '칸', '검토 상태', 'x px', 'y px'];
+function runRowsX(P){ const G = {}; P.forEach(x => { const k = x[0] || '(런 미입력)'; (G[k] = G[k] || []).push(x); });
+  const med = a => { const b = a.slice().sort((p, q) => p - q), n = b.length; return n ? (n % 2 ? b[(n - 1) / 2] : r3((b[n / 2 - 1] + b[n / 2]) / 2)) : null; };
+  return Object.entries(G).map(([k, L]) => { const s3 = L.map(x => x[15]).filter(x => x != null), s6 = L.map(x => x[16]).filter(x => x != null);
+    return [k, [...new Set(L.map(x => x[3]))].join('·'), L.length, L.filter(x => x[8] === '검토 완료').length, L.filter(x => x[8] === '검토 중').length, L.reduce((a, x) => a + (x[14] || 0), 0),
+      s3.length ? Math.min(...s3) : null, med(s3), s3.length ? Math.max(...s3) : null, med(s6)]; }); }
+async function runExport(){
+  const kind = (document.querySelector('input[name="xs"]:checked') || {}).value, set = exportSets().find(x => x[0] === kind); if (!set || !set[2].length) return;
+  const ids = set[2].slice().sort((a, b) => { const A = INDEX.photos[a], B = INDEX.photos[b]; return String(A.run).localeCompare(String(B.run), 'ko', {numeric: true}) || String(A.file).localeCompare(String(B.file)); });
+  const withC = $('#xCrys').checked, P = [], CR = []; $('#xGo').disabled = true;
+  try {
+    for (let i = 0; i < ids.length; i++){ const r = INDEX.photos[ids[i]]; let calc = null;
+      if (withC && r.auto){ $('#xProg').textContent = `${i + 1} / ${ids.length} · ${r.file} 불러오는 중…`; try { calc = await loadCalc(r); } catch (e){ calc = {error: String(e.message || e).slice(0, 80)}; } }
+      P.push(photoRowX(r, calc)); if (calc && calc.rows) CR.push(...calc.rows); }
+    const now = new Date(), stamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+    const note = [['항목', '내용'], ['만든 때', when(now.toISOString())], ['만든 사람', WHO], ['프로그램', APP_VERSION], ['범위', `${set[1]} · ${ids.length}장`],
+      ['사진별 요약', '사진 한 장 = 한 줄. "쓴 값"이 검토 n판이면 그 검토본(사람 수정 반영, 사진 전체)의 값, "자동"이면 사람 검토 전 자동 판독 값입니다.'],
+      ['방향 수 · S3 · S6', 'S3·S6는 0~1. 방향 수가 적을 때 우연히 생기는 몫을 뺀 값(웹·Colab과 같은 계산). S3는 120° 주기(한 방향 정렬), S6는 60° 주기(서로 뒤집힌 두 방향도 정렬로 셈).'],
+      ['검토 완료 영역', '"이 칸 검토 완료"를 누른 칸 안의 결정만으로 계산한 값. 검토 완료 칸이 없으면 비어 있습니다.'],
+      ['주방향', `방향 수 ${RULE.n_min}개 이상, 두 방향군(주방향, +60°) ±${RULE.tol_deg}° 안의 비율을 이항 검정(p ≤ ${RULE.p_max})으로 봅니다. 작은 쪽/큰 쪽 ≥ ${RULE.similar_ratio}이면 "두 방향이 비슷하게 나타남".`],
+      ['주방향과 (결정별 표)', `주방향 ±${RULE.tol_deg}° = 주방향과 일치, 주방향 + 60° ±${RULE.tol_deg}° = 주방향에서 약 60°, 나머지 = 기타 방향 (웹의 결정 카드와 같은 기준).`],
+      ['파이썬 검산', 'Colab 단계에서 같은 검토본을 파이썬으로 다시 계산해 웹 값과 비교한 결과 (같음 / 다름 / 아직).'],
+      ['런별 요약', 'S3는 사진별 값의 최소·중앙값·최대입니다. 런 전체 결정을 합쳐 다시 계산한 값이 아닙니다.'],
+      ['결정별 표', withC ? '사진마다 같은 판독 파일과 검토 기록을 불러와 웹과 같은 방식으로 다시 만든 표. 제외한 결정도 "제외 이유"와 함께 들어 있습니다.' : '이번에는 넣지 않았습니다.']];
+    const sheets = [{name: '사진별', rows: [XH_PHOTO].concat(P), widths: [8, 10, 8, 8, 30, 24, 20, 7, 12, 14, 10, 17, 8, 7, 8, 7, 7, 18, 8, 8, 8, 8, 8, 9, 9, 9, 8, 6, 9, 9, 9, 9, 8, 8, 7, 7, 9, 14, 12, 24]},
+      {name: '런별', rows: [['런', '전구체', '사진 수', '검토 완료', '검토 중', '방향 수 합', 'S3 최소', 'S3 중앙값', 'S3 최대', 'S6 중앙값']].concat(runRowsX(P)), widths: [12, 12, 8, 9, 8, 10, 9, 9, 9, 9]}];
+    if (withC) sheets.push({name: '결정별', rows: [XH_CRYS].concat(CR), widths: [8, 10, 8, 8, 28, 20, 10, 8, 14, 7, 12, 10, 14, 9, 9, 14, 9, 9, 8, 6, 10, 8, 8]});
+    sheets.push({name: '설명', rows: note, widths: [20, 120]});
+    saveBlob(xlsxBlob(sheets), `ws2_sem_결과_${stamp}.xlsx`);
+    $('#xProg').textContent = `내려받기 시작: 사진 ${P.length}장${withC ? ` · 결정 ${CR.length}줄` : ''}${P.some(x => x[x.length - 1]) ? ' · 일부 사진은 결정별 표를 불러오지 못함 (사진별 "비고" 참고)' : ''}`;
+  } catch (e){ $('#xProg').textContent = '만들지 못했습니다: ' + (e.message || e); }
+  $('#xGo').disabled = false;
+}
+function saveBlob(b, name){ const u = URL.createObjectURL(b), l = document.createElement('a'); l.href = u; l.download = name; document.body.appendChild(l); l.click(); setTimeout(() => { URL.revokeObjectURL(u); l.remove(); }, 2000); }
+/* --- minimal .xlsx writer: no library (the page has no build step); stored (uncompressed) zip, inline strings, bold header, frozen first row */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u){ let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRC_T[(c ^ u[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files){
+  const enc = new TextEncoder(), parts = [], cen = []; let off = 0; const d = new Date();
+  const dt = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF, dd = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+  files.forEach(f => { const nm = enc.encode(f.name), crc = crc32(f.data), sz = f.data.length, h = new DataView(new ArrayBuffer(30)), c = new DataView(new ArrayBuffer(46));
+    [[0, 0x04034b50, 4], [4, 20, 2], [6, 0x0800, 2], [8, 0, 2], [10, dt, 2], [12, dd, 2], [14, crc, 4], [18, sz, 4], [22, sz, 4], [26, nm.length, 2], [28, 0, 2]].forEach(([o, v, n]) => n === 4 ? h.setUint32(o, v, true) : h.setUint16(o, v, true));
+    [[0, 0x02014b50, 4], [4, 20, 2], [6, 20, 2], [8, 0x0800, 2], [10, 0, 2], [12, dt, 2], [14, dd, 2], [16, crc, 4], [20, sz, 4], [24, sz, 4], [28, nm.length, 2], [30, 0, 2], [32, 0, 2], [34, 0, 2], [36, 0, 2], [38, 0, 4], [42, off, 4]].forEach(([o, v, n]) => n === 4 ? c.setUint32(o, v, true) : c.setUint16(o, v, true));
+    parts.push(new Uint8Array(h.buffer), nm, f.data); cen.push(new Uint8Array(c.buffer), nm); off += 30 + nm.length + sz; });
+  const cl = cen.reduce((a, u) => a + u.length, 0), e = new DataView(new ArrayBuffer(22)); e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cl, true); e.setUint32(16, off, true);
+  return new Blob([...parts, ...cen, new Uint8Array(e.buffer)], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+const xesc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c])).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+const colName = i => { let s = ''; i++; while (i){ const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; };
+function sheetXml(rows, widths){
+  const body = rows.map((r, ri) => `<row r="${ri + 1}">${r.map((v, ci) => { if (v == null || v === '') return ''; const ref = colName(ci) + (ri + 1), st = ri === 0 ? ' s="1"' : '';
+    return typeof v === 'number' && isFinite(v) ? `<c r="${ref}"${st}><v>${v}</v></c>` : `<c r="${ref}"${st} t="inlineStr"><is><t xml:space="preserve">${xesc(v)}</t></is></c>`; }).join('')}</row>`).join('');
+  const cols = widths && widths.length ? `<cols>${widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join('')}</cols>` : '';
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>${cols}<sheetData>${body}</sheetData></worksheet>`;
+}
+function xlsxBlob(sheets){
+  const X = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', NS = 'http://schemas.openxmlformats.org', enc = new TextEncoder();
+  const files = [['[Content_Types].xml', X + `<Types xmlns="${NS}/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}</Types>`],
+    ['_rels/.rels', X + `<Relationships xmlns="${NS}/package/2006/relationships"><Relationship Id="rId1" Type="${NS}/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
+    ['xl/workbook.xml', X + `<workbook xmlns="${NS}/spreadsheetml/2006/main" xmlns:r="${NS}/officeDocument/2006/relationships"><sheets>${sheets.map((s, i) => `<sheet name="${xesc(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets></workbook>`],
+    ['xl/_rels/workbook.xml.rels', X + `<Relationships xmlns="${NS}/package/2006/relationships">${sheets.map((_, i) => `<Relationship Id="rId${i + 1}" Type="${NS}/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length + 1}" Type="${NS}/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
+    ['xl/styles.xml', X + `<styleSheet xmlns="${NS}/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="맑은 고딕"/></font><font><b/><sz val="11"/><name val="맑은 고딕"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`]]
+    .concat(sheets.map((s, i) => [`xl/worksheets/sheet${i + 1}.xml`, sheetXml(s.rows, s.widths)]));
+  return zipStore(files.map(([name, t]) => ({name, data: enc.encode(t)})));
+}
+$('#btnExport').onclick = openExport; $('#xGo').onclick = runExport; $('#xClose').onclick = () => $('#dlgExport').close();
+$('#xSelClear').onclick = () => { SELX.clear(); renderList(); };
 
 /* ============================== back navigation ==============================
    list → photo (results) → review are browser history entries, so the browser's / tablet's Back works and a photo has its own address (#p=<id>).
